@@ -13,12 +13,66 @@ export default function Login() {
     logout().then(setUser);
   };
   return (
-    <div>
-      {!user ? (
-        <button onClick={handleLogin}>Google Login</button>
-      ) : (
-        <button onClick={handleLogout}>Google Logout</button>
-      )}
+    <div className="w-[600px] mt-[80px] flex">
+      <img
+        className="w-[500px] h-[440px] mb-[80px] flex"
+        src="/public/img/loginLogo.png"
+        alt="loginLogo"
+      />
+      <div className="mb-[15px]">
+        {!user ? (
+          <button
+            className="bg-white text-black text-[18px] w-[350px] h-[48px] rounded hover:brightness-90 border border-black"
+            onClick={handleLogin}
+          >
+            <img
+              className="inline w-[38px] h-[38px]"
+              src="/public/img/googleLogo.png"
+              alt="googleLogo"
+            />
+            Google로 로그인
+          </button>
+        ) : (
+          <button
+            className="bg-white text-black text-[18px] w-[350px] h-[48px] rounded hover:brightness-90 border border-black"
+            onClick={handleLogout}
+          >
+            <img
+              className="inline w-[38px] h-[38px]"
+              src="/public/img/googleLogo.png"
+              alt="googleLogo"
+            />
+            Google 로그아웃
+          </button>
+        )}
+      </div>
+      <div>
+        {!user ? (
+          <button
+            className="bg-[#EFDB30] text-black text-[18px] w-[350px] h-[48px] rounded hover:brightness-90 border border-black"
+            onClick={handleLogin}
+          >
+            <img
+              className="inline w-[16] h-[15px] mr-[13px]"
+              src="/public/img/kakaoLogo.png"
+              alt="googleLogo"
+            />
+            카카오로 로그인
+          </button>
+        ) : (
+          <button
+            className="bg-white text-black text-[18px] w-[350px] h-[48px] rounded hover:brightness-90 border border-black"
+            onClick={handleLogout}
+          >
+            <img
+              className="inline w-[16px] h-[15px] mr-[13px]"
+              src="/public/img/kakaoLogo.png"
+              alt="googleLogo"
+            />
+            카카오 로그아웃
+          </button>
+        )}
+      </div>
     </div>
   );
 }
