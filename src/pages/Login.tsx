@@ -13,12 +13,14 @@ export default function Login() {
     logout().then(setUser);
   };
   return (
-    <div className="w-[600px] mt-[80px] flex">
-      <img
-        className="w-[500px] h-[440px] mb-[80px] flex"
-        src="/public/img/loginLogo.png"
-        alt="loginLogo"
-      />
+    <div className="w-[600px] mt-[80px]">
+      <div className="flex justify-center">
+        <img
+          className="w-[500px] h-[440px] mb-[80px]"
+          src="/public/img/loginLogo.png"
+          alt="loginLogo"
+        />
+      </div>
       <div className="mb-[15px]">
         {!user ? (
           <button
