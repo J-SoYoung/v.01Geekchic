@@ -6,6 +6,7 @@ import "./index.css";
 import Home from "./pages/Home.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import Login from "./pages/Login.tsx";
+import UsedHome from "./pages/UsedHome.tsx";
 
 const router = createBrowserRouter([
   {
@@ -15,6 +16,7 @@ const router = createBrowserRouter([
     children: [
       { index: true, path: "/", element: <Home /> },
       { path: "/api/login", element: <Login /> },
+      { path: "/usedHome", element: <UsedHome /> },
     ],
   },
 ]);
