@@ -13,7 +13,7 @@ export default function Login() {
     logout().then(setUser);
   };
   return (
-    <div className="w-[600px] mt-[80px]">
+    <div className="w-[600px] mt-[80px] h-screen">
       <div className="flex justify-center">
         <img
           className="w-[500px] h-[440px] mb-[80px]"
