@@ -1,18 +1,21 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 interface ProductCardProps {
+  id: string;
   title: string;
   price: string;
   imageUrl: string;
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({
+  id,
   title,
   price,
   imageUrl,
 }) => {
   return (
-    <div className="border rounded-md p-4">
+    <Link to={`detail/${id}`} className="border rounded-md p-4 cursor-pointer">
       <img
         src={imageUrl}
         alt={title}
@@ -20,7 +23,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
       />
       <h2 className="text-lg font-bold">{title}</h2>
       <p className="text-gray-500">{price}</p>
-    </div>
+    </Link>
   );
 };
 
