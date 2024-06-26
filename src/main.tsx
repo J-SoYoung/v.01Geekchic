@@ -7,6 +7,12 @@ import Home from "./pages/Home.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import Login from "./pages/Login.tsx";
 import UsedHome from "./pages/UsedHome.tsx";
+import MyPage from "./pages/MyPage.tsx";
+import UsedPostUpload from "./pages/UsedPostUpload.tsx";
+import MyList from "./pages/MyList.tsx";
+import MySalelist from "./pages/MySalelist.tsx";
+import MyProfile from "./pages/MyProfile.tsx";
+import UsedDetail from "./pages/UsedDetail.tsx";
 
 const router = createBrowserRouter([
   {
@@ -17,6 +23,12 @@ const router = createBrowserRouter([
       { index: true, path: "/", element: <Home /> },
       { path: "/api/login", element: <Login /> },
       { path: "/usedHome", element: <UsedHome /> },
+      { path: "usedHome/detail/:id", element: <UsedDetail /> },
+      { path: "/usedPostUpload", element: <UsedPostUpload /> },
+      { path: "/my", element: <MyPage /> },
+      { path: "/my/salelist", element: <MySalelist /> },
+      { path: "/my/:list", element: <MyList /> },
+      { path: "/myProfile", element: <MyProfile /> },
     ],
   },
 ]);
