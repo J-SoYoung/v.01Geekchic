@@ -1,11 +1,11 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-import HomeIcon from "../../assets/icons/nav_home.svg";
-import ItemsIcon from "../../assets/icons/nav_items.svg";
-import WishIcon from "../../assets/icons/nav_wish.svg";
-import UsedIcon from "../../assets/icons/nav_used.svg";
-import MyIcon from "../../assets/icons/nav_my.svg";
+// import HomeIcon from "../../assets/icons/nav_home.svg";
+// import ItemsIcon from "../../assets/icons/nav_items.svg";
+// import WishIcon from "../../assets/icons/nav_wish.svg";
+// import UsedIcon from "../../assets/icons/nav_used.svg";
+// import MyIcon from "../../assets/icons/nav_my.svg";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -30,7 +30,7 @@ const Layout: React.FC<LayoutProps> = ({ children, title, isPostButton }) => {
       <main className="flex-grow p-4 pt-0">{children}</main>
 
       {/* Buttom Nav Bar */}
-      <nav className="fixed bottom-0 mx-auto w-full max-w-[596px] border-t-2 bg-white">
+      {/* <nav className="fixed bottom-0 mx-auto w-full max-w-[596px] border-t-2 bg-white">
         <ul className="flex justify-around p-4">
           <Link to="/" className="text-center cursor-pointer">
             <img src={HomeIcon} alt="Home" className="w-6 h-6 mx-auto" />
@@ -53,7 +53,7 @@ const Layout: React.FC<LayoutProps> = ({ children, title, isPostButton }) => {
             <span className="text-xs">마이</span>
           </Link>
         </ul>
-      </nav>
+      </nav> */}
     </div>
   );
 };

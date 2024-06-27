@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 export default function Login() {
   const [user, setUser] = useState<User | void | null>(null);
   const navigate = useNavigate();
+
   useEffect(() => {
     onUserStateChange((user) => {
       console.log(user);

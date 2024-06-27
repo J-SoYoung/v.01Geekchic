@@ -9,7 +9,7 @@ import MyIcon from "../../assets/icons/nav_my.svg";
 
 const BottomNav: React.FC = () => {
   return (
-    <nav className="fixed bottom-0 mx-auto w-full max-w-[596px] border-t-2 bg-white">
+    <nav className="fixed bottom-0 mx-auto w-full max-w-[596px] border-t-2 bg-[#fff]">
       <ul className="flex justify-around p-4">
         <Link to="/" className="text-center cursor-pointer">
           <img src={HomeIcon} alt="Home" className="w-6 h-6 mx-auto" />
