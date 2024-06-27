@@ -5,18 +5,14 @@ import {
   GoogleAuthProvider,
   User,
   signOut,
+  onAuthStateChanged,
 } from "firebase/auth";
 
 const firebaseConfig = {
-  // apiKey: process.env.VITE_APP_FIREBASE_API_KEY,
-  // authDomain: process.env.VITE_APP_FIREBASE_AUTH_DOMAIN,
-  // databaseURL: process.env.VITE_APP_FIREBASE_DB_URL,
-  // projectId: process.env.VITE_APP_FIREBASE_PROJECT_ID,
-  apiKey: "AIzaSyAwXLdcG6bSu0bF1iy1mPgqjM-d_mehHbg",
-  authDomain: "geekchic-968c3.firebaseapp.com",
-  databaseURL:
-    "https://geekchic-968c3-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "geekchic-968c3",
+  apiKey: import.meta.env.VITE_APP_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_APP_FIREBASE_AUTH_DOMAIN,
+  databaseURL: import.meta.env.VITE_APP_FIREBASE_DB_URL,
+  projectId: import.meta.env.VITE_APP_FIREBASE_PROJECT_ID,
 };
 
 const app = initializeApp(firebaseConfig);
@@ -37,5 +33,11 @@ export async function login(): Promise<User | void> {
 export async function logout(): Promise<null> {
   return signOut(auth).then(() => {
     return null;
+  });
+}
+
+export function onUserStateChange(callback: (user: User | null) => void): void {
+  onAuthStateChanged(auth, (user) => {
+    callback(user);
   });
 }
