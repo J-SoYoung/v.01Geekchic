@@ -1,9 +1,16 @@
-import React, { useState } from "react";
-import { login, logout } from "../api/firebase";
+import React, { useEffect, useState } from "react";
+import { login, logout, onUserStateChange } from "../api/firebase";
 import { User } from "firebase/auth";
 
 export default function Login() {
   const [user, setUser] = useState<User | void | null>(null);
+
+  useEffect(() => {
+    onUserStateChange((user) => {
+      console.log(user);
+      setUser(user);
+    });
+  });
 
   const handleLogin = () => {
     login().then(setUser);

@@ -5,6 +5,7 @@ import {
   GoogleAuthProvider,
   User,
   signOut,
+  onAuthStateChanged,
 } from "firebase/auth";
 
 const firebaseConfig = {
@@ -32,5 +33,11 @@ export async function login(): Promise<User | void> {
 export async function logout(): Promise<null> {
   return signOut(auth).then(() => {
     return null;
+  });
+}
+
+export function onUserStateChange(callback: (user: User | null) => void): void {
+  onAuthStateChanged(auth, (user) => {
+    callback(user);
   });
 }
