@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { login, logout, onUserStateChange } from "../api/firebase";
 import { User } from "firebase/auth";
+import { useNavigate } from "react-router-dom";
 
 export default function Login() {
   const [user, setUser] = useState<User | void | null>(null);
-
+  const navigate = useNavigate();
   useEffect(() => {
     onUserStateChange((user) => {
       console.log(user);
@@ -13,7 +14,9 @@ export default function Login() {
   });
 
   const handleLogin = () => {
-    login().then(setUser);
+    login()
+      .then(setUser)
+      .then(() => navigate("/"));
   };
 
   const handleLogout = () => {

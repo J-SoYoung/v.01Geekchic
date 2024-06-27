@@ -27,6 +27,7 @@ export async function login(): Promise<User | void> {
       console.log(app);
       return user;
     })
+
     .catch(console.error);
 }
 
