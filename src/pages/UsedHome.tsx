@@ -6,7 +6,6 @@ const UsedHome = () => {
   return (
     <Layout title="중고거래" isPostButton={true}>
       <div className="h-[100%]">
-        
         {/* search검색바 컴포넌트 */}
         <div className="mb-5">
           <input
