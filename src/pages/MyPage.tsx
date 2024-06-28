@@ -1,5 +1,5 @@
 import React from "react";
-import Layout from "../components/common/_Layout";
+import Layout from "../components/myPage/_Layout";
 import { Link } from "react-router-dom";
 
 const MyPage = () => {

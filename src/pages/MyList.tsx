@@ -1,7 +1,7 @@
 import React from "react";
 import BuyList from "../components/myPage/BuyList";
 import Cart from "../components/myPage/Cart";
-import Layout from "../components/common/_Layout";
+import Layout from "../components/myPage/_Layout";
 import { useParams } from "react-router-dom";
 
 const MyList = () => {
