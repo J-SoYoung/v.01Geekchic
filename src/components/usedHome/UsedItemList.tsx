@@ -14,7 +14,7 @@ const UsedItemList: React.FC = () => {
   ];
 
   return (
-    <div className="p-4 grid grid-cols-2 gap-4 mb-24">
+    <div className="p-8 pt-4 grid grid-cols-2 gap-4 mb-24">
       {products.map((product, index) => (
         <UsedItemCard key={index} {...product} />
       ))}
