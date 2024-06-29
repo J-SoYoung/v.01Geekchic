@@ -21,7 +21,7 @@ const MyPage = () => {
           </div>
 
           <button className="w-full h-[45px] py-2 mb-16 bg-black text-white rounded-md">
-            <Link to="/myProfile">프로필 관리</Link>
+            <Link to="profile">프로필 관리</Link>
           </button>
         </div>
 
