@@ -1,30 +1,30 @@
-# React + TypeScript + Vite
+# GeekChic 
+Vite + React + TypeScript
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## 프로젝트 목표
 
-Currently, two official plugins are available:
+사용자들이 다양한 제품을 쉽게 검색하고 구매 및 중고 물품을 손쉽게 사고팔 수 있는 플랫폼을 구축하여 , 자원 재활용과 비용 절감을 도모하는 온라인 쇼핑몰 커뮤니티 플랫폼을 구축합니다.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## **주요기능✅**
 
-## Expanding the ESLint configuration
+- **사용자 인증** : 회원 가입, 로그인 및 로그아웃 기능
+- **제품 목록** : 제품 카테고리, 상세 설명, 가격, 이미지 등 제품 정보 표시
+- **장바구니** : 주문 생성, 결제, 주문 내역 조회 기능
+- **검색** : 제품 검색 기능
+- **리뷰 및 평점**: 사용자 리뷰 및 제품 평점 기능
+- **상품 등록**: 사용자가 중고 물품을 등록하고, 설명과 이미지를 업로드할 수 있는 기능
+- **쪽지 및 댓글 기능**: 구매자와 판매자가 직접 소통할 수 있는  쪽지, 댓글 기능
+- **거래, 판매 관리**: 거래, 판매 상태 관리 및 내역 조회 기능
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+## 기술 스택🛠️
 
-- Configure the top-level `parserOptions` property like this:
+- Typescript
+- React
+- React-query, recoil
+- React Router Dom
+- Vite
+- Eslint
+- Tailwind
+- Firebase
 
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
-```
-
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+zzzzzzzzzz
