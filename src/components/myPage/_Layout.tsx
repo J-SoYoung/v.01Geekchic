@@ -5,7 +5,6 @@ import { Link } from "react-router-dom";
 interface LayoutProps {
   children: React.ReactNode;
   title: string;
-  isPostButton?: boolean;
 }
 
 const Layout: React.FC<LayoutProps> = ({ children, title }) => {
