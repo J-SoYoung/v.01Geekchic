@@ -1,14 +1,14 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-interface ProductCardProps {
+interface UsedItemsCardProps {
   id: string;
   title: string;
   price: string;
   imageUrl: string;
 }
 
-const ProductCard: React.FC<ProductCardProps> = ({
+const ProductCard: React.FC<UsedItemsCardProps> = ({
   id,
   title,
   price,

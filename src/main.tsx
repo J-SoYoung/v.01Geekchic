@@ -23,7 +23,7 @@ const router = createBrowserRouter([
       { index: true, path: "/", element: <Home /> },
       { path: "/api/login", element: <Login /> },
       { path: "/usedHome", element: <UsedHome /> },
-      { path: "usedHome/detail/:id", element: <UsedDetail /> },
+      { path: "/usedHome/detail/:id", element: <UsedDetail /> },
       { path: "/usedPostUpload", element: <UsedPostUpload /> },
       { path: "/my", element: <MyPage /> },
       { path: "/my/salelist", element: <MySalelist /> },

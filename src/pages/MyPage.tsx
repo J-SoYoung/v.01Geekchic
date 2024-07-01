@@ -28,7 +28,7 @@ const MyPage = () => {
         {/* 내 상품 관리 */}
         <div className="space-y-4">
           <Link
-            to="buylist"
+            to="orderlist"
             className="flex justify-between items-center p-4 bg-gray-100 rounded-md cursor-pointer"
           >
             <span className="text-lg">주문내역</span>
