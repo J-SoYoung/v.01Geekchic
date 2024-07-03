@@ -1,12 +1,18 @@
-import React, { useState } from "react";
+import React, { FormEvent, useState } from "react";
 import { BsSearch } from "react-icons/bs";
+import { useNavigate } from "react-router-dom";
 
 export default function SearchHeader() {
+  const navigate = useNavigate();
   const [text, setText] = useState("");
+  const handleSubmit = (e: FormEvent<HTMLFormElement>): void => {
+    e.preventDefault();
+    navigate(`/home/${text}`);
+  };
 
   return (
     <header className="w-[600px] flex mb-4 text-xl ml-[25px]">
-      <form className="w-full flex">
+      <form className="w-full flex" onSubmit={handleSubmit}>
         <input
           className="w-9/12 p-2 outline-none bg-[#EEE] placeholder-gray-500 rounded-l-[8px] border-0 pl-4 "
           type="text"
