@@ -1,30 +1,26 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { MyUsedItemType } from "../../types/usedType";
 
-interface UsedItemsCardProps {
-  id: string;
-  title: string;
-  price: string;
-  imageUrl: string;
+interface UsedItemCardProps {
+  item: MyUsedItemType;
 }
 
-const ProductCard: React.FC<UsedItemsCardProps> = ({
-  id,
-  title,
-  price,
-  imageUrl,
-}) => {
+const UsedItemCard = ({ item }: UsedItemCardProps) => {
   return (
-    <Link to={`detail/${id}`} className="border rounded-md p-4 cursor-pointer">
+    <Link
+      to={`/usedHome/detail/${item.itemId}`}
+      className=" p-3 rounded-md  cursor-pointer"
+    >
       <img
-        src={imageUrl}
-        alt={title}
-        className="w-full h-48 object-cover rounded-md mb-4"
+        src={item.imageUrl}
+        alt={item.itemName}
+        className="w-full h-48 object-cover rounded-md mb-2"
       />
-      <h2 className="text-lg font-bold">{title}</h2>
-      <p className="text-gray-500">{price}</p>
+      <h2 className="text-lg font-bold pl-2">{item.itemName}</h2>
+      <p className="text-gray-500 pl-2">{item.price.toLocaleString()}원</p>
     </Link>
   );
 };
 
-export default ProductCard;
+export default UsedItemCard;

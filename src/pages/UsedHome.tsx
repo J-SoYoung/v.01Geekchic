@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 const UsedHome = () => {
   return (
     <div className="h-[100%] w-[600px]">
-      <header className="p-8 pb-4 text-right">
+      <header className="p-11 pb-4 text-right">
         <h1 className="text-3xl font-bold text-left mb-5 ">중고거래</h1>
         <button className="bg-black text-white px-4 py-2 mb-5 rounded-md text-right">
           <Link to="/usedPostUpload">등록하기</Link>
