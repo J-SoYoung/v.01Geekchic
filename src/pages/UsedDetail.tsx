@@ -1,40 +1,16 @@
 // UsedDetailPage.tsx
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import Chevron_left from "../assets/icons/chevron_left.svg";
+import { usedItems } from "../types/dummyData";
 
-const product = {
-  name: "나이키 페가수스 41",
-  price: 200000,
-  description:
-    "나이키 페가수스 41 리뷰글 입니다. 네고 가능 댓글 & 쪽지 남겨주세요. 나이키 페가수스 41 리뷰글 입니다. 네고 가능 댓글 & 쪽지 남겨주세요. 나이키 페가수스 41 리뷰글 입니다. 네고 가능 댓글 & 쪽지 남겨주세요. 나이키 페가수스 41 리뷰글 입니다. 네고 가능 댓글 & 쪽지 남겨주세요.",
-  imageUrl: "https://via.placeholder.com/300x200", // 예시 이미지 URL입니다.
-  colors: ["#cccccc", "#999999"],
-  owner: {
-    name: "나이키 매니아",
-    address: "부산광역시 양도구 임선동3가",
-    imageUrl: "https://via.placeholder.com/50", // 예시 프로필 이미지 URL입니다.
-  },
-  comments: [
-    {
-      user: "나이키 매니아",
-      time: "15분전",
-      text: "나이키 페가수스 41 리뷰글 입니다. 추가 정보는 프로필을 확인해 주세요. 최신 정보로 업데이트 했습니다.",
-      userImageUrl: "https://via.placeholder.com/50", // 예시 프로필 이미지 URL입니다.
-    },
-    {
-      user: "나이키 매니아",
-      time: "1시간전",
-      text: "나이키 페가수스 41 리뷰글 입니다. 추가 정보는 프로필을 확인해 주세요. 최신 정보로 업데이트 했습니다.",
-      userImageUrl: "https://via.placeholder.com/50", // 예시 프로필 이미지 URL입니다.
-    },
-  ],
-};
+// 디테일 페이지 그림 업로드 되는 부분 빠르게 되나?
+const UsedDetail = () => {
+  const { id } = useParams();
+  const item = usedItems.filter((i) => i.itemId === id)[0];
 
-const UsedDetail: React.FC = () => {
   return (
     <div className="w-[600px] h-[100%] mb-20 text-left">
-      {/* 제품 이미지 */}
       <div>
         <Link to="/usedHome">
           <img
@@ -43,90 +19,86 @@ const UsedDetail: React.FC = () => {
             className="w-10 h-10 top-2 cursor-pointer fixed "
           />
         </Link>
-        <div className="w-[598px] h-80 mb-6 bg-gray-200 ">
-          {/* <div className=" w-full h-64 mb-6 bg-gray-200 "> */}
-          <img src="/" alt="제품명" />
-        </div>
-        <div className="flex space-x-4 pl-8">
-          {[0, 1, 2].map((i, idx) => (
-            <div
-              key={idx}
-              className="w-20 h-20 flex items-center justify-center border"
-            >
-              {i}
-            </div>
-          ))}
+        <div className="w-[598px] h-[100%]">
+          <div className="mb-6 bg-gray-200 border-red-400">
+            <img
+              src={item.imageUrl}
+              alt={item.itemName}
+              className="w-[100%] h-96 object-cover"
+            />
+          </div>
+          <div className="flex space-x-4 pl-8">
+            {item.imageArr.map((i, idx) => (
+              <div
+                key={idx}
+                className="w-24 h-24 flex items-center justify-center"
+              >
+                <img src={i} className="w-full h-full object-cover" />
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
-      {/* 제품 설명 */}
       <div className="p-8">
-        {/* 유저 */}
         <div className="flex pb-6 border-b">
           <div className="w-12 h-12 bg-gray-200 rounded-full">
-            <img src="/" alt="유저" />
+            <img src={item.seller.userAvatar} alt="유저" />
           </div>
           <div className="ml-4 ">
-            <div className="text-lg font-semibold">판매자 아이디</div>
-            <div className="text-sm text-gray-500">
-              부산광역시 명도구 인정동3가
-            </div>
+            <div className="text-lg font-semibold">{item.seller.nickname}</div>
+            <div className="text-sm text-gray-500">{item.seller.address}</div>
           </div>
         </div>
 
         <div className="my-8 border-b pb-8">
-          <div className="text-xl font-bold">나이키</div>
-          <div className="text-sm text-gray-500">10일전</div>
+          <div className="text-xl font-bold">{item.itemName}</div>
+          {/* 상품 업로드 한 날짜를 db에 넣어야 함 */}
+          {/* <div className="text-sm text-gray-500">10일전</div> */}
           <div className="text-xl font-bold mt-2">
-            100000원
-            {/* {product.price.toLocaleString()}원 */}
+            {item.price.toLocaleString()}원
           </div>
+
           <div className="flex space-x-2 mt-2">
-            <span className="px-2 py-1 bg-gray-200 rounded-full text-sm">
-              배송비 포함
-            </span>
-            <span className="px-2 py-1 bg-gray-200 rounded-full text-sm">
-              새 상품
-            </span>
+            {item.options.map((i, idx) => (
+              <span key={idx} className="px-2 py-1 bg-gray-200 rounded-full text-sm">
+                {i}
+              </span>
+            ))}
           </div>
         </div>
 
         <div className="mb-10">
-          <p className="text-gray-700">
-            Lorem Ipsum is simply dummy text of the printing and typesetting
-            industry. Lorem Ipsum has been the industry's standard dummy text
-            ever since the 1500s, when an unknown printer took a galley of type
-            and scrambled it to make a type specimen book. It has survived not
-            only five centuries, but also the leap into electronic typesetting,
-            remaining essentially unchanged. It was popularised in the 1960s
-            with the release of Letraset sheets containing Lorem Ipsum passages,
-            and more recently with desktop publishing software like Aldus
-            PageMaker including versions of Lorem Ipsum.
-          </p>
+          <p className="text-gray-700">{item.description}</p>
         </div>
 
         <div className="mb-10 ">
           <div className="text-lg font-bold mb-4">
-            댓글 {product.comments.length}
+            댓글 {item.reviews.length}
           </div>
-          {product.comments.map((comment, index) => (
-            <div key={index} className="flex border-b py-6">
+          {item.reviews.map((r) => (
+            <div key={r.reviewId} className="flex border-b py-6">
               <img
-                src={comment.userImageUrl}
-                alt={comment.user}
+                src={r.reviewInfo.userAvatar}
+                alt={r.reviewInfo.userName}
                 className="w-[60px] h-[60px]  mr-4 object-cover rounded-full border"
               />
               <div>
-                <div className="flex mb-2">
-                  <div className="flex-1 font-semibold">{comment.user}</div>
-                  <div className="text-sm text-gray-500">{comment.time}</div>
+                <div className="flex mb-2 items-end">
+                  <div className="flex-1 font-semibold">
+                    {r.reviewInfo.userName}
+                  </div>
+                  <div className="text-sm text-gray-500">
+                    {r.reviewInfo.createdAt}
+                  </div>
                 </div>
-                <div className="text-gray-800">{comment.text}</div>
+                <div className="text-gray-800">{r.reviewInfo.review}</div>
               </div>
             </div>
           ))}
         </div>
         <button className="w-full py-2 mb-4 bg-[#8F5BBD] text-white rounded-md">
+          {/* 중고 구매하면 isSalse true로 바꿔야함 -> 판매완료로 해야함 */}
           쪽지 보내기
         </button>
       </div>
