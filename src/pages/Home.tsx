@@ -4,8 +4,8 @@ import Header from "../components/common/Header";
 import SearchHeader from "../components/common/SearchHeader";
 
 export default function Home() {
-  const { keyword } = useParams();
-  console.log(keyword);
+  const { id } = useParams<{ id: string }>();
+  console.log(id);
   return (
     <div className="h-[100vh]">
       <Header />
@@ -17,7 +17,7 @@ export default function Home() {
           alt="mainImage"
         />
       </div>
-      <div className="text-3xl">HOME {keyword}</div>
+      <div className="text-3xl">HOME {id}</div>
       <Link to="/api/login">
         <h2 className="text-2xl">Login</h2>
       </Link>
