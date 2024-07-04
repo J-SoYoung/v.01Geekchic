@@ -1,14 +1,17 @@
-import React, { FormEvent, useState } from "react";
+import React, { FormEvent, useEffect, useState } from "react";
 import { BsSearch } from "react-icons/bs";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 export default function SearchHeader() {
+  const { keyword } = useParams();
   const navigate = useNavigate();
   const [text, setText] = useState("");
   const handleSubmit = (e: FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
-    navigate(`/home/${text}`);
+    navigate(`/${text}`);
   };
+
+  useEffect((): void => setText(keyword || ""), [keyword]);
 
   return (
     <header className="w-[600px] flex mb-4 text-xl ml-[25px]">
