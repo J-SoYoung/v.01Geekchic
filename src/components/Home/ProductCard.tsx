@@ -46,7 +46,7 @@ export default function ProductCard({ product }: { product: Video }) {
       <img
         className="w-[120px] h-[130px] "
         src={thumbnails.medium.url}
-        alt=""
+        alt="img"
       />
     </li>
   );

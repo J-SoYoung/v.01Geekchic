@@ -63,30 +63,41 @@ export default function Home() {
     error && <p>Something is wrong</p>;
   }
   return (
-    <div className="h-full">
+    <div className="h-full min-h-screen">
       <Header />
       <SearchHeader />
-      <div className="w-full h-[300px] mt-[30px]">
-        <img
-          className="object-cover object-center w-[100%] h-[100%]"
-          src="/public/img/mainImg.jpg"
-          alt="mainImage"
-        />
-      </div>
       {keyword ? (
         <div>
           {products?.length !== 0 ? (
-            <p className="text-lg font-bold text-left ml-[30px] mt-[30px] mb-[15px] flex">
-              {keyword}
-              <p className="ml-[5px] text-[#BEBEBE]">{products?.length}</p>
-            </p>
+            <div>
+              <div className="w-full h-[300px] mt-[30px]">
+                <img
+                  className="object-cover object-center w-[100%] h-[100%]"
+                  src="/public/img/mainImg.jpg"
+                  alt="mainImage"
+                />
+              </div>
+              <p className="text-lg font-bold text-left ml-[30px] mt-[30px] mb-[15px] flex">
+                {keyword}
+                <p className="ml-[5px] text-[#BEBEBE]">{products?.length}</p>
+              </p>
+            </div>
           ) : (
             ""
           )}
         </div>
       ) : (
-        <div className="text-lg font-bold text-left ml-[30px] mt-[30px] mb-[15px]">
-          최근 등록 상품
+        <div>
+          <div className="w-full h-[300px] mt-[30px]">
+            <img
+              className="object-cover object-center w-[100%] h-[100%]"
+              src="/public/img/mainImg.jpg"
+              alt="mainImage"
+            />
+          </div>
+          <div className="text-lg font-bold text-left ml-[30px] mt-[30px] mb-[15px]">
+            최근 등록 상품
+          </div>
         </div>
       )}
 
@@ -98,7 +109,14 @@ export default function Home() {
             ))}
           </ul>
         ) : (
-          <div>없어요</div>
+          <div className="h-[100vh]">
+            <div className="text-2xl mt-[130px] mb-[40px]">
+              검색하신 상품이 없어요.
+            </div>
+            <button className="w-[220px] py-2 bg-[#fff] text-[#8F5BBD] border border-[#8F5BBD] rounded-md hover:bg-[#8F5BBD] hover:text-[#fff] duration-200">
+              상품으로 바로가기
+            </button>
+          </div>
         )}
       </div>
     </div>
