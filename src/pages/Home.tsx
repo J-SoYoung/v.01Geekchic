@@ -1,5 +1,5 @@
 import React from "react";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import Header from "../components/common/Header";
 import SearchHeader from "../components/common/SearchHeader";
 import { useQuery, QueryFunction, QueryKey } from "@tanstack/react-query";
@@ -71,10 +71,7 @@ export default function Home() {
     error && <p>Something is wrong</p>;
   }
   return (
-    <div className="h-[100vh]">
-      <Link to="/api/login">
-        <h2 className="text-2xl">Login</h2>
-      </Link>
+    <div className="h-full">
       <Header />
       <SearchHeader />
       <div className="w-full h-[300px] mt-[30px]">
@@ -84,17 +81,18 @@ export default function Home() {
           alt="mainImage"
         />
       </div>
-      <div className="text-lg font-bold text-left ml-[20px] mt-[30px] mb-[15px]">
+      <div className="text-lg font-bold text-left ml-[30px] mt-[30px] mb-[15px]">
         최근 등록 상품
       </div>
-
-      {products && (
-        <ul>
-          {products.items.map((product) => (
-            <ProductCard key={product.id.videoId} product={product} />
-          ))}
-        </ul>
-      )}
+      <div className="flex justify-center">
+        {products && (
+          <ul className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-[20px] mb-[100px]">
+            {products.items.map((product) => (
+              <ProductCard key={product.id.videoId} product={product} />
+            ))}
+          </ul>
+        )}
+      </div>
     </div>
   );
 }

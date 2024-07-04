@@ -42,8 +42,12 @@ interface Video {
 export default function ProductCard({ product }: { product: Video }) {
   const { thumbnails } = product.snippet;
   return (
-    <li>
-      <img src={thumbnails.medium.url} alt="" />
+    <li className="border rounded-md truncate">
+      <img
+        className="w-[120px] h-[130px] "
+        src={thumbnails.medium.url}
+        alt=""
+      />
     </li>
   );
 }
