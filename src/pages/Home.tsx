@@ -2,14 +2,11 @@ import React from "react";
 import { useParams } from "react-router-dom";
 import Header from "../components/common/Header";
 import SearchHeader from "../components/common/SearchHeader";
-import { useQuery, QueryFunction, QueryKey } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import ProductCard from "../components/Home/ProductCard";
+import useProducts from "../api/firebase";
 
 export default function Home() {
-  interface SearchResult {
-    items: Video[];
-  }
-
   interface Video {
     kind: string;
     etag: string;
@@ -46,22 +43,17 @@ export default function Home() {
   }
 
   const { keyword } = useParams<{ keyword: string }>();
-  const fetchProducts: QueryFunction<SearchResult, QueryKey> = async () => {
-    const response = await fetch(`/products/search.json`);
+  const searchKeyword = keyword || "";
 
-    if (!response.ok) {
-      throw new Error("Network response was not ok");
-    }
-    return response.json();
-  };
+  const product = useProducts();
 
   const {
     isLoading,
     error,
     data: products,
-  } = useQuery<SearchResult, Error>({
-    queryKey: ["products", keyword],
-    queryFn: fetchProducts,
+  } = useQuery<Video[], Error>({
+    queryKey: ["products", searchKeyword],
+    queryFn: () => product.search(searchKeyword),
   });
 
   {
@@ -71,26 +63,60 @@ export default function Home() {
     error && <p>Something is wrong</p>;
   }
   return (
-    <div className="h-full">
+    <div className="h-full min-h-screen">
       <Header />
       <SearchHeader />
-      <div className="w-full h-[300px] mt-[30px]">
-        <img
-          className="object-cover object-center w-[100%] h-[100%]"
-          src="/public/img/mainImg.jpg"
-          alt="mainImage"
-        />
-      </div>
-      <div className="text-lg font-bold text-left ml-[30px] mt-[30px] mb-[15px]">
-        최근 등록 상품
-      </div>
+      {keyword ? (
+        <div>
+          {products?.length !== 0 ? (
+            <div>
+              <div className="w-full h-[300px] mt-[30px]">
+                <img
+                  className="object-cover object-center w-[100%] h-[100%]"
+                  src="/public/img/mainImg.jpg"
+                  alt="mainImage"
+                />
+              </div>
+              <p className="text-lg font-bold text-left ml-[30px] mt-[30px] mb-[15px] flex">
+                {keyword}
+                <p className="ml-[5px] text-[#BEBEBE]">{products?.length}</p>
+              </p>
+            </div>
+          ) : (
+            ""
+          )}
+        </div>
+      ) : (
+        <div>
+          <div className="w-full h-[300px] mt-[30px]">
+            <img
+              className="object-cover object-center w-[100%] h-[100%]"
+              src="/public/img/mainImg.jpg"
+              alt="mainImage"
+            />
+          </div>
+          <div className="text-lg font-bold text-left ml-[30px] mt-[30px] mb-[15px]">
+            최근 등록 상품
+          </div>
+        </div>
+      )}
+
       <div className="flex justify-center">
-        {products && (
+        {products?.length !== 0 ? (
           <ul className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-[20px] mb-[100px]">
-            {products.items.map((product) => (
+            {products?.map((product) => (
               <ProductCard key={product.id.videoId} product={product} />
             ))}
           </ul>
+        ) : (
+          <div className="h-[100vh]">
+            <div className="text-2xl mt-[130px] mb-[40px]">
+              검색하신 상품이 없어요.
+            </div>
+            <button className="w-[220px] py-2 bg-[#fff] text-[#8F5BBD] border border-[#8F5BBD] rounded-md hover:bg-[#8F5BBD] hover:text-[#fff] duration-200">
+              상품으로 바로가기
+            </button>
+          </div>
         )}
       </div>
     </div>
