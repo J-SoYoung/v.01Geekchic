@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import Header from "../components/common/Header";
 import SearchHeader from "../components/common/SearchHeader";
 import { useQuery } from "@tanstack/react-query";
-import ProductCard from "../components/Home/ProductCard";
+import ProductCard from "../components/\bHome/ProductCard";
 import useProducts from "../api/firebase";
 
 export default function Home() {
@@ -20,6 +20,7 @@ export default function Home() {
   }
 
   interface Snippet {
+    price: number;
     publishedAt: string;
     channelId: string;
     title: string;
