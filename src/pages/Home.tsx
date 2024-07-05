@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import Header from "../components/common/Header";
 import SearchHeader from "../components/common/SearchHeader";
 import { useQuery } from "@tanstack/react-query";
-import ProductCard from "../components/\bHome/ProductCard";
+import ProductCard from "../components/main/ProductCard";
 import useProducts from "../api/firebase";
 
 export default function Home() {
