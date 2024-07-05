@@ -18,6 +18,7 @@ interface Video {
   etag: string;
   id: VideoId;
   snippet: {
+    price: number;
     publishedAt: string;
     channelId: string;
     title: string;
