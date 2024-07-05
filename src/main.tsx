@@ -13,6 +13,7 @@ import MyList from "./pages/MyList.tsx";
 import MySalelist from "./pages/MySalelist.tsx";
 import MyProfile from "./pages/MyProfile.tsx";
 import UsedDetail from "./pages/UsedDetail.tsx";
+import ProductsDtail from "./pages/ProductsDtail.tsx";
 
 const router = createBrowserRouter([
   {
@@ -21,6 +22,8 @@ const router = createBrowserRouter([
     errorElement: <NotFound />,
     children: [
       { index: true, path: "/", element: <Home /> },
+      { path: "/:keyword", element: <Home /> },
+      { path: "/products/detail/:id", element: <ProductsDtail /> },
       { path: "/api/login", element: <Login /> },
       { path: "/usedHome", element: <UsedHome /> },
       { path: "/usedHome/detail/:id", element: <UsedDetail /> },
