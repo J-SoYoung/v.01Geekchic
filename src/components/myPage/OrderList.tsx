@@ -1,39 +1,38 @@
 import React from "react";
-import MyUsedItemList, { MyUsedItemType } from "./MyUsedItemList";
-// import ItemComp from "./ItemComp";
+import MyUsedItemList from "./MyUsedItemList";
+import { Order } from "../../types/usedType";
 
-export interface Order {
-  date: string;
-  myUsedItems: MyUsedItemType[];
-}
 
 const orders: Order[] = [
   {
     date: "2024. 01. 10",
     myUsedItems: [
       {
-        id: "order01",
-        name: "나이키 V2K 런1",
+        itemㅑd: "order01",
+        itemName: "나이키 V2K 런1",
         size: "270",
         quantity: 1,
         price: 139000,
         imageUrl: "https://via.placeholder.com/150",
+        isSales: false,
       },
       {
         id: "order02",
-        name: "나이키 V2K 런2",
+        itemName: "나이키 V2K 런2",
         size: "270",
         quantity: 1,
         price: 139000,
         imageUrl: "https://via.placeholder.com/150",
+        isSales: false,
       },
       {
         id: "order03",
-        name: "나이키 V2K 런3",
+        itemName: "나이키 V2K 런3",
         size: "270",
         quantity: 1,
         price: 139000,
         imageUrl: "https://via.placeholder.com/150",
+        isSales: false,
       },
     ],
   },
@@ -42,11 +41,12 @@ const orders: Order[] = [
     myUsedItems: [
       {
         id: "order04",
-        name: "나이키 V2K 런4",
+        itemName: "나이키 V2K 런4",
         size: "270",
         quantity: 1,
         price: 139000,
         imageUrl: "https://via.placeholder.com/150",
+        isSales: true,
       },
     ],
   },

@@ -1,6 +1,7 @@
 # data
 memo.txt
 _json
+/types/dummyData.ts
 
 # Logs
 logs

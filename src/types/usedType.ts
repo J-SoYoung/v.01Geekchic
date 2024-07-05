@@ -34,9 +34,20 @@ export interface MyUsedItemListType {
   onRemove?: (id: string) => void;
 }
 
+export interface MyUsedOrderItemType {
+  itemId: "order01",
+  itemName: "나이키 V2K 런1",
+  size: "270",
+  quantity: 1,
+  price: 139000,
+  imageUrl: "https://via.placeholder.com/150",
+  isSales: false,
+}
+
+
 export interface Order {
   date: string;
-  myUsedItems: MyUsedItemType[];
+  myUsedOrderItems: MyUsedOrderItemType[];
 }
 
 export interface SellerType {
