@@ -1,32 +1,36 @@
 import React, { useState } from "react";
-import MyUsedItemList, { MyUsedItemType } from "./MyUsedItemList";
+import MyUsedItemList from "./MyUsedItemList";
+import { MyUsedItemType } from "../../types/usedType";
 
+// 유저 데이터 안에 카트 데이터 있음
 const initialCart: MyUsedItemType[] = [
   {
-    id: "item1",
-    name: "나이키 V2K 런",
+    cartId: "item1",
+    itemName: "나이키 V2K 런",
     size: "270",
     quantity: 1,
     price: 139000,
     imageUrl: "https://via.placeholder.com/150",
+    isSales: true,
   },
   {
-    id: "order02",
-    name: "나이키 V2K 런2",
+    cartId: "order02",
+    itemName: "나이키 V2K 런2",
     size: "270",
     quantity: 1,
     price: 139000,
     imageUrl: "https://via.placeholder.com/150",
+    isSales: true,
   },
 ];
 
 const Cart = () => {
   const [cardItems, setCartItems] = useState<MyUsedItemType[]>(initialCart);
 
-  const handleQuantityChange = (id: string, quantity: number) => {
+  const handleQuantityChange = (cartId: string, quantity: number) => {
     setCartItems((prevItems) =>
       prevItems.map((item) =>
-        item.id === id ? { ...item, quantity: Math.max(1, quantity) } : item
+        item.cartId === cartId ? { ...item, quantity: Math.max(1, quantity) } : item
       )
     );
   };

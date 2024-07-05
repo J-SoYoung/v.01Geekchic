@@ -2,41 +2,27 @@ import React from "react";
 import TrashIcon from "../../assets/icons/trash.svg";
 import Plus from "../../assets/icons/square_plus.svg";
 import Minus from "../../assets/icons/square_minus.svg";
+import { MyUsedItemListType } from "../../types/usedType";
 
-export interface MyUsedItemType {
-  id: string;
-  name: string;
-  size: string;
-  quantity: number;
-  price: number;
-  imageUrl: string;
-}
-
-interface MyUsedItemListProps {
-  myUsedItems: MyUsedItemType[];
-  isCart: boolean;
-  onQuantityChange?: (id: string, quantity: number) => void;
-  onRemove?: (id: string) => void;
-}
 
 const MyUsedItemList = ({
   myUsedItems,
   isCart,
   onQuantityChange,
   onRemove,
-}: MyUsedItemListProps) => {
+}: MyUsedItemListType) => {
   return (
     <div className={isCart ? "border-b mb-8" : ""}>
       {myUsedItems.map((item) => (
-        <div key={item.id} className="flex mb-4">
+        <div key={item.itemId} className="flex mb-4">
           <img
             src={item.imageUrl}
-            alt={item.name}
+            alt={item.itemName}
             className="w-20 h-20 object-cover rounded-lg mr-4"
           />
           <div className="w-full flex justify-between ">
             <div>
-              <div className="font-semibold">{item.name}</div>
+              <div className="font-semibold">{item.itemName}</div>
               <div className="text-sm text-gray-500">
                 {item.size}
                 {!isCart && ` | ${item.quantity}개`}
@@ -51,7 +37,7 @@ const MyUsedItemList = ({
                   <button
                     onClick={() =>
                       onQuantityChange &&
-                      onQuantityChange(item.id, item.quantity - 1)
+                      onQuantityChange(item.itemId, item.quantity - 1)
                     }
                   >
                     <img
@@ -64,7 +50,7 @@ const MyUsedItemList = ({
                   <button
                     onClick={() =>
                       onQuantityChange &&
-                      onQuantityChange(item.id, item.quantity + 1)
+                      onQuantityChange(item.itemId, item.quantity + 1)
                     }
                   >
                     <img
@@ -74,7 +60,7 @@ const MyUsedItemList = ({
                     />
                   </button>
                 </div>
-                <button onClick={() => onRemove && onRemove(item.id)}>
+                <button onClick={() => onRemove && onRemove(item.itemId)}>
                   <img src={TrashIcon} alt="삭제" className="w-5 h-5 mx-auto" />
                 </button>
               </div>
