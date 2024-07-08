@@ -1,24 +1,24 @@
 // UsedDetailPage.tsx
 import React from "react";
-import { Link, useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import Chevron_left from "../assets/icons/chevron_left.svg";
 import { usedItems } from "../types/dummyData";
 
 // 디테일 페이지 그림 업로드 되는 부분 빠르게 되나?
 const UsedDetail = () => {
+  const navigate = useNavigate();
   const { id } = useParams();
   const item = usedItems.filter((i) => i.itemId === id)[0];
 
   return (
     <div className="w-[600px] h-[100%] mb-20 text-left">
       <div>
-        <Link to="/usedHome">
-          <img
-            src={Chevron_left}
-            alt="이전 페이지로"
-            className="w-10 h-10 top-2 cursor-pointer fixed "
-          />
-        </Link>
+        <button
+          className="w-10 h-10 top-2 cursor-pointer fixed"
+          onClick={() => navigate(-1)}
+        >
+          <img src={Chevron_left} alt="이전 페이지로" className="w-full" />
+        </button>
         <div className="w-[598px] h-[100%]">
           <div className="mb-6 bg-gray-200 border-red-400">
             <img
@@ -61,7 +61,10 @@ const UsedDetail = () => {
 
           <div className="flex space-x-2 mt-2">
             {item.options.map((i, idx) => (
-              <span key={idx} className="px-2 py-1 bg-gray-200 rounded-full text-sm">
+              <span
+                key={idx}
+                className="px-2 py-1 bg-gray-200 rounded-full text-sm"
+              >
                 {i}
               </span>
             ))}
