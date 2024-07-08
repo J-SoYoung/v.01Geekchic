@@ -1,42 +1,25 @@
 import React, { useState } from "react";
 import MyUsedItemList from "./MyUsedItemList";
-import { MyUsedItemType } from "../../types/usedType";
+import { MyItems, UserType } from "../../types/usedType";
+import { userData } from "../../types/dummyData";
 
-// 유저 데이터 안에 카트 데이터 있음
-const initialCart: MyUsedItemType[] = [
-  {
-    cartId: "item1",
-    itemName: "나이키 V2K 런",
-    size: "270",
-    quantity: 1,
-    price: 139000,
-    imageUrl: "https://via.placeholder.com/150",
-    isSales: true,
-  },
-  {
-    cartId: "order02",
-    itemName: "나이키 V2K 런2",
-    size: "270",
-    quantity: 1,
-    price: 139000,
-    imageUrl: "https://via.placeholder.com/150",
-    isSales: true,
-  },
-];
+const user: UserType = userData[0];
 
 const Cart = () => {
-  const [cardItems, setCartItems] = useState<MyUsedItemType[]>(initialCart);
+  const [cardItems, setCartItems] = useState<MyItems[]>([]);
 
   const handleQuantityChange = (cartId: string, quantity: number) => {
     setCartItems((prevItems) =>
       prevItems.map((item) =>
-        item.cartId === cartId ? { ...item, quantity: Math.max(1, quantity) } : item
+        item.itemId === cartId
+          ? { ...item, quantity: Math.max(1, quantity) }
+          : item
       )
     );
   };
 
   const handleRemove = (id: string) => {
-    setCartItems((prevItems) => prevItems.filter((item) => item.id !== id));
+    setCartItems((prevItems) => prevItems.filter((item) => item.itemId !== id));
   };
 
   return (
@@ -44,12 +27,17 @@ const Cart = () => {
       <div className="text-m text-gray-600 mb-4 pb-4 border-b">
         <span className="font-bold">전체 {cardItems.length}</span>
       </div>
-      <MyUsedItemList
-        myUsedItems={cardItems}
-        isCart={true}
-        onQuantityChange={handleQuantityChange}
-        onRemove={handleRemove}
-      />
+      {user.carts.cartsItems.map((el) => {
+        return (
+          <MyUsedItemList
+            item={el}
+            isCart={true}
+            onQuantityChange={handleQuantityChange}
+            onRemove={handleRemove}
+          />
+        );
+      })}
+
       <div className="p-4 bg-gray-100 rounded-lg flex justify-between items-center text-center">
         <div className="flex flex-col ">
           <span>상품 총액</span>
