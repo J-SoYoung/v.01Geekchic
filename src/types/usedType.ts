@@ -1,3 +1,4 @@
+// 중고 데이터 타입
 export interface MyUsedItemType {
   itemId: string;
   itemName: string;
@@ -12,13 +13,21 @@ export interface MyUsedItemType {
   seller: SellerType;
   reviews: ReviewType[];
 }
-export interface ReviewType {
+
+export interface MyUsedItemListType {
+  item: MyItems;
+  isCart: boolean;
+  onQuantityChange?: (id: string, quantity: number) => void;
+  onRemove?: (id: string) => void;
+}
+
+interface ReviewType {
   reviewId: string;
   reviewInfo: ReveiwInfoType;
 }
 
 // 유저타입 지정되면 공통 부분 정리하기
-export interface ReveiwInfoType {
+interface ReveiwInfoType {
   userId: string;
   userName: string;
   userAvatar: string;
@@ -27,34 +36,76 @@ export interface ReveiwInfoType {
   createdAt: string;
 }
 
-export interface MyUsedItemListType {
-  myUsedItems: MyUsedItemType[];
-  isCart: boolean;
-  onQuantityChange?: (id: string, quantity: number) => void;
-  onRemove?: (id: string) => void;
-}
-
-export interface MyUsedOrderItemType {
-  itemId: "order01",
-  itemName: "나이키 V2K 런1",
-  size: "270",
-  quantity: 1,
-  price: 139000,
-  imageUrl: "https://via.placeholder.com/150",
-  isSales: false,
-}
-
-
-export interface Order {
-  date: string;
-  myUsedOrderItems: MyUsedOrderItemType[];
-}
-
-export interface SellerType {
+interface SellerType {
   sellerId: string;
   userName: string;
   nickname: string;
   userAvatar: string;
   address: string;
   phone: string;
+}
+
+// 유저 데이터타입
+export interface UserType {
+  userId: string;
+  userName: string;
+  nickname: string;
+  userAvatar: string;
+  address: string;
+  phone: string;
+  orders: [] | Orders[];
+  sales: Sales;
+  carts: Carts;
+  wishlists: [] | Wishlists[];
+}
+
+export interface Orders {
+  orderId: string;
+  totalPrice: number;
+  items: MyItems[];
+  buyerInfo: {
+    name: string;
+    address: string;
+    phone: string;
+  };
+  paymentMethod: string;
+  orderDate: string;
+}
+
+export interface Sales {
+  salesId: string;
+  salesItems:
+    | {
+        itemId: string;
+        itemName: string;
+        price: number;
+        size: string;
+        imageUrl: string;
+        quantity: number;
+        createdAt: string;
+        isSales: boolean;
+        options: string[];
+      }[]
+    | [];
+}
+
+export interface Carts {
+  cartsId: string;
+  cartsItems: [] | MyItems[];
+}
+
+export interface MyItems {
+  itemId: string;
+  itemName: string;
+  price: number;
+  size: string;
+  imageUrl: string;
+  quantity: number;
+}
+
+interface Wishlists {
+  itemId: string;
+  itemName: string;
+  price: number;
+  imageUrl: string;
 }
