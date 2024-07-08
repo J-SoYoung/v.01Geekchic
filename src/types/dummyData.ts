@@ -1,3 +1,221 @@
+export const userData = [
+  {
+    userId: "userId_119M",
+    userName: "Sumner",
+    nickname: "Tooth",
+    userAvatar:
+      "https://robohash.org/estharumlaudantium.png?size=70x70&set=set1",
+    address: "4923 Mesta Park",
+    phone: "010-2436-4062",
+    orders: [
+      {
+        orderId: "orderId_754c",
+        totalPrice: 0,
+        items: [
+          {
+            itemId: "itemId850H",
+            itemName: "NASDAQ",
+            price: 602000,
+            size: "M",
+            imageUrl: "https://i.postimg.cc/K89Dxv30/1-1.webp",
+            quantity: 1,
+          },
+          {
+            itemId: "itemId534M",
+            itemName: "NASDAQ",
+            price: 36000,
+            size: "XS",
+            imageUrl: "https://i.postimg.cc/KjFMtdgK/2-1.webp",
+            quantity: 1,
+          },
+        ],
+        buyerInfo: {
+          name: "Sumner",
+          address: "4923 Mesta Park",
+          phone: "010-2436-4062",
+        },
+        paymentMethod: "creditcard",
+        orderDate: "2024-01-28",
+      },
+      {
+        orderId: "orderId_578e",
+        totalPrice: 0,
+        items: [
+          {
+            itemId: "itemId534M",
+            itemName: "NASDAQ",
+            price: 36000,
+            size: "XS",
+            imageUrl: "https://i.postimg.cc/KjFMtdgK/2-1.webp",
+            quantity: 1,
+          },
+          {
+            itemId: "itemId850H",
+            itemName: "NASDAQ",
+            price: 602000,
+            size: "M",
+            imageUrl: "https://i.postimg.cc/K89Dxv30/1-1.webp",
+            quantity: 1,
+          },
+        ],
+        buyerInfo: {
+          name: "Sumner",
+          address: "4923 Mesta Park",
+          phone: "010-2436-4062",
+        },
+        paymentMethod: "creditcard",
+        orderDate: "2024-07-28",
+      },
+    ],
+    sales: {
+      salesId: "saleId_thdud01",
+      salesItems: [
+        {
+          itemId: "itemId850H",
+          itemName: "NASDAQ",
+          price: 602000,
+          size: "M",
+          imageUrl: "https://i.postimg.cc/K89Dxv30/1-1.webp",
+          quantity: 1,
+          createdAt: "2024-06-17",
+          isSales: false,
+          options: ["배송비포함", "새상품"],
+        },
+        {
+          itemId: "itemId111O",
+          itemName: "NYSE",
+          quantity: 2,
+          size: "XS",
+          price: 15000,
+          imageUrl: "https://i.postimg.cc/Wz2xx1ks/4-1.png",
+          createdAt: "2024-06-17",
+          isSales: true,
+          options: ["배송비포함", "새상품"],
+        },
+      ],
+    },
+    carts: {
+      cartsId: "cartId_thdud_01",
+      cartsItems: [
+        {
+          itemId: "itemId850H",
+          itemName: "NASDAQ",
+          price: 602000,
+          size: "M",
+          imageUrl: "https://i.postimg.cc/K89Dxv30/1-1.webp",
+          quantity: 1,
+        },
+        {
+          itemId: "itemId534M",
+          itemName: "NASDAQ",
+          price: 36000,
+          size: "XS",
+          imageUrl: "https://i.postimg.cc/KjFMtdgK/2-1.webp",
+          quantity: 1,
+        },
+        {
+          itemId: "itemId784I",
+          itemName: "NYSE",
+          price: 226000,
+          size: "L",
+          imageUrl: "https://i.postimg.cc/cLrGsC5H/3-1.webp",
+          quantity: 1,
+        },
+      ],
+    },
+    wishlists: [
+      {
+        itemId: "itemId850H",
+        itemName: "NASDAQ",
+        price: 602000,
+        imageUrl: "https://i.postimg.cc/K89Dxv30/1-1.webp",
+      },
+      {
+        itemId: "itemId534M",
+        itemName: "NASDAQ",
+        price: 36000,
+        imageUrl: "https://i.postimg.cc/KjFMtdgK/2-1.webp",
+      },
+    ],
+  },
+  {
+    userId: "userId_208O",
+    userName: "Hartwell",
+    nickname: "Acott",
+    userAvatar:
+      "https://robohash.org/hicprovidentcupiditate.png?size=70x70&set=set1",
+    address: "4 Susan Drive",
+    phone: "010-6194-7197",
+    orders: [],
+    sales: {
+      salesId: "saleId_208O",
+      salesItems: [],
+    },
+    carts: {
+      cartsId: "cartId_208O",
+      cartsItems: [],
+    },
+    wishlists: [],
+  },
+  {
+    userId: "userId_753m",
+    userName: "Ronnica",
+    nickname: "Gullen",
+    userAvatar:
+      "https://robohash.org/oditquisreiciendis.png?size=70x70&set=set1",
+    address: "6204 Oneill Trail",
+    phone: "010-3637-6171",
+    orders: [],
+    sales: {
+      salesId: "saleId_753m",
+      salesItems: [],
+    },
+    carts: {
+      cartsId: "cartId_753m",
+      cartsItems: [],
+    },
+    wishlists: [],
+  },
+  {
+    userId: "userId_398G",
+    userName: "Ingamar",
+    nickname: "Scrange",
+    userAvatar:
+      "https://robohash.org/occaecatitemporaest.png?size=70x70&set=set1",
+    address: "87 Spaight Junction",
+    phone: "010-0806-1103",
+    orders: [],
+    sales: {
+      salesId: "saleId_398G",
+      salesItems: [],
+    },
+    carts: {
+      cartsId: "cartId_398G",
+      cartsItems: [],
+    },
+    wishlists: [],
+  },
+  {
+    userId: "userId_020q",
+    userName: "Emmy",
+    nickname: "Coetzee",
+    userAvatar: "https://robohash.org/etnumquamut.png?size=70x70&set=set1",
+    address: "31 Acker Crossing",
+    phone: "010-8367-1533",
+    orders: [],
+    sales: {
+      salesId: "saleId_020q",
+      salesItems: [],
+    },
+    carts: {
+      cartsId: "cartId_020q",
+      cartsItems: [],
+    },
+    wishlists: [],
+  },
+];
+
+// createdAt: "2024-06-17",  업로드 한 날짜 추가해야함
 export const usedItems = [
   {
     itemId: "itemId850H",
@@ -31,7 +249,7 @@ export const usedItems = [
           userId: "userId_7158s",
           userName: "balmak0",
           userAvatar:
-            "https://robohash.org/quiarchitectoerror.png?size=50x0&set=set1",
+            "https://robohash.org/temporadolorumquos.png?size=70x70&set=set1",
           rating: 1,
           review:
             "Curabitur convallis. Duis consequat dui nec nisi volutpat eleifend. Donec ut dolor. Morbi vel lectus in quam fringilla rhoncus. Mauris enim leo, rhoncus sed, vestibulum sit amet, cursus id, turpis. Integer aliquet, massa id lobortis convallis, tortor risus dapibus augue, vel accumsan tellus nisi eu orci.",
