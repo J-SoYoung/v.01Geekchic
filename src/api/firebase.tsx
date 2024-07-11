@@ -8,6 +8,7 @@ import {
   onAuthStateChanged,
 } from "firebase/auth";
 import axios from "axios";
+import { getDatabase, ref, get } from "firebase/database";
 
 interface SearchResult {
   items: Video[];
@@ -51,14 +52,24 @@ interface VideoId {
   videoId: string;
 }
 
+interface AdminUser extends User {
+  isAdmin: boolean;
+}
+
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_APP_FIREBASE_API_KEY,
-  authDomain: import.meta.env.VITE_APP_FIREBASE_AUTH_DOMAIN,
-  databaseURL: import.meta.env.VITE_APP_FIREBASE_DB_URL,
-  projectId: import.meta.env.VITE_APP_FIREBASE_PROJECT_ID,
+  // apiKey: import.meta.env.VITE_APP_FIREBASE_API_KEY,
+  // authDomain: import.meta.env.VITE_APP_FIREBASE_AUTH_DOMAIN,
+  // databaseURL: import.meta.env.VITE_APP_FIREBASE_DB_URL,
+  // projectId: import.meta.env.VITE_APP_FIREBASE_PROJECT_ID,
+  apiKey: "AIzaSyAwXLdcG6bSu0bF1iy1mPgqjM-d_mehHbg",
+  authDomain: "geekchic-968c3.firebaseapp.com",
+  databaseURL:
+    "https://geekchic-968c3-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "geekchic-968c3",
 };
 
 const app = initializeApp(firebaseConfig);
+const database = getDatabase(app);
 const auth = getAuth();
 const provider = new GoogleAuthProvider();
 
@@ -66,8 +77,6 @@ export async function login(): Promise<User | void> {
   return signInWithPopup(auth, provider)
     .then((result) => {
       const user = result.user;
-      console.log(user);
-      console.log(app);
       return user;
     })
     .catch(console.error);
@@ -80,9 +89,20 @@ export async function logout(): Promise<null> {
 }
 
 export function onUserStateChange(callback: (user: User | null) => void): void {
-  onAuthStateChanged(auth, (user) => {
-    callback(user);
+  onAuthStateChanged(auth, async (user) => {
+    const updatedUser = user ? await adminUser(user) : null;
+    callback(updatedUser);
   });
+}
+
+async function adminUser(user: User): Promise<AdminUser> {
+  const snapshot = await get(ref(database, "admins"));
+  if (snapshot.exists()) {
+    const admins = snapshot.val();
+    const isAdmin = admins.includes(user.uid);
+    return { ...user, isAdmin };
+  }
+  return { ...user, isAdmin: false };
 }
 
 export default function useProducts() {

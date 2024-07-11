@@ -12,7 +12,7 @@ export default function Login() {
       console.log(user);
       setUser(user);
     });
-  });
+  }, []);
 
   const handleLogin = () => {
     login()
