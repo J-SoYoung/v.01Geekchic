@@ -4,7 +4,6 @@ import Plus from "../../assets/icons/square_plus.svg";
 import Minus from "../../assets/icons/square_minus.svg";
 import { MyUsedItemListType } from "../../types/usedType";
 
-
 const MyUsedItemList = ({
   myUsedItems,
   isCart,
