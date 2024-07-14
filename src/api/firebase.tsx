@@ -123,7 +123,7 @@ export function onUserStateChange(callback: (user: User | null) => void): void {
   });
 }
 
-async function fetchAdminUser(user: User): Promise<AdminUser> {
+export async function fetchAdminUser(user: User): Promise<AdminUser> {
   const snapshot = await get(ref(database, "admins"));
   if (snapshot.exists()) {
     const admins = snapshot.val();
