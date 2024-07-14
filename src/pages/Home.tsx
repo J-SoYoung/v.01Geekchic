@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import Header from "../components/common/Header";
 import SearchHeader from "../components/common/SearchHeader";
 import { useQuery } from "@tanstack/react-query";
 import ProductCard from "../components/main/ProductCard";
 import useProducts from "../api/firebase";
+import { useRecoilValue } from "recoil";
+import { userState } from "../atoms/userAtom";
 
 export default function Home() {
   interface Video {
@@ -44,9 +46,13 @@ export default function Home() {
   }
 
   const { keyword } = useParams<{ keyword: string }>();
+  const user = useRecoilValue(userState);
   const searchKeyword = keyword || "";
-
   const product = useProducts();
+
+  useEffect(() => {
+    console.log(user);
+  }, [user]);
 
   const {
     isLoading,
@@ -63,6 +69,7 @@ export default function Home() {
   {
     error && <p>Something is wrong</p>;
   }
+  console.log(user);
   return (
     <div className="h-full min-h-screen">
       <Header />

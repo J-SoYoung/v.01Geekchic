@@ -8,6 +8,7 @@ import {
   onAuthStateChanged,
 } from "firebase/auth";
 import axios from "axios";
+import { getDatabase, ref, get } from "firebase/database";
 
 interface SearchResult {
   items: Video[];
@@ -51,6 +52,10 @@ interface VideoId {
   videoId: string;
 }
 
+interface AdminUser extends User {
+  isAdmin: boolean;
+}
+
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_APP_FIREBASE_API_KEY,
   authDomain: import.meta.env.VITE_APP_FIREBASE_AUTH_DOMAIN,
@@ -59,30 +64,73 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-const auth = getAuth();
+const database = getDatabase(app);
+const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 
+provider.setCustomParameters({
+  prompt: "select_account",
+});
+
 export async function login(): Promise<User | void> {
-  return signInWithPopup(auth, provider)
-    .then((result) => {
-      const user = result.user;
-      console.log(user);
-      console.log(app);
-      return user;
-    })
-    .catch(console.error);
+  // try {
+  //   const result = await signInWithPopup(auth, provider);
+  //   const user = result.user;
+  //   const adminUser = await fetchAdminUser(user);
+  //   return adminUser;
+  // } catch (error) {
+  //   console.error(error);
+  // }
+  // return signInWithPopup(auth, provider)
+  //   .then((result) => {
+  //     const user = result.user;
+  //     // const adminUser = fetchAdminUser(user);
+  //     // return adminUser;
+  //     return user;
+  //   })
+  //   .catch(console.error);
+  try {
+    const result = await signInWithPopup(auth, provider);
+    return result.user;
+  } catch (error) {
+    console.error("Login error:", error);
+  }
 }
 
-export async function logout(): Promise<null> {
+export async function logout(): Promise<void | null> {
   return signOut(auth).then(() => {
     return null;
   });
+
+  // return signOut(auth)
+  // .then(() => null)
+  // .catch(console.error);
 }
+// export async function logout(): Promise<void | null> {
+//   try {
+//     await signOut(auth);
+//     return null;
+//   } catch (error) {
+//     console.error("Logout error:", error);
+//     throw error;
+//   }
+// }
 
 export function onUserStateChange(callback: (user: User | null) => void): void {
-  onAuthStateChanged(auth, (user) => {
-    callback(user);
+  onAuthStateChanged(auth, async (user) => {
+    const updatedUser = user ? await fetchAdminUser(user) : null;
+    callback(updatedUser);
   });
+}
+
+async function fetchAdminUser(user: User): Promise<AdminUser> {
+  const snapshot = await get(ref(database, "admins"));
+  if (snapshot.exists()) {
+    const admins = snapshot.val();
+    const isAdmin = admins.includes(user.uid);
+    return { ...user, isAdmin };
+  }
+  return { ...user, isAdmin: false };
 }
 
 export default function useProducts() {
