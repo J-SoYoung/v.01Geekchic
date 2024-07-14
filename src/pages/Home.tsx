@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useParams } from "react-router-dom";
 import Header from "../components/common/Header";
 import SearchHeader from "../components/common/SearchHeader";
@@ -49,10 +49,6 @@ export default function Home() {
   const user = useRecoilValue(userState);
   const searchKeyword = keyword || "";
   const product = useProducts();
-
-  useEffect(() => {
-    console.log(user);
-  }, [user]);
 
   const {
     isLoading,
@@ -107,6 +103,11 @@ export default function Home() {
             최근 등록 상품
           </div>
         </div>
+      )}
+      {user && user.isAdmin && (
+        <button className="bg-white text-black text-[18px] w-[350px] h-[48px] rounded hover:brightness-90 border border-black">
+          admin
+        </button>
       )}
 
       <div className="flex justify-center">
