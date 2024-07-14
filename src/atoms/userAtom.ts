@@ -8,4 +8,5 @@ interface AdminUser extends User {
 export const userState = atom<AdminUser | null>({
   key: "userState",
   default: null,
+  dangerouslyAllowMutability: true,
 });
