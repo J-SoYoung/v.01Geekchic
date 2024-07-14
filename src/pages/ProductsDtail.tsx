@@ -45,7 +45,7 @@ export default function ProductsDtail() {
   const { product } = location.state as { product: Video };
   const { title, thumbnails, price } = product.snippet;
   return (
-    <div className="h-full min-h-screen w-[600px]">
+    <div className="h-[1000px] min-h-screen w-[600px]">
       <img
         className="w-[600px] h-[450px]"
         src={thumbnails.high.url}
@@ -58,17 +58,23 @@ export default function ProductsDtail() {
       <p className="text-lg text-left ml-[30px] mt-[25px]">구매가</p>
       <p className="text-2xl font-bold text-left ml-[30px]">{`${price} 원`}</p>
       <h1 className="text-lg text-left ml-[30px] mt-[15px]">{title}</h1>
-      <form action="">
-        <select name="" id="">
-          ss
+      <div className="w-full flex flex-col">
+        <select className="p-3 m-7 border-2 border-brand rounded-md outline-none bg-[#EEE]">
+          <option value="S">S</option>
+          <option value="M">M</option>
+          <option value="L">L</option>
+          <option value="XL">XL</option>
         </select>
-      </form>
-      <button className="w-[220px] py-2 bg-[#fff] text-[#8F5BBD] border border-[#8F5BBD] rounded-md hover:bg-[#8F5BBD] hover:text-[#fff] duration-200">
-        상품으로 바로가기
-      </button>
-      <button className="w-[220px] py-2 bg-[#fff] text-[#8F5BBD] border border-[#8F5BBD] rounded-md hover:bg-[#8F5BBD] hover:text-[#fff] duration-200">
-        상품으로 바로가기
-      </button>
+      </div>
+      <p className="border border-[#D9D9D9] w-[550px] m-auto"></p>
+      <div className="flex justify-center gap-[30px] mt-[30px]">
+        <button className="w-[260px] py-3 bg-[#D34D4D] text-[#fff] border border-[#D34D4D] rounded-md hover:bg-[#fff] hover:text-[#D34D4D] duration-200">
+          장바구니 담기
+        </button>
+        <button className="w-[260px] py-3 bg-[#8F5BBD] text-[#fff] border border-[#8F5BBD] rounded-md hover:bg-[#fff] hover:text-[#8F5BBD] duration-200">
+          바로구매
+        </button>
+      </div>
     </div>
   );
 }
