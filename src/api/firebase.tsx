@@ -57,45 +57,73 @@ interface AdminUser extends User {
 }
 
 const firebaseConfig = {
-  // apiKey: import.meta.env.VITE_APP_FIREBASE_API_KEY,
-  // authDomain: import.meta.env.VITE_APP_FIREBASE_AUTH_DOMAIN,
-  // databaseURL: import.meta.env.VITE_APP_FIREBASE_DB_URL,
-  // projectId: import.meta.env.VITE_APP_FIREBASE_PROJECT_ID,
-  apiKey: "AIzaSyAwXLdcG6bSu0bF1iy1mPgqjM-d_mehHbg",
-  authDomain: "geekchic-968c3.firebaseapp.com",
-  databaseURL:
-    "https://geekchic-968c3-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "geekchic-968c3",
+  apiKey: import.meta.env.VITE_APP_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_APP_FIREBASE_AUTH_DOMAIN,
+  databaseURL: import.meta.env.VITE_APP_FIREBASE_DB_URL,
+  projectId: import.meta.env.VITE_APP_FIREBASE_PROJECT_ID,
 };
 
 const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
-const auth = getAuth();
+const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 
+provider.setCustomParameters({
+  prompt: "select_account",
+});
+
 export async function login(): Promise<User | void> {
-  return signInWithPopup(auth, provider)
-    .then((result) => {
-      const user = result.user;
-      return user;
-    })
-    .catch(console.error);
+  // try {
+  //   const result = await signInWithPopup(auth, provider);
+  //   const user = result.user;
+  //   const adminUser = await fetchAdminUser(user);
+  //   return adminUser;
+  // } catch (error) {
+  //   console.error(error);
+  // }
+  // return signInWithPopup(auth, provider)
+  //   .then((result) => {
+  //     const user = result.user;
+  //     // const adminUser = fetchAdminUser(user);
+  //     // return adminUser;
+  //     return user;
+  //   })
+  //   .catch(console.error);
+  try {
+    const result = await signInWithPopup(auth, provider);
+    return result.user;
+  } catch (error) {
+    console.error("Login error:", error);
+  }
 }
 
-export async function logout(): Promise<null> {
+export async function logout(): Promise<void | null> {
   return signOut(auth).then(() => {
     return null;
   });
+
+  // return signOut(auth)
+  // .then(() => null)
+  // .catch(console.error);
 }
+// export async function logout(): Promise<void | null> {
+//   try {
+//     await signOut(auth);
+//     return null;
+//   } catch (error) {
+//     console.error("Logout error:", error);
+//     throw error;
+//   }
+// }
 
 export function onUserStateChange(callback: (user: User | null) => void): void {
   onAuthStateChanged(auth, async (user) => {
-    const updatedUser = user ? await adminUser(user) : null;
+    const updatedUser = user ? await fetchAdminUser(user) : null;
     callback(updatedUser);
   });
 }
 
-async function adminUser(user: User): Promise<AdminUser> {
+async function fetchAdminUser(user: User): Promise<AdminUser> {
   const snapshot = await get(ref(database, "admins"));
   if (snapshot.exists()) {
     const admins = snapshot.val();
