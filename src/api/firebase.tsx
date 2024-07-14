@@ -7,8 +7,8 @@ import {
   signOut,
   onAuthStateChanged,
 } from "firebase/auth";
-import axios from "axios";
 import { getDatabase, ref, get } from "firebase/database";
+import axios from "axios";
 
 interface SearchResult {
   items: Video[];
@@ -73,22 +73,6 @@ provider.setCustomParameters({
 });
 
 export async function login(): Promise<User | void> {
-  // try {
-  //   const result = await signInWithPopup(auth, provider);
-  //   const user = result.user;
-  //   const adminUser = await fetchAdminUser(user);
-  //   return adminUser;
-  // } catch (error) {
-  //   console.error(error);
-  // }
-  // return signInWithPopup(auth, provider)
-  //   .then((result) => {
-  //     const user = result.user;
-  //     // const adminUser = fetchAdminUser(user);
-  //     // return adminUser;
-  //     return user;
-  //   })
-  //   .catch(console.error);
   try {
     const result = await signInWithPopup(auth, provider);
     return result.user;
@@ -98,23 +82,14 @@ export async function login(): Promise<User | void> {
 }
 
 export async function logout(): Promise<void | null> {
-  return signOut(auth).then(() => {
+  try {
+    await signOut(auth);
     return null;
-  });
-
-  // return signOut(auth)
-  // .then(() => null)
-  // .catch(console.error);
+  } catch (error) {
+    console.error("Logout error:", error);
+    throw error;
+  }
 }
-// export async function logout(): Promise<void | null> {
-//   try {
-//     await signOut(auth);
-//     return null;
-//   } catch (error) {
-//     console.error("Logout error:", error);
-//     throw error;
-//   }
-// }
 
 export function onUserStateChange(callback: (user: User | null) => void): void {
   onAuthStateChanged(auth, async (user) => {
@@ -123,7 +98,7 @@ export function onUserStateChange(callback: (user: User | null) => void): void {
   });
 }
 
-export async function fetchAdminUser(user: User): Promise<AdminUser> {
+async function fetchAdminUser(user: User): Promise<AdminUser> {
   const snapshot = await get(ref(database, "admins"));
   if (snapshot.exists()) {
     const admins = snapshot.val();
