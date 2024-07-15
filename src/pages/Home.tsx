@@ -6,6 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import ProductCard from "../components/main/ProductCard";
 import useProducts from "../api/firebase";
 import { useRecoilValue } from "recoil";
+import { Link } from "react-router-dom";
 import { userState } from "../atoms/userAtom";
 
 export default function Home() {
@@ -105,11 +106,12 @@ export default function Home() {
         </div>
       )}
       {user && user.isAdmin && (
-        <button className="bg-white text-black text-[18px] w-[350px] h-[48px] rounded hover:brightness-90 border border-black">
-          admin
-        </button>
+        <Link to="products/new">
+          <button className="bg-white text-black text-[18px] w-[350px] h-[48px] rounded hover:brightness-90 border border-black">
+            admin
+          </button>
+        </Link>
       )}
-
       <div className="flex justify-center">
         {products?.length !== 0 ? (
           <ul className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-[20px] mb-[100px]">
