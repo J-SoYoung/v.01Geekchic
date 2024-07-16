@@ -9,8 +9,6 @@ import {
   onAuthStateChanged,
 } from "firebase/auth";
 
-import { getDatabase, ref, get, set } from "firebase/database";
-=======
 import {
   getDatabase,
   ref,
@@ -188,7 +186,7 @@ export async function addNewProduct(
     options: product.options.split(","),
   });
 }
-=======
+
 // 중고 제품 업로드
 export function usedItemUpload(itemData: MyUsedItemType) {
   const usedItemRef = ref(database, "usedItems");
