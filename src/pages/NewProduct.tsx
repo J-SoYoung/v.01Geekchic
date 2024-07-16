@@ -1,5 +1,6 @@
 import React, { useState, ChangeEvent, FormEvent } from "react";
 import { uploadImage } from "../api/uploader";
+import { addNewProduct } from "../api/firebase";
 
 interface Product {
   title: string;
@@ -27,6 +28,7 @@ export default function NewProduct() {
     if (file) {
       const url = await uploadImage(file);
       console.log(url);
+      addNewProduct(product as Product, url);
     }
   };
   return (
