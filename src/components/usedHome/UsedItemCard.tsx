@@ -9,14 +9,19 @@ interface UsedItemCardProps {
 const UsedItemCard = ({ item }: UsedItemCardProps) => {
   return (
     <Link
-      to={`/usedHome/detail/${item.itemId}`}
+      to={`/usedHome/detail/${item.id}`}
       className=" p-3 rounded-md  cursor-pointer"
     >
-      <img
-        src={item.imageUrl}
-        alt={item.itemName}
-        className="w-full h-48 object-cover rounded-md mb-2"
-      />
+      {item.imageArr ? (
+        <img
+          src={item.imageArr[0]}
+          alt={item.itemName}
+          className="w-full h-48 object-cover rounded-md mb-2"
+        />
+      ) : (
+        <img src="/" className="w-full h-48 object-cover rounded-md mb-2 border" />
+      )}
+
       <h2 className="text-lg font-bold pl-2">{item.itemName}</h2>
       <p className="text-gray-500 pl-2">{item.price.toLocaleString()}원</p>
     </Link>
