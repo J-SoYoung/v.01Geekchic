@@ -6,6 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import ProductCard from "../components/main/ProductCard";
 import useProducts from "../api/firebase";
 import { useRecoilValue } from "recoil";
+import { Link } from "react-router-dom";
 import { userState } from "../atoms/userAtom";
 
 export default function Home() {
@@ -65,50 +66,54 @@ export default function Home() {
   {
     error && <p>Something is wrong</p>;
   }
-  console.log(user);
+
   return (
     <div className="h-full min-h-screen">
       <Header />
       <SearchHeader />
-      {keyword ? (
-        <div>
-          {products?.length !== 0 ? (
-            <div>
-              <div className="w-full h-[300px] mt-[30px]">
-                <img
-                  className="object-cover object-center w-[100%] h-[100%]"
-                  src="/public/img/mainImg.jpg"
-                  alt="mainImage"
-                />
+      <div>
+        {keyword ? (
+          <div>
+            {products?.length !== 0 ? (
+              <div>
+                <div className="w-full h-[300px] mt-[30px]">
+                  <img
+                    className="object-cover object-center w-[100%] h-[100%]"
+                    src="/public/img/mainImg.jpg"
+                    alt="mainImage"
+                  />
+                </div>
+                <p className="text-lg font-bold text-left ml-[30px] mt-[30px] mb-[15px] flex">
+                  {keyword}
+                  <p className="ml-[5px] text-[#BEBEBE]">{products?.length}</p>
+                </p>
               </div>
-              <p className="text-lg font-bold text-left ml-[30px] mt-[30px] mb-[15px] flex">
-                {keyword}
-                <p className="ml-[5px] text-[#BEBEBE]">{products?.length}</p>
-              </p>
+            ) : (
+              ""
+            )}
+          </div>
+        ) : (
+          <div>
+            <div className="w-full h-[300px] mt-[30px]">
+              <img
+                className="object-cover object-center w-[100%] h-[100%]"
+                src="/public/img/mainImg.jpg"
+                alt="mainImage"
+              />
             </div>
-          ) : (
-            ""
-          )}
-        </div>
-      ) : (
-        <div>
-          <div className="w-full h-[300px] mt-[30px]">
-            <img
-              className="object-cover object-center w-[100%] h-[100%]"
-              src="/public/img/mainImg.jpg"
-              alt="mainImage"
-            />
+            <div className="flex space-x-[320px] justify-center items-center mt-[30px] mb-[20px]">
+              <div className="text-lg font-bold text-left">최근 등록 상품</div>
+              {user && user.isAdmin && (
+                <Link to="products/new">
+                  <button className="py-2 px-7 bg-[#8F5BBD] text-[#fff] border border-[#8F5BBD] rounded-md hover:bg-[#fff] hover:text-[#8F5BBD] duration-200">
+                    상품 등록
+                  </button>
+                </Link>
+              )}
+            </div>
           </div>
-          <div className="text-lg font-bold text-left ml-[30px] mt-[30px] mb-[15px]">
-            최근 등록 상품
-          </div>
-        </div>
-      )}
-      {user && user.isAdmin && (
-        <button className="bg-white text-black text-[18px] w-[350px] h-[48px] rounded hover:brightness-90 border border-black">
-          admin
-        </button>
-      )}
+        )}
+      </div>
 
       <div className="flex justify-center">
         {products?.length !== 0 ? (
