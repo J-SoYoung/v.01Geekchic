@@ -1,14 +1,32 @@
-// UsedDetailPage.tsx
-import React from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import Chevron_left from "../assets/icons/chevron_left.svg";
-import { usedItems } from "../types/dummyData";
+import { usedDetailItem } from "../api/firebase";
+import { MyUsedItemType } from "../types/usedType";
 
-// 디테일 페이지 그림 업로드 되는 부분 빠르게 되나?
 const UsedDetail = () => {
   const navigate = useNavigate();
   const { id } = useParams();
-  const item = usedItems.filter((i) => i.itemId === id)[0];
+  const [item, setItem] = useState<MyUsedItemType>();
+
+  useEffect(() => {
+    const fetchItem = async () => {
+      if (id) {
+        const data = await usedDetailItem(id);
+        console.log(data);
+        setItem(data);
+      }
+    };
+    fetchItem();
+  }, [id]);
+
+  if (!item)
+    return (
+      <>
+        <div> 데이터가 없습니다. </div>
+        <Link to="/usedHome">중고 메인페이지로 돌아가기</Link>
+      </>
+    );
 
   return (
     <div className="w-[600px] h-[100%] mb-20 text-left">
@@ -22,7 +40,7 @@ const UsedDetail = () => {
         <div className="w-[598px] h-[100%]">
           <div className="mb-6 bg-gray-200 border-red-400">
             <img
-              src={item.imageUrl}
+              src={item.imageArr[0]}
               alt={item.itemName}
               className="w-[100%] h-96 object-cover"
             />
@@ -74,32 +92,34 @@ const UsedDetail = () => {
         <div className="mb-10">
           <p className="text-gray-700">{item.description}</p>
         </div>
-
-        <div className="mb-10 ">
-          <div className="text-lg font-bold mb-4">
-            댓글 {item.reviews.length}
-          </div>
-          {item.reviews.map((r) => (
-            <div key={r.reviewId} className="flex border-b py-6">
-              <img
-                src={r.reviewInfo.userAvatar}
-                alt={r.reviewInfo.userName}
-                className="w-[60px] h-[60px]  mr-4 object-cover rounded-full border"
-              />
-              <div>
-                <div className="flex mb-2 items-end">
-                  <div className="flex-1 font-semibold">
-                    {r.reviewInfo.userName}
-                  </div>
-                  <div className="text-sm text-gray-500">
-                    {r.reviewInfo.createdAt}
-                  </div>
-                </div>
-                <div className="text-gray-800">{r.reviewInfo.review}</div>
-              </div>
+        {item.reviews ? (
+          <div className="mb-10 ">
+            <div className="text-lg font-bold mb-4">
+              댓글 {item.reviews.length}
             </div>
-          ))}
-        </div>
+            {item.reviews.map((r) => (
+              <div key={r.reviewId} className="flex border-b py-6">
+                <img
+                  src={r.reviewInfo.userAvatar}
+                  alt={r.reviewInfo.userName}
+                  className="w-[60px] h-[60px]  mr-4 object-cover rounded-full border"
+                />
+                <div>
+                  <div className="flex mb-2 items-end">
+                    <div className="flex-1 font-semibold">
+                      {r.reviewInfo.userName}
+                    </div>
+                    <div className="text-sm text-gray-500">
+                      {r.reviewInfo.createdAt}
+                    </div>
+                  </div>
+                  <div className="text-gray-800">{r.reviewInfo.review}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : null}
+
         <button className="w-full py-2 mb-4 bg-[#8F5BBD] text-white rounded-md">
           {/* 중고 구매하면 isSalse true로 바꿔야함 -> 판매완료로 해야함 */}
           쪽지 보내기

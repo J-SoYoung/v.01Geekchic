@@ -7,8 +7,18 @@ import {
   signOut,
   onAuthStateChanged,
 } from "firebase/auth";
-import { getDatabase, ref, get } from "firebase/database";
+import {
+  getDatabase,
+  ref,
+  get,
+  push,
+  set,
+  query,
+  orderByKey,
+  onValue,
+} from "firebase/database";
 import axios from "axios";
+import { MyUsedItemType } from "../types/usedType";
 
 interface SearchResult {
   items: Video[];
@@ -148,4 +158,58 @@ export default function useProducts() {
   return {
     search,
   };
+}
+
+// 중고 제품 업로드
+export function usedItemUpload(itemData: MyUsedItemType) {
+  const usedItemRef = ref(database, "usedItems");
+  const newItemRef = push(usedItemRef);
+
+  return set(newItemRef, {
+    ...itemData,
+    createdAt: Date.now(),
+  });
+}
+
+// 중고 메인 데이터 받아오기
+export function usedItemLists(): Promise<MyUsedItemType[]> {
+  return new Promise((resolve, reject) => {
+    const usedDataRef = ref(database, "usedItems");
+    const sortUsedItem = query(usedDataRef, orderByKey());
+
+    onValue(
+      sortUsedItem,
+      (snapshop) => {
+        const data = snapshop.val();
+        if (data) {
+          const dataArr = Object.keys(data).map((key) => ({
+            id: key,
+            ...data[key],
+          }));
+          dataArr.reverse();
+          resolve(dataArr);
+        } else {
+          resolve([]);
+        }
+      },
+      (error) => {
+        reject(error);
+      }
+    );
+  });
+}
+
+// 중고 상세페이지 데이터 받아오기
+export async function usedDetailItem(id: string) {
+  try {
+    const itemRef = ref(database, `usedItems/${id}`);
+    const snapshot = await get(itemRef);
+    if (snapshot.exists()) {
+      return snapshot.val();
+    } else {
+      return null;
+    }
+  } catch (error) {
+    console.error("Item not found");
+  }
 }
