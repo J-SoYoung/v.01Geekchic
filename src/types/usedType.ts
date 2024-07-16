@@ -1,17 +1,16 @@
 // 중고 데이터 타입
 export interface MyUsedItemType {
-  itemId: string;
+  id?: string;
   itemName: string;
   size: string;
   quantity: number;
   description: string;
   price: number;
-  imageUrl: string;
   imageArr: string[];
   isSales: boolean;
   options: string[];
   seller: SellerType;
-  reviews: ReviewType[];
+  reviews?: ReviewType[];
 }
 
 export interface MyUsedItemListType {

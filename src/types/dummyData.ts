@@ -234,13 +234,13 @@ export const usedItems = [
     size: "M",
     options: ["배송비포함", "새상품"],
     seller: {
-      sellerId: "seller1",
-      userName: "ahellyer0",
-      nickname: "aclawsley0",
+      sellerId: "seller6",
+      userName: "bmenhenitt5",
+      nickname: "chandscombe5",
       userAvatar:
-        "https://robohash.org/autemautemvel.png?size=100x100&set=set1",
-      address: "70140 Sunnyside Plaza",
-      phone: "010-8433-9597",
+        "https://robohash.org/quisconsequatureveniet.png?size=50x50&set=set1",
+      address: "9 Bobwhite Avenue",
+      phone: "010-5325-6919",
     },
     reviews: [
       {
@@ -510,15 +510,15 @@ export const usedItems = [
     ],
     isSales: true,
     options: ["배송비포함", "새상품"],
-    seller: {
-      sellerId: "seller4",
-      userName: "kstorm3",
-      nickname: "rstonebanks3",
-      userAvatar:
-        "https://robohash.org/minuscorporistempore.png?size=50x50&set=set1",
-      address: "4 Scott Lane",
-      phone: "010-8310-6068",
-    },
+      seller: {
+        sellerId: "seller6",
+        userName: "bmenhenitt5",
+        nickname: "chandscombe5",
+        userAvatar:
+          "https://robohash.org/quisconsequatureveniet.png?size=50x50&set=set1",
+        address: "9 Bobwhite Avenue",
+        phone: "010-5325-6919",
+      },
     reviews: [
       {
         reviewId: "reviewId_1880e",
@@ -539,7 +539,7 @@ export const usedItems = [
     itemId: "itemId072c",
     itemName: "NASDAQ",
     description:
-      "Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Mauris viverra diam vitae quam. Suspendisse potenti. Nullam porttitor lacus at turpis. Donec posuere metus vitae ipsum. Aliquam non mauris. Morbi non lectus. Aliquam sit amet diam in magna bibendum imperdiet. Nullam orci pede, venenatis non, sodales sed, tincidunt eu, felis. Fusce posuere felis sed lacus. Morbi sem mauris, laoreet ut, rhoncus aliquet, pulvinar sed, nisl. Nunc rhoncus dui vel sem. Sed sagittis. Nam congue, risus semper porta volutpat, quam pede lobortis ligula, sit amet eleifend pede libero quis orci. Nullam molestie nibh in lectus. Pellentesque at nulla. Suspendisse potenti. Cras in purus eu magna vulputate luctus. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Vivamus vestibulum sagittis sapien. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Etiam vel augue. Vestibulum rutrum rutrum neque. Aenean auctor gravida sem. Praesent id massa id nisl venenatis lacinia. Aenean sit amet justo.",
+      "c Cras in purus eu magna vulputate luctus. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Vivamus vestibulum sagittis sapien. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Etiam vel augue. Vestibulum rutrum rutrum neque. Aenean auctor gravida sem. Praesent id massa id nisl venenatis lacinia. Aenean sit amet justo.",
     quantity: 3,
     size: "L",
     price: 93000,
@@ -552,13 +552,13 @@ export const usedItems = [
     isSales: true,
     options: ["배송비포함", "새상품"],
     seller: {
-      sellerId: "seller5",
-      userName: "kpetyanin4",
-      nickname: "titchingham4",
+      sellerId: "seller6",
+      userName: "bmenhenitt5",
+      nickname: "chandscombe5",
       userAvatar:
-        "https://robohash.org/consequaturquiconsectetur.png?size=50x50&set=set1",
-      address: "4650 Independence Drive",
-      phone: "010-5445-2008",
+        "https://robohash.org/quisconsequatureveniet.png?size=50x50&set=set1",
+      address: "9 Bobwhite Avenue",
+      phone: "010-5325-6919",
     },
     reviews: [
       {
@@ -589,7 +589,7 @@ export const usedItems = [
   },
   {
     itemId: "itemId835E",
-    itemName: "NASDAQ",
+    itemName: "c",
     description:
       "Morbi non lectus. Aliquam sit amet diam in magna bibendum imperdiet. Nullam orci pede, venenatis non, sodales sed, tincidunt eu, felis. Fusce posuere felis sed lacus. Morbi sem mauris, laoreet ut, rhoncus aliquet, pulvinar sed, nisl. Nunc rhoncus dui vel sem. Sed sagittis. Nam congue, risus semper porta volutpat, quam pede lobortis ligula, sit amet eleifend pede libero quis orci. Nullam molestie nibh in lectus. Pellentesque at nulla. Suspendisse potenti. Cras in purus eu magna vulputate luctus. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Vivamus vestibulum sagittis sapien. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Etiam vel augue. Vestibulum rutrum rutrum neque. Aenean auctor gravida sem. Praesent id massa id nisl venenatis lacinia. Aenean sit amet justo.",
     quantity: 1,
