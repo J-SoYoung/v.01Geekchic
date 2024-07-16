@@ -1,4 +1,5 @@
 import { initializeApp } from "firebase/app";
+import { v4 as uuidv4 } from "uuid";
 import {
   getAuth,
   signInWithPopup,
@@ -7,6 +8,9 @@ import {
   signOut,
   onAuthStateChanged,
 } from "firebase/auth";
+
+import { getDatabase, ref, get, set } from "firebase/database";
+=======
 import {
   getDatabase,
   ref,
@@ -17,6 +21,7 @@ import {
   orderByKey,
   onValue,
 } from "firebase/database";
+
 import axios from "axios";
 import { MyUsedItemType } from "../types/usedType";
 
@@ -64,6 +69,14 @@ interface VideoId {
 
 interface AdminUser extends User {
   isAdmin: boolean;
+}
+
+interface Product {
+  title: string;
+  price: number;
+  category: string;
+  description: string;
+  options: string;
 }
 
 const firebaseConfig = {
@@ -160,6 +173,22 @@ export default function useProducts() {
   };
 }
 
+export async function addNewProduct(
+  product: Product,
+  image: string
+): Promise<void> {
+  const id = uuidv4();
+  const sanitizedId = id.replace(/[.#$[\]]/g, "_");
+
+  set(ref(database, `products/${sanitizedId}`), {
+    ...product,
+    id,
+    price: product.price,
+    image,
+    options: product.options.split(","),
+  });
+}
+=======
 // 중고 제품 업로드
 export function usedItemUpload(itemData: MyUsedItemType) {
   const usedItemRef = ref(database, "usedItems");
