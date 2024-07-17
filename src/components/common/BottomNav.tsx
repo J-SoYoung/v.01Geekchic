@@ -4,6 +4,7 @@ import { Link, useLocation } from "react-router-dom";
 import HomeIcon from "../../assets/icons/nav_home.svg";
 import HomeActIcons from "../../assets/icons/nav_homeActive.svg";
 import ItemsIcon from "../../assets/icons/nav_items.svg";
+import ItemsActIcons from "../../assets/icons/nav_itemsActive.svg";
 import WishIcon from "../../assets/icons/nav_wish.svg";
 import UsedIcon from "../../assets/icons/nav_used.svg";
 import UsedActIcon from "../../assets/icons/nav_usedActive.svg";
@@ -36,11 +37,14 @@ const BottomNav = () => {
             </>
           )} 
         </Link> */}
-
-        <li className="text-center cursor-pointer">
-          <img src={ItemsIcon} alt="Home" className="w-6 h-6 mx-auto" />
+        <Link to="/products" className="text-center cursor-pointer">
+          <img
+            src={location.pathname === "/products" ? ItemsActIcons : ItemsIcon}
+            alt="Products"
+            className="w-6 h-6 mx-auto"
+          />
           <span className="text-xs">상품</span>
-        </li>
+        </Link>
         <li className="text-center cursor-pointer">
           <img src={WishIcon} alt="Home" className="w-6 h-6 mx-auto" />
           <span className="text-xs">관심목록</span>
