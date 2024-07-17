@@ -4,60 +4,36 @@ import Header from "../components/common/Header";
 import SearchHeader from "../components/common/SearchHeader";
 import { useQuery } from "@tanstack/react-query";
 import ProductCard from "../components/main/ProductCard";
-import useProducts from "../api/firebase";
+// import useProducts from "../api/firebase";
+import { getProducts } from "../api/firebase";
 import { useRecoilValue } from "recoil";
 import { Link } from "react-router-dom";
 import { userState } from "../atoms/userAtom";
 
+interface Product {
+  id: string;
+  title: string;
+  category: string;
+  description: string;
+  price: string;
+  image: string;
+  options: string;
+}
+
 export default function Home() {
-  interface Video {
-    kind: string;
-    etag: string;
-    id: VideoId;
-    snippet: Snippet;
-  }
-
-  interface VideoId {
-    kind: string;
-    videoId: string;
-  }
-
-  interface Snippet {
-    price: number;
-    publishedAt: string;
-    channelId: string;
-    title: string;
-    description: string;
-    thumbnails: Thumbnails;
-    channelTitle: string;
-    liveBroadcastContent: string;
-    publishTime: string;
-  }
-
-  interface Thumbnails {
-    default: Thumbnail;
-    medium: Thumbnail;
-    high: Thumbnail;
-  }
-
-  interface Thumbnail {
-    url: string;
-    width: number;
-    height: number;
-  }
-
   const { keyword } = useParams<{ keyword: string }>();
   const user = useRecoilValue(userState);
   const searchKeyword = keyword || "";
-  const product = useProducts();
+  // const product = useProducts();
 
   const {
     isLoading,
     error,
     data: products,
-  } = useQuery<Video[], Error>({
+  } = useQuery<Product[], Error>({
     queryKey: ["products", searchKeyword],
-    queryFn: () => product.search(searchKeyword),
+    queryFn: getProducts,
+    // queryFn: () => product.search(searchKeyword),
   });
 
   {
@@ -119,7 +95,7 @@ export default function Home() {
         {products?.length !== 0 ? (
           <ul className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-[20px] mb-[100px]">
             {products?.map((product) => (
-              <ProductCard key={product.id.videoId} product={product} />
+              <ProductCard key={product.id} product={product} />
             ))}
           </ul>
         ) : (
