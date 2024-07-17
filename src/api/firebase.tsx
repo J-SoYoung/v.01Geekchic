@@ -8,7 +8,6 @@ import {
   signOut,
   onAuthStateChanged,
 } from "firebase/auth";
-
 import {
   getDatabase,
   ref,
@@ -19,7 +18,6 @@ import {
   orderByKey,
   onValue,
 } from "firebase/database";
-
 import axios from "axios";
 import { MyUsedItemType } from "../types/usedType";
 
@@ -70,10 +68,12 @@ interface AdminUser extends User {
 }
 
 interface Product {
+  id: string;
   title: string;
-  price: number;
   category: string;
   description: string;
+  price: string;
+  image: string;
   options: string;
 }
 
@@ -171,6 +171,15 @@ export default function useProducts() {
   };
 }
 
+export async function getProducts(): Promise<Product[]> {
+  return get(ref(database, "products")).then((snapshot) => {
+    if (snapshot.exists()) {
+      return Object.values(snapshot.val());
+    }
+    return [];
+  });
+}
+
 export async function addNewProduct(
   product: Product,
   image: string
@@ -183,6 +192,7 @@ export async function addNewProduct(
     id,
     price: product.price,
     image,
+    // options: product.options,
     options: product.options.split(","),
   });
 }

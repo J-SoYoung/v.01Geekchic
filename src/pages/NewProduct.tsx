@@ -2,11 +2,22 @@ import React, { useState, ChangeEvent, FormEvent } from "react";
 import { uploadImage } from "../api/uploader";
 import { addNewProduct } from "../api/firebase";
 
+// interface addnewProduct {
+//   id: string;
+//   title: string;
+//   price: number;
+//   category: string;
+//   description: string;
+//   options: string;
+// }
+
 interface Product {
+  id: string;
   title: string;
-  price: number;
   category: string;
   description: string;
+  price: string;
+  image: string;
   options: string;
 }
 
@@ -43,7 +54,7 @@ export default function NewProduct() {
     }
   };
   return (
-    <section className="w-[600px] h-[950px] text-center">
+    <section className="w-[600px] h-[1200px] text-center">
       <h2 className="text-2xl font-bold my-4">새로운 제품 등록</h2>
       {success && <p className="my-2">✅ {success}</p>}
       {file && (
