@@ -10,7 +10,7 @@ export async function uploadImage(file: File): Promise<string> {
     .then((data) => data.url);
 }
 
-// 소영 클라우디너리
+// 소영 클라우디너리.
 export async function uploadCloudImage(file: File): Promise<string> {
   const data = new FormData();
   data.append("file", file);
