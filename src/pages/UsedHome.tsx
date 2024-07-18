@@ -1,36 +1,64 @@
-import React from "react";
+import React, { useState } from "react";
 import UsedItemList from "../components/usedHome/UsedItemList";
 import { BsSearch } from "react-icons/bs";
 import { Link } from "react-router-dom";
+import { usedItemSearch } from "../api/firebase";
+import { MyUsedItemType } from "../types/usedType";
+import SearchList from "../components/usedHome/SearchList";
 
 const UsedHome = () => {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResultData, setSearchResultData] = useState<MyUsedItemType[]>(
+    []
+  );
+
+  const onClickSearch = async () => {
+    try {
+      const data = await usedItemSearch(searchQuery);
+      setSearchResultData(data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <div className="h-[100%] w-[600px]">
       <header className="p-11 pb-4 text-right">
-        <h1 className="text-3xl font-bold text-left mb-5 ">중고거래</h1>
+        <h1 className="text-3xl font-bold text-left mb-5 ">
+          <Link to="/usedHome">중고거래</Link>
+        </h1>
         <button className="bg-black text-white px-4 py-2 mb-5 rounded-md text-right">
           <Link to="/usedPostUpload">등록하기</Link>
         </button>
 
         {/* <SearchHeader/> */}
         <div className="flex mb-4 text-xl">
-          <form className="flex w-[100%]">
+          <div className="flex w-[100%]">
             <input
               className="w-[100%] p-2 outline-none bg-[#EEE] placeholder-gray-500 rounded-l-[8px] border-0 pl-4 "
               type="text"
               placeholder="상품검색"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
             />
-            <button className="bg-[#EEE] rounded-r-[8px] mt-1 px-4 h-[44px] box-border">
+            <button
+              className="bg-[#EEE] rounded-r-[8px] mt-1 px-4 h-[44px] box-border"
+              onClick={onClickSearch}
+              type="button"
+            >
               <BsSearch />
             </button>
-          </form>
+          </div>
         </div>
       </header>
-
-      <p className="text-left pl-3 pl-8">
-        전체<span>10</span>
-      </p>
-      <UsedItemList />
+      <div className="">
+        {searchResultData.length > 0 ? (
+          <SearchList searchData={searchResultData} />
+        ) : (
+          <UsedItemList />
+        )}
+        {/* <UsedItemList /> */}
+      </div>
     </div>
   );
 };
