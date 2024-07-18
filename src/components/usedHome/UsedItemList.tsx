@@ -18,14 +18,17 @@ const UsedItemList = () => {
     fetchData();
   }, []);
 
-  console.log(usedItems);
-
   return (
-    <div className="p-8 pt-4 grid grid-cols-2 gap-4 mb-24">
-      {usedItems.map((item) => (
-        <UsedItemCard key={item.id} item={item} />
-      ))}
-    </div>
+    <>
+      <p className="text-left pl-3 pl-8">
+        전체<span>{usedItems.length}</span>
+      </p>
+      <div className="p-8 pt-4 grid grid-cols-2 gap-4 mb-24">
+        {usedItems.map((item) => (
+          <UsedItemCard key={item.id} item={item} />
+        ))}
+      </div>
+    </>
   );
 };
 
