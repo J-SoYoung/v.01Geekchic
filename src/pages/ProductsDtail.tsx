@@ -1,63 +1,30 @@
 import React from "react";
 import { useLocation } from "react-router-dom";
 
-interface VideoId {
-  kind: string;
-  videoId: string;
-}
-
-interface Snippet {
-  price: number;
-  publishedAt: string;
-  channelId: string;
+interface Product {
+  id: string;
   title: string;
+  category: string;
   description: string;
-  thumbnails: {
-    default: {
-      url: string;
-      width: number;
-      height: number;
-    };
-    medium: {
-      url: string;
-      width: number;
-      height: number;
-    };
-    high: {
-      url: string;
-      width: number;
-      height: number;
-    };
-  };
-  channelTitle: string;
-  liveBroadcastContent: string;
-  publishTime: string;
+  price: string;
+  image: string;
+  options: string[];
 }
 
-interface Video {
-  kind: string;
-  etag: string;
-  id: VideoId;
-  snippet: Snippet;
-}
 export default function ProductsDtail() {
   const location = useLocation();
-  const { product } = location.state as { product: Video };
-  const { title, thumbnails, price } = product.snippet;
+  const { product } = location.state as { product: Product };
+  const { description, image, price } = product;
   return (
     <div className="h-[1000px] min-h-screen w-[600px]">
-      <img
-        className="w-[600px] h-[450px]"
-        src={thumbnails.high.url}
-        alt={title}
-      />
+      <img className="w-[600px] h-[450px]" src={image} alt={description} />
       <div className="flex m-[30px] gap-[20px]">
         <div className="w-[100px] h-[100px] bg-[#BEBEBE]"></div>
         <div className="w-[100px] h-[100px] bg-[#BEBEBE]"></div>
       </div>
       <p className="text-lg text-left ml-[30px] mt-[25px]">구매가</p>
       <p className="text-2xl font-bold text-left ml-[30px]">{`${price} 원`}</p>
-      <h1 className="text-lg text-left ml-[30px] mt-[15px]">{title}</h1>
+      <h1 className="text-lg text-left ml-[30px] mt-[15px]">{description}</h1>
       <div className="w-full flex flex-col">
         <select className="p-3 m-7 border-2 border-brand rounded-md outline-none bg-[#EEE]">
           <option value="S">S</option>
