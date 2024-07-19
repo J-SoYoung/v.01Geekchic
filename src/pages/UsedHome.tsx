@@ -5,8 +5,10 @@ import { Link } from "react-router-dom";
 import { usedItemSearch } from "../api/firebase";
 import { MyUsedItemType } from "../types/usedType";
 import SearchList from "../components/usedHome/SearchList";
+// import UsedSearchHeader from "../components/usedHome/UsedSearchHeader";
 
 const UsedHome = () => {
+  const [isSearching, setIsSearching] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResultData, setSearchResultData] = useState<MyUsedItemType[]>(
     []
@@ -16,9 +18,17 @@ const UsedHome = () => {
     try {
       const data = await usedItemSearch(searchQuery);
       setSearchResultData(data);
+      setIsSearching(true);
     } catch (error) {
       console.error(error);
+      setIsSearching(false);
     }
+  };
+
+  const handleBackToMain = () => {
+    setSearchQuery("");
+    setSearchResultData([]);
+    setIsSearching(false);
   };
 
   return (
@@ -31,7 +41,7 @@ const UsedHome = () => {
           <Link to="/usedPostUpload">등록하기</Link>
         </button>
 
-        {/* <SearchHeader/> */}
+        {/* <UsedSearchHeader onclickFunc={onClickSearch}/> */}
         <div className="flex mb-4 text-xl">
           <div className="flex w-[100%]">
             <input
@@ -51,13 +61,16 @@ const UsedHome = () => {
           </div>
         </div>
       </header>
+
       <div className="">
-        {searchResultData.length > 0 ? (
-          <SearchList searchData={searchResultData} />
+        {isSearching ? (
+          <SearchList
+            searchData={searchResultData}
+            onClickfunc={handleBackToMain}
+          />
         ) : (
           <UsedItemList />
         )}
-        {/* <UsedItemList /> */}
       </div>
     </div>
   );

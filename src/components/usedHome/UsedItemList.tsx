@@ -20,7 +20,7 @@ const UsedItemList = () => {
 
   return (
     <>
-      <p className="text-left pl-3 pl-8">
+      <p className="text-left px-11">
         전체<span>{usedItems.length}</span>
       </p>
       <div className="p-8 pt-4 grid grid-cols-2 gap-4 mb-24">
