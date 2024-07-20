@@ -1,24 +1,38 @@
-import React, { useState } from "react";
-import UsedItemList from "../components/usedHome/UsedItemList";
-import { BsSearch } from "react-icons/bs";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { usedItemSearch } from "../api/firebase";
+import { useQuery } from "@tanstack/react-query";
+
 import { MyUsedItemType } from "../types/usedType";
+import { usedItemLists, usedItemSearch } from "../api/firebase";
+
 import SearchList from "../components/usedHome/SearchList";
-// import UsedSearchHeader from "../components/usedHome/UsedSearchHeader";
+import UsedItemList from "../components/usedHome/UsedItemList";
+import UsedSearchBar from "../components/usedHome/UsedSearchBar";
 
 const UsedHome = () => {
   const [isSearching, setIsSearching] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [usedItems, setUsedItems] = useState<MyUsedItemType[]>([]);
   const [searchResultData, setSearchResultData] = useState<MyUsedItemType[]>(
     []
   );
 
-  const onClickSearch = async () => {
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await usedItemLists();
+        setUsedItems(data);
+      } catch (error) {
+        console.error("Error fetching used items:", error);
+      }
+    };
+    fetchData();
+  }, []);
+
+  const onClickSearch = async (query: string) => {
     try {
-      const data = await usedItemSearch(searchQuery);
+      const data = await usedItemSearch(query);
       setSearchResultData(data);
-      setIsSearching(true);
+      setIsSearching(!!query);
     } catch (error) {
       console.error(error);
       setIsSearching(false);
@@ -26,8 +40,6 @@ const UsedHome = () => {
   };
 
   const handleBackToMain = () => {
-    setSearchQuery("");
-    setSearchResultData([]);
     setIsSearching(false);
   };
 
@@ -41,35 +53,19 @@ const UsedHome = () => {
           <Link to="/usedPostUpload">등록하기</Link>
         </button>
 
-        {/* <UsedSearchHeader onclickFunc={onClickSearch}/> */}
-        <div className="flex mb-4 text-xl">
-          <div className="flex w-[100%]">
-            <input
-              className="w-[100%] p-2 outline-none bg-[#EEE] placeholder-gray-500 rounded-l-[8px] border-0 pl-4 "
-              type="text"
-              placeholder="상품검색"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-            <button
-              className="bg-[#EEE] rounded-r-[8px] mt-1 px-4 h-[44px] box-border"
-              onClick={onClickSearch}
-              type="button"
-            >
-              <BsSearch />
-            </button>
-          </div>
-        </div>
+        {/* 검색바 */}
+        <UsedSearchBar onSearch={onClickSearch} />
       </header>
 
-      <div className="">
+      <div>
         {isSearching ? (
           <SearchList
-            searchData={searchResultData}
+            searchData={searchResultData || []}
             onClickfunc={handleBackToMain}
+            searchLoading={false}
           />
         ) : (
-          <UsedItemList />
+          usedItems && <UsedItemList usedItems={usedItems} />
         )}
       </div>
     </div>
@@ -77,3 +73,78 @@ const UsedHome = () => {
 };
 
 export default UsedHome;
+
+// import { useState } from "react";
+// import { Link } from "react-router-dom";
+// import { useQuery } from "@tanstack/react-query";
+
+// import { MyUsedItemType } from "../types/usedType";
+// import { usedItemLists, usedItemSearch } from "../api/firebase";
+
+// import SearchList from "../components/usedHome/SearchList";
+// import UsedItemList from "../components/usedHome/UsedItemList";
+// import UsedSearchBar from "../components/usedHome/UsedSearchBar";
+
+// const UsedHome = () => {
+//   const [isSearching, setIsSearching] = useState(false);
+//   const [searchQuery, setSearchQuery] = useState("");
+
+//   const { data: usedItems, isLoading: usedItemLoading } = useQuery<
+//     MyUsedItemType[],
+//     Error
+//   >({
+//     queryKey: ["usedItems"],
+//     queryFn: () => usedItemLists(),
+//   });
+
+//   const { data: searchResultData, isLoading: searchLoading } = useQuery<
+//     MyUsedItemType[],
+//     Error
+//   >({
+//     queryKey: ["searchUsedItems", searchQuery],
+//     queryFn: () => usedItemSearch(searchQuery),
+//     enabled: !!searchQuery, // query가 빈 문자열일 때는 쿼리를 실행하지 않습니다
+//   });
+
+//   const onClickSearch = async (query: string) => {
+//     setSearchQuery(query);
+//     setIsSearching(!!query);
+//   };
+
+//   const handleBackToMain = () => {
+//     setSearchQuery("");
+//     setIsSearching(false);
+//   };
+
+//   if (usedItemLoading) return <div>로딩중입니다</div>;
+
+//   return (
+//     <div className="h-[100%] w-[600px]">
+//       <header className="p-11 pb-4 text-right">
+//         <h1 className="text-3xl font-bold text-left mb-5 ">
+//           <Link to="/usedHome">중고거래</Link>
+//         </h1>
+//         <button className="bg-black text-white px-4 py-2 mb-5 rounded-md text-right">
+//           <Link to="/usedPostUpload">등록하기</Link>
+//         </button>
+
+//         {/* 검색바 */}
+//         <UsedSearchBar onSearch={onClickSearch} />
+//       </header>
+
+//       <div>
+//         {isSearching ? (
+//           <SearchList
+//             searchData={searchResultData || []}
+//             onClickfunc={handleBackToMain}
+//             searchLoading={searchLoading}
+//           />
+//         ) : (
+//           usedItems && <UsedItemList usedItems={usedItems} />
+//         )}
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default UsedHome;

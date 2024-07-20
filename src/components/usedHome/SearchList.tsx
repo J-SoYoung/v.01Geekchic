@@ -4,9 +4,16 @@ import { MyUsedItemType } from "../../types/usedType";
 interface UsedItemListProps {
   searchData: MyUsedItemType[];
   onClickfunc: () => void;
+  searchLoading: boolean;
 }
 
-const SearchList = ({ searchData, onClickfunc }: UsedItemListProps) => {
+const SearchList = ({
+  searchData,
+  onClickfunc,
+  searchLoading,
+}: UsedItemListProps) => {
+  if (searchLoading) return <div>검색결과를 찾고 있습니다.</div>;
+
   return (
     <div className="min-h-screen overflow-auto">
       <p className="text-left px-11">
@@ -14,12 +21,12 @@ const SearchList = ({ searchData, onClickfunc }: UsedItemListProps) => {
       </p>
       {searchData.length !== 0 ? (
         searchData.map((item) => (
-          <div key={item.id} className="p-8 pt-4 grid grid-cols-2 gap-4 mb-24">
+          <div key={item.id} className="p-8 pt-4 grid grid-cols-2 gap-4">
             <UsedItemCard item={item} />
           </div>
         ))
       ) : (
-        <div className="">검색결과가 없습니다</div>
+        <div>검색결과가 없습니다</div>
       )}
       <button onClick={onClickfunc}>중고 메인으로 돌아가기</button>
     </div>
