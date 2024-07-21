@@ -15,6 +15,7 @@ import MyProfile from "./pages/MyProfile.tsx";
 import UsedDetail from "./pages/UsedDetail.tsx";
 import ProductsDtail from "./pages/ProductsDtail.tsx";
 import NewProduct from "./pages/NewProduct.tsx";
+import Products from "./pages/Products.tsx";
 
 const router = createBrowserRouter([
   {
@@ -24,7 +25,8 @@ const router = createBrowserRouter([
     children: [
       { index: true, path: "/", element: <Home /> },
       { path: "/:keyword", element: <Home /> },
-      { path: "products/new", element: <NewProduct /> },
+      { path: "/products/new", element: <NewProduct /> },
+      { path: "/products", element: <Products /> },
       { path: "/products/detail/:id", element: <ProductsDtail /> },
       { path: "/api/login", element: <Login /> },
       { path: "/usedHome", element: <UsedHome /> },
