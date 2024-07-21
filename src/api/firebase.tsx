@@ -17,6 +17,7 @@ import {
   query,
   orderByKey,
   onValue,
+  orderByChild,
 } from "firebase/database";
 import axios from "axios";
 import { MyUsedItemType } from "../types/usedType";
@@ -249,4 +250,38 @@ export async function usedDetailItem(id: string) {
   } catch (error) {
     console.error("Item not found");
   }
+}
+
+// 중고 데이터 쿼리 검색
+// firebase검색어 쿼리로는 검색하기에 한계가 있음. 따로 filter함수를 사용해서 검색
+export async function usedItemSearch(
+  queryString: string
+): Promise<MyUsedItemType[]> {
+  return new Promise((resolve, reject) => {
+    const usedItemRef = ref(database, "usedItems");
+    const queryUsedItem = query(usedItemRef, orderByChild("itemName"));
+
+    onValue(
+      queryUsedItem,
+      (snapshop) => {
+        const data = snapshop.val();
+        if (data) {
+          const dataArr = Object.keys(data).map((key) => ({
+            id: key,
+            ...data[key],
+          }));
+          dataArr.reverse();
+          const filterData = dataArr.filter((item) =>
+            item.itemName.toLowerCase().includes(queryString.toLowerCase())
+          );
+          resolve(filterData);
+        } else {
+          resolve([]);
+        }
+      },
+      (error) => {
+        reject(error);
+      }
+    );
+  });
 }

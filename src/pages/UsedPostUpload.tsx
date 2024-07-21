@@ -1,6 +1,7 @@
 import React, { useRef, useState } from "react";
 import { usedItemUpload } from "../api/firebase";
 import { useNavigate } from "react-router-dom";
+import { uploadCloudImage } from "../api/uploader";
 
 const UsedPostUpload = () => {
   const navigate = useNavigate();
@@ -16,20 +17,23 @@ const UsedPostUpload = () => {
   const [description, setDescription] = useState("");
 
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const file = e.target.files[0];
       const urlFile = URL.createObjectURL(file);
       setPreviewImages((prevImages) => prevImages.concat(urlFile));
 
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onloadend = () => {
-        const base64data = reader.result;
-        if (base64data) {
-          setUploadImages((prevImages) => prevImages.concat(base64data));
-        }
-      };
+      // const reader = new FileReader();
+      // reader.readAsDataURL(file);
+      // reader.onloadend = () => {
+      //   const base64data = reader.result;
+      //   if (base64data) {
+      //     setUploadImages((prevImages) => prevImages.concat(base64data));
+      //   }
+      // };
+      const cloudImage = await uploadCloudImage(file);
+      console.log(cloudImage);
+      setUploadImages((prevImages) => prevImages.concat(cloudImage));
     }
   };
 
@@ -38,7 +42,7 @@ const UsedPostUpload = () => {
     setPreviewImages((prevImages) => prevImages.filter((_, i) => i !== index));
   };
 
-  // 판매자정보는 로그인 한 유저 데이터 받아와야 함. 
+  // 판매자정보는 로그인 한 유저 데이터 받아와야 함.
   // 로그인 정보 추후 추가!
   const onClickUsedItemUpload = () => {
     const itemData = {
@@ -57,8 +61,7 @@ const UsedPostUpload = () => {
         sellerId: "thdud11",
         userName: "thdud11",
         nickname: "소영짱",
-        userAvatar:
-          "https://i.postimg.cc/FFP7t86v/profile.png",
+        userAvatar: "https://i.postimg.cc/FFP7t86v/profile.png",
         address: "9 Bobwhite Avenue",
         phone: "010-1212-6919",
       },
