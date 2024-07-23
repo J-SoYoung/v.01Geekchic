@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import Header from "../components/common/Header";
 import SearchHeader from "../components/common/SearchHeader";
@@ -20,12 +20,13 @@ interface Product {
   options: string;
 }
 
+const filters = ["전체", "아우터", "상의", "하의", "신발", "모자"];
 export default function Products() {
   const { keyword } = useParams<{ keyword: string }>();
   // const user = useRecoilValue(userState);
   const searchKeyword = keyword || "";
   // const product = useProducts();
-
+  const [filter, setFilter] = useState(filters[0]);
   const {
     isLoading,
     error,
@@ -48,13 +49,12 @@ export default function Products() {
       <Header />
       <SearchHeader />
       <div className="flex justify-center ">
-        <ul className="flex  gap-[45px] mt-[20px] mb-[40px] text-[23px] border-b-2 border-[#D9D9D9] w-[540px] pb-[15px]">
-          <li className="ml-[15px]">전체</li>
-          <li>아우터</li>
-          <li>상의</li>
-          <li>하의</li>
-          <li>신발</li>
-          <li>모자</li>
+        <ul className="flex justify-center gap-[45px] mt-[20px] mb-[40px] text-[23px] border-b-2 border-[#D9D9D9] w-[540px] pb-[15px]">
+          {filters.map((value, index) => (
+            <li key={index}>
+              <button>{value}</button>
+            </li>
+          ))}
         </ul>
       </div>
 
