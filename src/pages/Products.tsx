@@ -20,7 +20,19 @@ interface Product {
   options: string;
 }
 
-const filters = ["전체", "아우터", "상의", "하의", "신발", "모자"];
+interface Filter {
+  text: string;
+  name: string;
+}
+
+const filters: Filter[] = [
+  { text: "전체", name: "all" },
+  { text: "아우터", name: "outer" },
+  { text: "상의", name: "top" },
+  { text: "하의", name: "bottom" },
+  { text: "신발", name: "shose" },
+  { text: "모자", name: "cap" },
+];
 export default function Products() {
   const { keyword } = useParams<{ keyword: string }>();
   // const user = useRecoilValue(userState);
@@ -36,6 +48,14 @@ export default function Products() {
     queryFn: getProducts,
     // queryFn: () => product.search(searchKeyword),
   });
+  const filtered: Product[] = getFilteredItems(products || [], filter.name);
+
+  function getFilteredItems(products: Product[], filter: string): Product[] {
+    if (filter === "all") {
+      return products;
+    }
+    return products.filter((product) => product.category === filter);
+  }
 
   {
     isLoading && <p>Loading..</p>;
@@ -52,16 +72,16 @@ export default function Products() {
         <ul className="flex justify-center gap-[45px] mt-[20px] mb-[40px] text-[23px] border-b-2 border-[#D9D9D9] w-[540px] pb-[15px]">
           {filters.map((value, index) => (
             <li key={index}>
-              <button>{value}</button>
+              <button onClick={() => setFilter(value)}>{value.text}</button>
             </li>
           ))}
         </ul>
       </div>
 
       <div className="flex justify-center">
-        {products?.length !== 0 ? (
+        {filtered?.length !== 0 ? (
           <ul className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-[20px] mb-[100px]">
-            {products?.map((product) => (
+            {filtered?.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
           </ul>
