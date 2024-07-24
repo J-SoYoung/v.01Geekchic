@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -31,7 +30,7 @@ const UsedHome = () => {
     enabled: !!searchQuery, // query가 빈 문자열일 때는 쿼리를 실행하지 않습니다
   });
 
-  const onClickSearch = async (query: string) => {
+  const onClickSearch = (query: string) => {
     setSearchQuery(query);
     setIsSearching(!!query);
   };
