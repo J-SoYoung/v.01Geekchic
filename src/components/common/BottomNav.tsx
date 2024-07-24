@@ -10,11 +10,15 @@ import UsedIcon from "../../assets/icons/nav_used.svg";
 import UsedActIcon from "../../assets/icons/nav_usedActive.svg";
 import MyIcon from "../../assets/icons/nav_my.svg";
 import MyActIcon from "../../assets/icons/nav_myActive.svg";
+import { useRecoilValue } from "recoil";
+import { userState } from "../../atoms/userAtom";
 
 const BottomNav = () => {
   const location = useLocation();
+  const firebaseUser = useRecoilValue(userState);
+
   return (
-    <nav className="fixed bottom-0 mx-auto w-full max-w-[598px] border-t-2 bg-[#fff]">
+    <nav className="fixed bottom-0 mx-auto w-[597px] max-w-[598px] border-t-2 bg-[#fff]">
       <ul className="flex justify-around p-4">
         <Link to="/" className="text-center cursor-pointer">
           <img
@@ -24,19 +28,6 @@ const BottomNav = () => {
           />
           <span className="text-xs">홈</span>
         </Link>
-        {/* <Link to="/" className="text-center cursor-pointer">
-          {location.pathname === "/" ? (
-            <>
-              <img src={HomeActIcons} alt="Home" className="w-6 h-6 mx-auto" />
-              <span className="text-xs">홈</span>
-            </>
-          ) : (
-            <>
-              <img src={HomeIcon} alt="Home" className="w-6 h-6 mx-auto" />
-              <span className="text-xs">홈</span>
-            </>
-          )} 
-        </Link> */}
         <Link to="/products" className="text-center cursor-pointer">
           <img
             src={location.pathname === "/products" ? ItemsActIcons : ItemsIcon}
@@ -57,9 +48,16 @@ const BottomNav = () => {
           />
           <span className="text-xs">중고거래</span>
         </Link>
-        <Link to="/my" className="text-center cursor-pointer">
+        <Link
+          to={`/my/${firebaseUser && firebaseUser.uid}`}
+          className="text-center cursor-pointer"
+        >
           <img
-            src={location.pathname === "/my" ? MyActIcon : MyIcon}
+            src={
+              location.pathname === `/my/${firebaseUser && firebaseUser.uid}`
+                ? MyActIcon
+                : MyIcon
+            }
             alt="Home"
             className="w-6 h-6 mx-auto"
           />

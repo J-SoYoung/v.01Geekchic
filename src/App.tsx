@@ -13,9 +13,9 @@ function App() {
       <QueryClientProvider client={queryClient}>
         <RecoilRoot>
           <Outlet />
+          {location.pathname !== "/api/login" && <BottomNav />}
         </RecoilRoot>
       </QueryClientProvider>
-      {location.pathname !== "/api/login" && <BottomNav />}
     </>
   );
 }

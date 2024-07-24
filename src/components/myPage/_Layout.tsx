@@ -1,6 +1,8 @@
 import React from "react";
 import Chevron_left from "../../assets/icons/chevron_left.svg";
 import { Link } from "react-router-dom";
+import { useRecoilValue } from "recoil";
+import { userState } from "../../atoms/userAtom";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -8,10 +10,12 @@ interface LayoutProps {
 }
 
 const Layout: React.FC<LayoutProps> = ({ children, title }) => {
+  const firebaseUser = useRecoilValue(userState);
+
   return (
     <div className="w-[600px] h-[100%]">
       <header className="p-8 text-left ">
-        {location.pathname === "/my" ? (
+        {location.pathname === `/my/${firebaseUser && firebaseUser.uid}` ? (
           <Link to="/">
             <img
               src={Chevron_left}
@@ -20,7 +24,7 @@ const Layout: React.FC<LayoutProps> = ({ children, title }) => {
             />
           </Link>
         ) : (
-          <Link to="/my">
+          <Link to={`/my/${firebaseUser && firebaseUser.uid}`}>
             <img
               src={Chevron_left}
               alt="이전 페이지로"
@@ -32,7 +36,7 @@ const Layout: React.FC<LayoutProps> = ({ children, title }) => {
       </header>
 
       {/* Contents */}
-      <main >{children}</main>
+      <main>{children}</main>
     </div>
   );
 };

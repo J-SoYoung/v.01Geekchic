@@ -22,15 +22,7 @@ const UsedPostUpload = () => {
       const file = e.target.files[0];
       const urlFile = URL.createObjectURL(file);
       setPreviewImages((prevImages) => prevImages.concat(urlFile));
-
-      // const reader = new FileReader();
-      // reader.readAsDataURL(file);
-      // reader.onloadend = () => {
-      //   const base64data = reader.result;
-      //   if (base64data) {
-      //     setUploadImages((prevImages) => prevImages.concat(base64data));
-      //   }
-      // };
+      
       const cloudImage = await uploadCloudImage(file);
       console.log(cloudImage);
       setUploadImages((prevImages) => prevImages.concat(cloudImage));

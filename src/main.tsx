@@ -32,7 +32,7 @@ const router = createBrowserRouter([
       { path: "/usedHome", element: <UsedHome /> },
       { path: "/usedHome/detail/:id", element: <UsedDetail /> },
       { path: "/usedPostUpload", element: <UsedPostUpload /> },
-      { path: "/my", element: <MyPage /> },
+      { path: "/my/:userId", element: <MyPage /> },
       { path: "/my/salelist", element: <MySalelist /> },
       { path: "/my/:list", element: <MyList /> },
       { path: "/my/profile", element: <MyProfile /> },
