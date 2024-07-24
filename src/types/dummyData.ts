@@ -1,3 +1,22 @@
+// const userData = {
+//   userId: localUser.email,
+//   userName: localUser.displayName,
+//   nickname: localUser.displayName,
+//   userAvatar: localUser.photoURL,
+//   address: "",
+//   phone: "",
+//   orders: [],
+//   sales: {
+//     saleId: `saleId_${localUser.uid}`,
+//     salesItems: [],
+//   },
+//   carts: {
+//     cartId: `cartId_${localUser.uid}`,
+//     cartsItems: [],
+//   },
+//   wishlists: [],
+// };
+
 export const userData = [
   {
     userId: "userId_119M",
