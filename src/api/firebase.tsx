@@ -18,9 +18,11 @@ import {
   orderByKey,
   onValue,
   orderByChild,
+  remove,
 } from "firebase/database";
 import axios from "axios";
 import { MyUsedItemType } from "../types/usedType";
+import { UserDataType } from "../pages/MyPage";
 
 interface SearchResult {
   items: Video[];
@@ -284,4 +286,72 @@ export async function usedItemSearch(
       }
     );
   });
+}
+
+// 유저 데이터 생성
+// export async function uploadUserData(data) {
+//   console.log(data);
+//   const userTestRef = ref(database, "userTestData");
+//   const newUserRef = push(userTestRef);
+
+//   return set(newUserRef, {
+//     ...data,
+//     createdAt: Date.now(),
+//   });
+// }
+export async function uploadUserData(
+  data: UserDataType
+): Promise<UserDataType> {
+  const userTestRef = ref(database, `userTestData/${data.userId}`);
+  await set(userTestRef, {
+    ...data,
+    createdAt: Date.now(),
+  });
+  return data;
+}
+
+// 유저 데이터 불러오기
+// uid로 바로 확인할 수 있는 법 or firebase의 id를 받아올 수 잇는 법 check
+// export async function loadUserData(userId: string) {
+//   console.log(userId);
+//   try {
+//     const userRef = ref(database, `userTestData`);
+//     const snapshot = await get(userRef);
+//     const data = snapshot.val();
+//     console.log("firebase유저전체", data);
+
+//     if (data) {
+//       const allUser = Object.keys(data).map((key) => ({
+//         id: key,
+//         ...data[key],
+//       }));
+//       const user = allUser.filter((u) =>
+//         u.userId.toLowerCase().includes(userId.toLowerCase())
+//       );
+//       console.log(user);
+//       return user;
+//     } else {
+//       return null;
+//     }
+//   } catch (error) {
+//     console.error("user not found");
+//   }
+// }
+
+export async function loadUserData(
+  userId: string
+): Promise<UserDataType | null> {
+  const userRef = ref(database, `userTestData/${userId}`);
+  const snapshot = await get(userRef);
+  if (snapshot.exists()) {
+    return snapshot.val() as UserDataType;
+  } else {
+    return null;
+  }
+}
+
+// 유저 데이터 삭제
+export async function deleteUser(userId: string): Promise<void> {
+  const userRef = ref(database, `userTestData/${userId}`);
+  await remove(userRef);
 }
