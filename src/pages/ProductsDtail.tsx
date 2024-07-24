@@ -1,6 +1,8 @@
 import React, { useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import HeartIcon from "../assets/icons/heart.svg";
+import { useRecoilValue, useSetRecoilState } from "recoil";
+import { userState, wishlistState } from "../atoms/userAtom";
 
 interface Product {
   id: string;
@@ -19,8 +21,16 @@ export default function ProductsDtail() {
   const [selected, setSelected] = useState<string | undefined>(
     options && options[0]
   );
+  const navigate = useNavigate();
+  const user = useRecoilValue(userState);
+  const setWishlist = useSetRecoilState(wishlistState);
+
   const handleSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelected(e.target.value);
+  };
+  const handleWishlist = () => {
+    setWishlist((prev) => [...prev, product]);
+    navigate("/wishlist", { state: { user, wishlist: [product] } });
   };
 
   return (
@@ -32,7 +42,7 @@ export default function ProductsDtail() {
       </div>
       <div className="flex gap-[460px] text-lg text-left ml-[30px] mt-[25px]">
         <p className="">구매가</p>
-        <div className="cursor-pointer">
+        <div className="cursor-pointer" onClick={handleWishlist}>
           <img className="w-[30px] h-[30px]" src={HeartIcon} alt="likeButton" />
         </div>
       </div>
