@@ -200,6 +200,24 @@ export async function addNewProduct(
   });
 }
 
+export async function addWishlistItem(
+  userId: string,
+  product: Product
+): Promise<void> {
+  const wishlistRef = ref(database, `wishlist/${userId}/${product.id}`);
+  return set(wishlistRef, product);
+}
+
+export async function getWishlistItems(userId: string): Promise<Product[]> {
+  const wishlistRef = ref(database, `wishlist/${userId}`);
+  return get(wishlistRef).then((snapshot) => {
+    if (snapshot.exists()) {
+      return Object.values(snapshot.val());
+    }
+    return [];
+  });
+}
+
 // 중고 제품 업로드
 export function usedItemUpload(itemData: MyUsedItemType) {
   const usedItemRef = ref(database, "usedItems");
