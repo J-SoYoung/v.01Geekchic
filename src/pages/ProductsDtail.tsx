@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useLocation } from "react-router-dom";
+import HeartIcon from "../assets/icons/heart.svg";
 
 interface Product {
   id: string;
@@ -29,7 +30,12 @@ export default function ProductsDtail() {
         <div className="w-[100px] h-[100px] bg-[#BEBEBE]"></div>
         <div className="w-[100px] h-[100px] bg-[#BEBEBE]"></div>
       </div>
-      <p className="text-lg text-left ml-[30px] mt-[25px]">구매가</p>
+      <div className="flex gap-[460px] text-lg text-left ml-[30px] mt-[25px]">
+        <p className="">구매가</p>
+        <div className="cursor-pointer">
+          <img className="w-[30px] h-[30px]" src={HeartIcon} alt="likeButton" />
+        </div>
+      </div>
       <p className="text-2xl font-bold text-left ml-[30px]">{`${price} 원`}</p>
       <h1 className="text-lg text-left ml-[30px] mt-[15px]">{description}</h1>
       <div className="w-full flex flex-col">
