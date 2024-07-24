@@ -77,7 +77,7 @@ interface Product {
   description: string;
   price: string;
   image: string;
-  options: string;
+  options: string[];
 }
 
 const firebaseConfig = {
@@ -195,8 +195,8 @@ export async function addNewProduct(
     id,
     price: product.price,
     image,
-    // options: product.options,
-    options: product.options.split(","),
+    options: product.options,
+    // options: product.options.split(","),
   });
 }
 
@@ -207,6 +207,20 @@ export async function addWishlistItem(
   const wishlistRef = ref(database, `wishlist/${userId}/${product.id}`);
   return set(wishlistRef, product);
 }
+
+export async function setWishlistItems(
+  userId: string,
+  wishlist: Product[]
+): Promise<void> {
+  await set(ref(database, `wishlist/${userId}`), wishlist);
+}
+
+// export async function removeWishlistItem(
+//   userId: string,
+//   product: Product
+// ): Promise<void> {
+//   return remove(ref(database, `wishlist/${userId}/${product.id}}`));
+// }
 
 export async function getWishlistItems(userId: string): Promise<Product[]> {
   const wishlistRef = ref(database, `wishlist/${userId}`);

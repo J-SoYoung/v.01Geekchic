@@ -18,7 +18,7 @@ const BottomNav = () => {
   const firebaseUser = useRecoilValue(userState);
 
   return (
-    <nav className="fixed bottom-0 mx-auto w-[597px] max-w-[598px] border-t-2 bg-[#fff]">
+    <nav className="fixed bottom-0 mx-auto w-[599px] max-w-[600px] border-t-2 bg-[#fff]">
       <ul className="flex justify-around p-4">
         <Link to="/" className="text-center cursor-pointer">
           <img
@@ -42,7 +42,7 @@ const BottomNav = () => {
             alt="Wishlist"
             className="w-6 h-6 mx-auto"
           />
-          <span className="text-xs">상품</span>
+          <span className="text-xs">관심물품</span>
         </Link>
         <Link to="/usedHome" className="text-center cursor-pointer">
           <img

@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useEffect } from "react";
 // import { useLocation } from 'react-router-dom';
-import { useRecoilValue } from "recoil";
+import { useRecoilValue, useRecoilState } from "recoil";
 import { wishlistState } from "../atoms/userAtom";
 import { userState } from "../atoms/userAtom";
+import { getWishlistItems } from "../api/firebase";
 
 interface Product {
   id: string;
@@ -16,8 +17,14 @@ interface Product {
 
 export default function Wishlist() {
   // const location = useLocation();
+  const [wishlist, setWishlist] = useRecoilState(wishlistState);
   const user = useRecoilValue(userState);
-  const wishlist = useRecoilValue(wishlistState);
+
+  useEffect(() => {
+    if (user) {
+      getWishlistItems(user.uid).then(setWishlist);
+    }
+  }, [user, setWishlist]);
 
   return (
     <div>

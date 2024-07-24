@@ -1,8 +1,13 @@
 import React, { useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import HeartIcon from "../assets/icons/heart.svg";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { userState, wishlistState } from "../atoms/userAtom";
+import {
+  addWishlistItem,
+  getWishlistItems,
+  setWishlistItems,
+} from "../api/firebase";
 
 interface Product {
   id: string;
@@ -21,16 +26,29 @@ export default function ProductsDtail() {
   const [selected, setSelected] = useState<string | undefined>(
     options && options[0]
   );
-  const navigate = useNavigate();
   const user = useRecoilValue(userState);
   const setWishlist = useSetRecoilState(wishlistState);
+  const wishlist = useRecoilValue(wishlistState);
 
   const handleSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelected(e.target.value);
   };
-  const handleWishlist = () => {
-    setWishlist((prev) => [...prev, product]);
-    navigate("/wishlist", { state: { user, wishlist: [product] } });
+
+  const handleWishlist = async () => {
+    if (user) {
+      const isInWishlist = wishlist.some((item) => item.id === product.id);
+      if (isInWishlist) {
+        const updatedWishlist = wishlist.filter(
+          (item) => item.id !== product.id
+        );
+        setWishlist(updatedWishlist);
+        setWishlistItems(user.uid, updatedWishlist);
+      } else {
+        await addWishlistItem(user.uid, product);
+        const updatedWishlist = await getWishlistItems(user.uid);
+        setWishlist(updatedWishlist);
+      }
+    }
   };
 
   return (
