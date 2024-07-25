@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useLocation } from "react-router-dom";
 import HeartIcon from "../assets/icons/heart.svg";
+import HeartFullIcon from "../assets/icons/heart_full.svg";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { userState, wishlistState } from "../atoms/userAtom";
 import {
@@ -29,6 +30,7 @@ export default function ProductsDtail() {
   const user = useRecoilValue(userState);
   const setWishlist = useSetRecoilState(wishlistState);
   const wishlist = useRecoilValue(wishlistState);
+  const isInWishlist = wishlist.some((item) => item.id === product.id);
 
   const handleSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelected(e.target.value);
@@ -36,7 +38,6 @@ export default function ProductsDtail() {
 
   const handleWishlist = async () => {
     if (user) {
-      const isInWishlist = wishlist.some((item) => item.id === product.id);
       if (isInWishlist) {
         const updatedWishlist = wishlist.filter(
           (item) => item.id !== product.id
@@ -61,7 +62,11 @@ export default function ProductsDtail() {
       <div className="flex gap-[460px] text-lg text-left ml-[30px] mt-[25px]">
         <p className="">구매가</p>
         <div className="cursor-pointer" onClick={handleWishlist}>
-          <img className="w-[30px] h-[30px]" src={HeartIcon} alt="likeButton" />
+          <img
+            className="w-[30px] h-[30px]"
+            src={isInWishlist ? HeartFullIcon : HeartIcon}
+            alt="likeButton"
+          />
         </div>
       </div>
       <p className="text-2xl font-bold text-left ml-[30px]">{`${price} 원`}</p>
