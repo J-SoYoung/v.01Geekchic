@@ -27,9 +27,12 @@ export default function Wishlist() {
   }, [user, setWishlist]);
 
   return (
-    <div>
-      <h2>{user?.uid}의 관심물품</h2>
-      <ul>
+    <div className="h-[100%] w-[600px]">
+      <div className="p-11 pb-4">
+        <h1 className="text-3xl font-bold text-left mb-[40px]">관심물품</h1>
+        <p className="text-left text-lg">전체</p>
+      </div>
+      <ul className="p-11 pb-4">
         {wishlist.map((product: Product) => (
           <li key={product.id}>
             <img src={product.image} alt={product.title} />
