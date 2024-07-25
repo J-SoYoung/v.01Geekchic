@@ -1,5 +1,13 @@
 import React, { useState } from "react";
 import { useLocation } from "react-router-dom";
+import HeartIcon from "../assets/icons/heart.svg";
+import { useRecoilValue, useSetRecoilState } from "recoil";
+import { userState, wishlistState } from "../atoms/userAtom";
+import {
+  addWishlistItem,
+  getWishlistItems,
+  setWishlistItems,
+} from "../api/firebase";
 
 interface Product {
   id: string;
@@ -18,8 +26,29 @@ export default function ProductsDtail() {
   const [selected, setSelected] = useState<string | undefined>(
     options && options[0]
   );
+  const user = useRecoilValue(userState);
+  const setWishlist = useSetRecoilState(wishlistState);
+  const wishlist = useRecoilValue(wishlistState);
+
   const handleSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelected(e.target.value);
+  };
+
+  const handleWishlist = async () => {
+    if (user) {
+      const isInWishlist = wishlist.some((item) => item.id === product.id);
+      if (isInWishlist) {
+        const updatedWishlist = wishlist.filter(
+          (item) => item.id !== product.id
+        );
+        setWishlist(updatedWishlist);
+        setWishlistItems(user.uid, updatedWishlist);
+      } else {
+        await addWishlistItem(user.uid, product);
+        const updatedWishlist = await getWishlistItems(user.uid);
+        setWishlist(updatedWishlist);
+      }
+    }
   };
 
   return (
@@ -29,7 +58,12 @@ export default function ProductsDtail() {
         <div className="w-[100px] h-[100px] bg-[#BEBEBE]"></div>
         <div className="w-[100px] h-[100px] bg-[#BEBEBE]"></div>
       </div>
-      <p className="text-lg text-left ml-[30px] mt-[25px]">구매가</p>
+      <div className="flex gap-[460px] text-lg text-left ml-[30px] mt-[25px]">
+        <p className="">구매가</p>
+        <div className="cursor-pointer" onClick={handleWishlist}>
+          <img className="w-[30px] h-[30px]" src={HeartIcon} alt="likeButton" />
+        </div>
+      </div>
       <p className="text-2xl font-bold text-left ml-[30px]">{`${price} 원`}</p>
       <h1 className="text-lg text-left ml-[30px] mt-[15px]">{description}</h1>
       <div className="w-full flex flex-col">
