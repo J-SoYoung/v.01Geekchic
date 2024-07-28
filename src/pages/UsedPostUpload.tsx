@@ -22,7 +22,7 @@ const UsedPostUpload = () => {
       const file = e.target.files[0];
       const urlFile = URL.createObjectURL(file);
       setPreviewImages((prevImages) => prevImages.concat(urlFile));
-      
+
       const cloudImage = await uploadCloudImage(file);
       console.log(cloudImage);
       setUploadImages((prevImages) => prevImages.concat(cloudImage));
