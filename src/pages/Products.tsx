@@ -69,19 +69,20 @@ export default function Products() {
       <Header />
       <SearchHeader />
       <div className="flex justify-center ">
-        <ul className="flex justify-center gap-[45px] mt-[20px] mb-[40px] text-[23px] border-b-2 border-[#D9D9D9] w-[540px] pb-[15px]">
+        <ul className="flex justify-center gap-[45px] mt-[20px] mb-[40px] text-[23px] border-b-2 border-[#D9D9D9] w-[515px]">
           {filters.map((value, index) => (
-            <li key={index}>
+            <li key={index} className="relative">
               <button
                 className={`${
-                  value.text === filter.text
-                    ? "font-bold border-b-2 border-[#000] "
-                    : ""
-                }`}
+                  value.text === filter.text ? "font-bold" : ""
+                } pb-[14px]`}
                 onClick={() => setFilter(value)}
               >
                 {value.text}
               </button>
+              {value.text === filter.text && (
+                <span className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-[177%] border-b-2 border-black -mb-[2px]"></span>
+              )}
             </li>
           ))}
         </ul>
