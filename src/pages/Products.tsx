@@ -17,7 +17,7 @@ interface Product {
   description: string;
   price: string;
   image: string;
-  options: string;
+  options: string[];
 }
 
 interface Filter {
@@ -38,7 +38,7 @@ export default function Products() {
   // const user = useRecoilValue(userState);
   const searchKeyword = keyword || "";
   // const product = useProducts();
-  const [filter, setFilter] = useState(filters[0]);
+  const [filter, setFilter] = useState<Filter>(filters[0]);
   const {
     isLoading,
     error,
@@ -72,7 +72,16 @@ export default function Products() {
         <ul className="flex justify-center gap-[45px] mt-[20px] mb-[40px] text-[23px] border-b-2 border-[#D9D9D9] w-[540px] pb-[15px]">
           {filters.map((value, index) => (
             <li key={index}>
-              <button onClick={() => setFilter(value)}>{value.text}</button>
+              <button
+                className={`${
+                  value.text === filter.text
+                    ? "font-bold border-b-2 border-[#000] "
+                    : ""
+                }`}
+                onClick={() => setFilter(value)}
+              >
+                {value.text}
+              </button>
             </li>
           ))}
         </ul>

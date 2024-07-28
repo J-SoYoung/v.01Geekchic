@@ -5,6 +5,16 @@ interface AdminUser extends User {
   isAdmin: boolean;
 }
 
+interface Product {
+  id: string;
+  title: string;
+  category: string;
+  description: string;
+  price: string;
+  image: string;
+  options: string[];
+}
+
 export const userState = atom<AdminUser | null>({
   key: "userState",
   default: null,
@@ -25,4 +35,9 @@ export const userState = atom<AdminUser | null>({
       });
     },
   ],
+});
+
+export const wishlistState = atom<Product[]>({
+  key: "wishlistState",
+  default: [],
 });
