@@ -77,7 +77,7 @@ export default function Home() {
                 alt="mainImage"
               />
             </div>
-            <div className="flex space-x-[320px] justify-center items-center mt-[30px] mb-[20px]">
+            <div className="flex space-x-[320px] ml-[30px] items-center mt-[30px] mb-[20px]">
               <div className="text-lg font-bold text-left">최근 등록 상품</div>
               {user && user.isAdmin && (
                 <Link to="products/new">
