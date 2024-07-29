@@ -40,6 +40,7 @@ interface Product {
 interface Comment {
   id: string;
   text: string;
+  rank: number;
   createdAt: string;
 }
 
@@ -187,17 +188,18 @@ export async function getWishlistItems(userId: string): Promise<Product[]> {
 
 export async function newComment(
   productId: string,
-  commentText: string
+  comments: Omit<Comment, "id" | "createdAt">
 ): Promise<void> {
   const commentId = uuidv4();
   const newComment: Comment = {
     id: commentId,
-    text: commentText,
+    text: comments.text,
+    rank: comments.rank,
     createdAt: new Date().toISOString(),
   };
 
   const commentRef = ref(
-    database,
+    getDatabase(),
     `products/${productId}/comments/${commentId}`
   );
   await set(commentRef, newComment);
