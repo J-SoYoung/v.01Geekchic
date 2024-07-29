@@ -20,51 +20,8 @@ import {
   orderByChild,
   remove,
 } from "firebase/database";
-import axios from "axios";
 import { MyUsedItemType } from "../types/usedType";
 import { UserDataType } from "../pages/MyPage";
-
-interface SearchResult {
-  items: Video[];
-}
-
-interface Video {
-  kind: string;
-  etag: string;
-  id: VideoId;
-  snippet: {
-    price: number;
-    publishedAt: string;
-    channelId: string;
-    title: string;
-    description: string;
-    thumbnails: {
-      default: {
-        url: string;
-        width: number;
-        height: number;
-      };
-      medium: {
-        url: string;
-        width: number;
-        height: number;
-      };
-      high: {
-        url: string;
-        width: number;
-        height: number;
-      };
-    };
-    channelTitle: string;
-    liveBroadcastContent: string;
-    publishTime: string;
-  };
-}
-
-interface VideoId {
-  kind: string;
-  videoId: string;
-}
 
 interface AdminUser extends User {
   isAdmin: boolean;
@@ -132,46 +89,36 @@ async function fetchAdminUser(user: User): Promise<AdminUser> {
   return { ...user, isAdmin: false };
 }
 
-export default function useProducts() {
-  const httpClient = axios.create({
-    baseURL: "/",
-    headers: {
-      "Content-Type": "application/json",
-    },
+const searchProducts = async (keyword: string): Promise<Product[]> => {
+  const response = get(ref(database, "products"));
+  const products: Product[] = [];
+
+  (await response).forEach((childSnapshot) => {
+    const item = childSnapshot.val();
+    const product: Product = {
+      id: childSnapshot.key as string,
+      title: item.title,
+      category: item.category,
+      description: item.description,
+      price: item.price,
+      image: item.image,
+      options: item.options,
+    };
+    products.push(product);
   });
 
-  const search = async (keyword: string): Promise<Video[]> => {
-    return keyword ? searchByKeyword(keyword) : newProducts();
-  };
+  const filteredItems = products.filter((item) =>
+    item.description.toLowerCase().includes(keyword.toLowerCase())
+  );
 
-  const searchByKeyword = async (keyword: string): Promise<Video[]> => {
-    const response = await httpClient.get<SearchResult>(
-      "/products/search.json"
-    );
-    const filteredItems = response.data.items.filter((item) =>
-      item.snippet.title.toLowerCase().includes(keyword.toLowerCase())
-    );
-    return filteredItems.map((item) => ({
-      ...item,
-      id: {
-        kind: item.id.kind,
-        videoId: item.id.videoId,
-      },
-      snippet: {
-        ...item.snippet,
-      },
-    }));
-  };
+  return filteredItems;
+};
 
-  const newProducts = async (): Promise<Video[]> => {
-    const response = await httpClient.get<SearchResult>(
-      "/products/search.json"
-    );
-    return response.data.items;
+export default function useProducts() {
+  const search = async (keyword: string): Promise<Product[]> => {
+    return keyword ? searchProducts(keyword) : getProducts();
   };
-  return {
-    search,
-  };
+  return { search };
 }
 
 export async function getProducts(): Promise<Product[]> {
