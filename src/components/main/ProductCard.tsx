@@ -8,7 +8,7 @@ interface Product {
   description: string;
   price: string;
   image: string;
-  options: string;
+  options: string[];
 }
 
 export default function ProductCard({ product }: { product: Product }) {

@@ -4,8 +4,7 @@ import Header from "../components/common/Header";
 import SearchHeader from "../components/common/SearchHeader";
 import { useQuery } from "@tanstack/react-query";
 import ProductCard from "../components/main/ProductCard";
-// import useProducts from "../api/firebase";
-import { getProducts } from "../api/firebase";
+import useProducts from "../api/firebase";
 import { useRecoilValue } from "recoil";
 import { Link } from "react-router-dom";
 import { userState } from "../atoms/userAtom";
@@ -17,14 +16,14 @@ interface Product {
   description: string;
   price: string;
   image: string;
-  options: string;
+  options: string[];
 }
 
 export default function Home() {
   const { keyword } = useParams<{ keyword: string }>();
   const user = useRecoilValue(userState);
   const searchKeyword = keyword || "";
-  // const product = useProducts();
+  const { search } = useProducts();
 
   const {
     isLoading,
@@ -32,8 +31,7 @@ export default function Home() {
     data: products,
   } = useQuery<Product[], Error>({
     queryKey: ["products", searchKeyword],
-    queryFn: getProducts,
-    // queryFn: () => product.search(searchKeyword),
+    queryFn: () => search(searchKeyword),
   });
 
   {
@@ -77,7 +75,7 @@ export default function Home() {
                 alt="mainImage"
               />
             </div>
-            <div className="flex space-x-[320px] justify-center items-center mt-[30px] mb-[20px]">
+            <div className="flex space-x-[320px] ml-[30px] items-center mt-[30px] mb-[20px]">
               <div className="text-lg font-bold text-left">최근 등록 상품</div>
               {user && user.isAdmin && (
                 <Link to="products/new">
