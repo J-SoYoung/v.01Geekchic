@@ -37,6 +37,13 @@ interface Product {
   options: string[];
 }
 
+interface Comment {
+  id: string;
+  text: string;
+  rank: number;
+  createdAt: string;
+}
+
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_APP_FIREBASE_API_KEY,
   authDomain: import.meta.env.VITE_APP_FIREBASE_AUTH_DOMAIN,
@@ -135,9 +142,9 @@ export async function addNewProduct(
   image: string
 ): Promise<void> {
   const id = uuidv4();
-  const sanitizedId = id.replace(/[.#$[\]]/g, "_");
+  const definedId = id.replace(/[.#$[\]]/g, "_");
 
-  set(ref(database, `products/${sanitizedId}`), {
+  set(ref(database, `products/${definedId}`), {
     ...product,
     id,
     price: product.price,
@@ -177,6 +184,25 @@ export async function getWishlistItems(userId: string): Promise<Product[]> {
     }
     return [];
   });
+}
+
+export async function newComment(
+  productId: string,
+  comments: Omit<Comment, "id" | "createdAt">
+): Promise<void> {
+  const commentId = uuidv4();
+  const newComment: Comment = {
+    id: commentId,
+    text: comments.text,
+    rank: comments.rank,
+    createdAt: new Date().toISOString(),
+  };
+
+  const commentRef = ref(
+    getDatabase(),
+    `products/${productId}/comments/${commentId}`
+  );
+  await set(commentRef, newComment);
 }
 
 // 중고 제품 업로드
