@@ -42,6 +42,9 @@ interface Comment {
   text: string;
   rank: number;
   createdAt: string;
+  uid: User;
+  userPhoto: string;
+  displayName: string;
 }
 
 const firebaseConfig = {
@@ -188,14 +191,17 @@ export async function getWishlistItems(userId: string): Promise<Product[]> {
 
 export async function newComment(
   productId: string,
-  comments: Omit<Comment, "id" | "createdAt">
+  comment: Omit<Comment, "id" | "createdAt">
 ): Promise<void> {
   const commentId = uuidv4();
   const newComment: Comment = {
     id: commentId,
-    text: comments.text,
-    rank: comments.rank,
+    text: comment.text,
+    rank: comment.rank,
     createdAt: new Date().toISOString(),
+    uid: comment.uid,
+    userPhoto: comment.userPhoto,
+    displayName: comment.displayName,
   };
 
   const commentRef = ref(
