@@ -64,16 +64,15 @@ export default function Comment({ product }: { product: Product }) {
   return (
     <>
       {success && <p className="my-2">✅ {success}</p>}
-      <form className="flex flex-col px-12 gap-1" onSubmit={handleSubmit}>
+      <h1 className="text-3xl font-bold text-left ml-[25px] mt-[50px]">
+        상품 후기
+      </h1>
+      <form
+        className="flex flex-col px-12 gap-1 mt-[25px]"
+        onSubmit={handleSubmit}
+      >
         <input
-          type="text"
-          placeholder="리뷰를 작성해주세요."
-          name="text"
-          value={comment.text ?? ""}
-          required
-          onChange={handleChange}
-        />
-        <input
+          className="border-b-2 border-0 w-[200px] ml-[300px] mb-[20px] h-[30px]"
           type="number"
           placeholder="평점"
           name="rank"
@@ -82,11 +81,20 @@ export default function Comment({ product }: { product: Product }) {
           onChange={handleChange}
         />
         <button
-          className="mb-[100px] mt-[10px] py-3 bg-[#8F5BBD] text-[#fff] border border-[#8F5BBD] rounded-md hover:bg-[#fff] hover:text-[#8F5BBD] duration-200"
+          className="w-[50px] h-[40px] ml-[450px] -mb-[30px] z-0 bg-[#8F5BBD] text-[#fff] border border-[#8F5BBD] rounded-md hover:bg-[#fff] hover:text-[#8F5BBD] duration-200"
           disabled={isUploading}
         >
-          {isUploading ? "업로드중..." : "리뷰등록"}
+          {isUploading ? "업로드중..." : "등록"}
         </button>
+        <input
+          className=" border-b-2 border-0 h-[30px]"
+          type="text"
+          placeholder="리뷰를 작성해주세요."
+          name="text"
+          value={comment.text ?? ""}
+          required
+          onChange={handleChange}
+        />
       </form>
     </>
   );
