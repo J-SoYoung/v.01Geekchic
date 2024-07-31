@@ -1,13 +1,21 @@
 import React from "react";
 import Layout from "../components/myPage/_Layout";
-import { UserType } from "../types/usedType";
+import { UserDataType, UserType } from "../types/usedType";
 import { userData } from "../types/dummyData";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 const user: UserType = userData[0];
 const items = user.sales.salesItems;
 
+interface StateProps {
+  user: UserDataType;
+}
+
 const MySalelist = () => {
+  const location = useLocation();
+  const { user }: StateProps = location.state || {};
+  const sales = user.sales
+
   return (
     <Layout title="판매목록">
       <div className="text-left h-[100vh]">
@@ -17,8 +25,9 @@ const MySalelist = () => {
         {/* <UsedItemList /> */}
 
         <div className="p-8 pt-4 grid grid-cols-2 gap-4 mb-24">
-          {items.map((el) => (
+          {sales.salesItems.map((el,idx) => (
             <Link
+              key={idx}
               to={`/usedHome/detail/${el.itemId}`}
               className=" p-3 rounded-md cursor-pointer"
             >

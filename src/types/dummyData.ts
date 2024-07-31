@@ -16,6 +16,7 @@
 //   },
 //   wishlists: [],
 // };
+export const defaultImage = 'https://via.placeholder.com/150'
 
 export const userData = [
   {
