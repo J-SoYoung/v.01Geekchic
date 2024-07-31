@@ -20,8 +20,7 @@ import {
   orderByChild,
   remove,
 } from "firebase/database";
-import { MyUsedItemType, ReviewType } from "../types/usedType";
-import { UserDataType } from "../pages/MyPage";
+import { MyUsedItemType, ReviewType, UserDataType } from "../types/usedType";
 
 interface AdminUser extends User {
   isAdmin: boolean;
@@ -320,8 +319,8 @@ export async function usedItemSearch(
 export async function uploadUserData(
   data: UserDataType
 ): Promise<UserDataType> {
-  const userTestRef = ref(database, `userData/${data.userId}`);
-  await set(userTestRef, {
+  const userRef = ref(database, `userData/${data.userId}`);
+  await set(userRef, {
     ...data,
     createdAt: Date.now(),
   });
@@ -341,9 +340,3 @@ export async function loadUserData(
   }
 }
 
-// 유저 데이터 삭제
-export async function deleteUser(userId: string): Promise<void> {
-  console.log(userId);
-  const userRef = ref(database, `userData/${userId}`);
-  await remove(userRef);
-}
