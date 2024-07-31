@@ -4,7 +4,7 @@ import { Link, useParams } from "react-router-dom";
 
 import { useRecoilValue } from "recoil";
 import { userState } from "../atoms/userAtom";
-import { User } from "firebase/auth";
+import { deleteUser, User } from "firebase/auth";
 import { loadUserData, uploadUserData } from "../api/firebase";
 
 export interface FirebaseUserType extends User {
@@ -16,6 +16,41 @@ export interface FirebaseUserType extends User {
   phoneNumber: string | null;
 }
 
+interface UsedItems {
+  itemId: string;
+  itemName: string;
+  price: number;
+  size: string;
+  imageUrl: string;
+  quantity: number;
+}
+
+interface SalesItemsType extends UsedItems {
+  createdAt: string;
+  isSales: boolean;
+  options: string[];
+}
+
+interface OrderItemsType {
+  orderId: string;
+  totalPrice: number;
+  items: UsedItems[];
+  buyerInfo: {
+    name: string;
+    address: string;
+    phone: string;
+  };
+  paymentMethod: string;
+  orderDate: string;
+}
+
+interface WishItemsType {
+  itemId: string;
+  itemName: string;
+  price: number;
+  imageUrl: string;
+}
+
 export interface UserDataType {
   userId: string;
   userEmail: string | null;
@@ -24,16 +59,16 @@ export interface UserDataType {
   userAvatar: string | null;
   address: string;
   phone: string | null;
-  orders: [];
+  orders: OrderItemsType[];
   sales: {
     saleId: string;
-    salesItems: [];
+    salesItems: SalesItemsType[];
   };
   carts: {
     cartId: string;
-    cartsItems: [];
+    cartsItems: UsedItems[];
   };
-  wishlists: [];
+  wishlists: WishItemsType[];
 }
 
 const MyPage = () => {
@@ -41,8 +76,6 @@ const MyPage = () => {
   const { userId } = useParams<{ userId: string }>();
   const firebaseUser = useRecoilValue(userState);
   const [me, setMe] = useState<UserDataType | null>(null);
-
-  console.log(me);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -60,16 +93,136 @@ const MyPage = () => {
             userAvatar: firebaseUser.photoURL,
             address: "",
             phone: firebaseUser.phoneNumber,
-            orders: [],
+            orders: [
+              {
+                orderId: "orderId_754c",
+                totalPrice: 0,
+                items: [
+                  {
+                    itemId: "itemId850H",
+                    itemName: "NASDAQ",
+                    price: 602000,
+                    size: "M",
+                    imageUrl: "https://i.postimg.cc/K89Dxv30/1-1.webp",
+                    quantity: 1,
+                  },
+                  {
+                    itemId: "itemId534M",
+                    itemName: "NASDAQ",
+                    price: 36000,
+                    size: "XS",
+                    imageUrl: "https://i.postimg.cc/KjFMtdgK/2-1.webp",
+                    quantity: 1,
+                  },
+                ],
+                buyerInfo: {
+                  name: "Sumner",
+                  address: "4923 Mesta Park",
+                  phone: "010-2436-4062",
+                },
+                paymentMethod: "creditcard",
+                orderDate: "2024-01-28",
+              },
+              {
+                orderId: "orderId_578e",
+                totalPrice: 0,
+                items: [
+                  {
+                    itemId: "itemId534M",
+                    itemName: "NASDAQ",
+                    price: 36000,
+                    size: "XS",
+                    imageUrl: "https://i.postimg.cc/KjFMtdgK/2-1.webp",
+                    quantity: 1,
+                  },
+                  {
+                    itemId: "itemId850H",
+                    itemName: "NASDAQ",
+                    price: 602000,
+                    size: "M",
+                    imageUrl: "https://i.postimg.cc/K89Dxv30/1-1.webp",
+                    quantity: 1,
+                  },
+                ],
+                buyerInfo: {
+                  name: "Sumner",
+                  address: "4923 Mesta Park",
+                  phone: "010-2436-4062",
+                },
+                paymentMethod: "creditcard",
+                orderDate: "2024-07-28",
+              },
+            ],
             sales: {
               saleId: `saleId_${firebaseUser.uid}`,
-              salesItems: [],
+              salesItems: [
+                {
+                  itemId: "itemId850H",
+                  itemName: "NASDAQ",
+                  price: 602000,
+                  size: "M",
+                  imageUrl: "https://i.postimg.cc/K89Dxv30/1-1.webp",
+                  quantity: 1,
+                  createdAt: "2024-06-17",
+                  isSales: false,
+                  options: ["배송비포함", "새상품"],
+                },
+                {
+                  itemId: "itemId111O",
+                  itemName: "NYSE",
+                  quantity: 2,
+                  size: "XS",
+                  price: 15000,
+                  imageUrl: "https://i.postimg.cc/Wz2xx1ks/4-1.png",
+                  createdAt: "2024-06-17",
+                  isSales: true,
+                  options: ["배송비포함", "새상품"],
+                },
+              ],
             },
             carts: {
               cartId: `cartId_${firebaseUser.uid}`,
-              cartsItems: [],
+              cartsItems: [
+                {
+                  itemId: "itemId850H",
+                  itemName: "NASDAQ",
+                  price: 602000,
+                  size: "M",
+                  imageUrl: "https://i.postimg.cc/K89Dxv30/1-1.webp",
+                  quantity: 1,
+                },
+                {
+                  itemId: "itemId534M",
+                  itemName: "NASDAQ",
+                  price: 36000,
+                  size: "XS",
+                  imageUrl: "https://i.postimg.cc/KjFMtdgK/2-1.webp",
+                  quantity: 1,
+                },
+                {
+                  itemId: "itemId784I",
+                  itemName: "NYSE",
+                  price: 226000,
+                  size: "L",
+                  imageUrl: "https://i.postimg.cc/cLrGsC5H/3-1.webp",
+                  quantity: 1,
+                },
+              ],
             },
-            wishlists: [],
+            wishlists: [
+              {
+                itemId: "itemId850H",
+                itemName: "NASDAQ",
+                price: 602000,
+                imageUrl: "https://i.postimg.cc/K89Dxv30/1-1.webp",
+              },
+              {
+                itemId: "itemId534M",
+                itemName: "NASDAQ",
+                price: 36000,
+                imageUrl: "https://i.postimg.cc/KjFMtdgK/2-1.webp",
+              },
+            ],
           };
           console.log("생성할 유저데이터", newUser);
           const createdUser = await uploadUserData(newUser);
@@ -81,6 +234,9 @@ const MyPage = () => {
     fetchData();
   }, [userId, firebaseUser]);
 
+  const onClickUserDelete = () => {
+    deleteUser(userId);
+  };
   // useEffect(() => {
   //   // 페이지 들어왔을 때, 로그인 된 유저인지 확인하기
   //   // 유저 데이터 불러오기 ( firebase googlelogin uid 아이디 검색 )
@@ -122,9 +278,23 @@ const MyPage = () => {
   //     // uploadUser();
   //   }
   // }, []);
+  if (me == null) {
+    return (
+      <div>
+        <p>로그인이 필요합니다.</p>
+        <p>
+          <Link to={"/api/login"}>로그인 페이지로 이동합니다</Link>
+        </p>
+        <p>
+          <Link to={"/"}>아니요, 구경만할래요</Link>
+        </p>
+      </div>
+    );
+  }
 
   return (
     <Layout title="마이페이지">
+      <button onClick={onClickUserDelete}>유저삭제</button>
       <div className="m-16 p-4 h-[100vh]">
         {/* 프로필 관리 */}
         <div className="mb-16 border-b-2">

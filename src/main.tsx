@@ -35,9 +35,9 @@ const router = createBrowserRouter([
       { path: "/usedHome/detail/:id", element: <UsedDetail /> },
       { path: "/usedPostUpload", element: <UsedPostUpload /> },
       { path: "/my/:userId", element: <MyPage /> },
-      { path: "/my/salelist", element: <MySalelist /> },
-      { path: "/my/:list", element: <MyList /> },
-      { path: "/my/profile", element: <MyProfile /> },
+      { path: "/my/:id/salelist", element: <MySalelist /> },
+      { path: "/my/:id/:list", element: <MyList /> },
+      { path: "/my/:id/profile", element: <MyProfile /> },
     ],
   },
 ]);
