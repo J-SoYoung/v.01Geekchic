@@ -10,7 +10,7 @@ const MyUsedItemList = ({
   onQuantityChange,
   onRemove,
 }: MyUsedItemListType) => {
-  console.log("컴포넌트확인", item);
+
   return (
     <div className={isCart ? "border-b mb-8" : ""}>
       <div key={item.itemId} className="flex mb-4">

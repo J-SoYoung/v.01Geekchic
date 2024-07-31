@@ -1,12 +1,16 @@
 import React, { useState } from "react";
 import MyUsedItemList from "./MyUsedItemList";
-import { MyItems, UserType } from "../../types/usedType";
-import { userData } from "../../types/dummyData";
+import { MyItems, UsedItems } from "../../types/usedType";
 
-const user: UserType = userData[0];
+interface CartsProps {
+  carts: {
+    cartId: string;
+    cartsItems: UsedItems[];
+  };
+}
 
-const Cart = () => {
-  const [cardItems, setCartItems] = useState<MyItems[]>([]);
+const Cart = ({ carts }: CartsProps) => {
+  const [cartItems, setCartItems] = useState<MyItems[]>([]);
 
   const handleQuantityChange = (cartId: string, quantity: number) => {
     setCartItems((prevItems) =>
@@ -25,11 +29,13 @@ const Cart = () => {
   return (
     <div className="p-10 text-left">
       <div className="text-m text-gray-600 mb-4 pb-4 border-b">
-        <span className="font-bold">전체 {cardItems.length}</span>
+        <span className="font-bold">전체 {cartItems.length}</span>
       </div>
-      {user.carts.cartsItems.map((el) => {
+
+      {carts.cartsItems.map((el,idx) => {
         return (
           <MyUsedItemList
+            key={idx}
             item={el}
             isCart={true}
             onQuantityChange={handleQuantityChange}
@@ -42,12 +48,12 @@ const Cart = () => {
         <div className="flex flex-col ">
           <span>상품 총액</span>
           <span>
-            {cardItems
+            {/* {cartItems
               .reduce(
-                (acc, cardItem) => acc + cardItem.price * cardItem.quantity,
+                (acc, cartItem) => acc + cartItem.price * cartItem.quantity,
                 0
               )
-              .toLocaleString()}
+              .toLocaleString()} */}
             원
           </span>
         </div>
@@ -60,12 +66,12 @@ const Cart = () => {
         <div className="flex flex-col font-bold">
           <span>총 금액</span>
           <span>
-            {(
-              cardItems.reduce(
-                (acc, cardItem) => acc + cardItem.price * cardItem.quantity,
+            {/* {(
+              cartItems.reduce(
+                (acc, cartItem) => acc + cartItem.price * cartItem.quantity,
                 0
               ) + 3000
-            ).toLocaleString()}
+            ).toLocaleString()} */}
             원
           </span>
         </div>
