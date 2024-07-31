@@ -4,17 +4,14 @@ import { useNavigate } from "react-router-dom";
 import { uploadCloudImage } from "../api/uploader";
 import { useRecoilValue } from "recoil";
 import { userState } from "../atoms/userAtom";
-import { FirebaseUserType, UserDataType } from "./MyPage";
+import { FirebaseUserType, UserDataType } from "../types/usedType";
+
 
 const UsedPostUpload = () => {
   const navigate = useNavigate();
   const firebaseUser: FirebaseUserType | null = useRecoilValue(userState);
   const [dbUser, setDbUser] = useState<UserDataType | null>(null);
-  // console.log("firebsaseuser-", firebaseUser);
-  // console.log("dbuser-", dbUser);
 
-  // db에 유저 데이터 있으면 가져오고 없으면 firebase에서 가져오기
-  //
   useEffect(() => {
     const fetchData = async () => {
       if (firebaseUser?.uid) {
