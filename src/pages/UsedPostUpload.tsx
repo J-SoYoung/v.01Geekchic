@@ -1,10 +1,33 @@
-import React, { useRef, useState } from "react";
-import { usedItemUpload } from "../api/firebase";
+import React, { useEffect, useRef, useState } from "react";
+import { loadUserData, usedItemUpload } from "../api/firebase";
 import { useNavigate } from "react-router-dom";
 import { uploadCloudImage } from "../api/uploader";
+import { useRecoilValue } from "recoil";
+import { userState } from "../atoms/userAtom";
+import { FirebaseUserType, UserDataType } from "./MyPage";
 
 const UsedPostUpload = () => {
   const navigate = useNavigate();
+  const firebaseUser: FirebaseUserType | null = useRecoilValue(userState);
+  const [dbUser, setDbUser] = useState<UserDataType | null>(null);
+  // console.log("firebsaseuser-", firebaseUser);
+  // console.log("dbuser-", dbUser);
+
+  // db에 유저 데이터 있으면 가져오고 없으면 firebase에서 가져오기
+  //
+  useEffect(() => {
+    const fetchData = async () => {
+      if (firebaseUser?.uid) {
+        const data = await loadUserData(firebaseUser.uid);
+        if (!data && firebaseUser) {
+          setDbUser(null);
+        } else {
+          setDbUser(data);
+        }
+      }
+    };
+    fetchData();
+  }, []);
 
   const [previewImages, setPreviewImages] = useState<string[]>([]);
   const [uploadImages, setUploadImages] = useState<string[]>([]);
@@ -34,8 +57,6 @@ const UsedPostUpload = () => {
     setPreviewImages((prevImages) => prevImages.filter((_, i) => i !== index));
   };
 
-  // 판매자정보는 로그인 한 유저 데이터 받아와야 함.
-  // 로그인 정보 추후 추가!
   const onClickUsedItemUpload = () => {
     const itemData = {
       description,
@@ -50,12 +71,12 @@ const UsedPostUpload = () => {
       quantity,
       size,
       seller: {
-        sellerId: "thdud11",
-        userName: "thdud11",
-        nickname: "소영짱",
-        userAvatar: "https://i.postimg.cc/FFP7t86v/profile.png",
-        address: "9 Bobwhite Avenue",
-        phone: "010-1212-6919",
+        sellerId: dbUser ? dbUser.userId : firebaseUser?.uid,
+        userName: dbUser ? dbUser.userName : firebaseUser?.displayName,
+        nickname: dbUser ? dbUser.nickname : firebaseUser?.displayName,
+        userAvatar: dbUser ? dbUser.userAvatar : firebaseUser?.photoURL,
+        address: "",
+        phone: "",
       },
     };
 
