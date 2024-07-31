@@ -20,7 +20,7 @@ export interface MyUsedItemListType {
   onRemove?: (id: string) => void;
 }
 
-interface ReviewType {
+export interface ReviewType {
   reviewId: string;
   reviewInfo: ReveiwInfoType;
 }
@@ -30,7 +30,6 @@ interface ReveiwInfoType {
   userId: string;
   userName: string;
   userAvatar: string;
-  rating: number;
   review: string;
   createdAt: string;
 }
@@ -108,3 +107,4 @@ interface Wishlists {
   price: number;
   imageUrl: string;
 }
+
