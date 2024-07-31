@@ -120,7 +120,7 @@ export interface FirebaseUserType extends User {
   phoneNumber: string | null;
 }
 
-interface UsedItems {
+export interface UsedItems {
   itemId: string;
   itemName: string;
   price: number;
@@ -135,7 +135,7 @@ interface SalesItemsType extends UsedItems {
   options: string[];
 }
 
-interface OrderItemsType {
+export interface OrderItemsType {
   orderId: string;
   totalPrice: number;
   items: UsedItems[];

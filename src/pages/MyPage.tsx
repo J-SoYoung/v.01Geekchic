@@ -6,13 +6,13 @@ import { useRecoilValue } from "recoil";
 import { userState } from "../atoms/userAtom";
 import { loadUserData, uploadUserData } from "../api/firebase";
 import { UserDataType } from "../types/usedType";
+import { defaultImage } from "../types/dummyData";
 
 const MyPage = () => {
   // userId = firebase소셜 로그인 uid
   const { userId } = useParams<{ userId: string }>();
   const firebaseUser = useRecoilValue(userState);
   const [me, setMe] = useState<UserDataType | null>(null);
-  console.log(me);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -20,7 +20,6 @@ const MyPage = () => {
         // firebase db에 유저 찾기
         const data = await loadUserData(userId);
         setMe(data);
-        console.log("db유저확인", data);
 
         // firebase db에 유저 없는 경우 유저 데이터 생성
         if (!data && firebaseUser) {
@@ -50,9 +49,10 @@ const MyPage = () => {
       }
     };
     fetchData();
-  }, []);
+  }, [firebaseUser, userId]);
 
   if (me == null) {
+    // 스켈레톤으로 ㄱㄱ 로그인 여부를 확인해서 자동으로 페이지 이동
     return (
       <div>
         <p>로그인이 필요합니다.</p>
@@ -73,7 +73,10 @@ const MyPage = () => {
         <div className="mb-16 border-b-2">
           <div className="flex items-center mb-8 mx-auto">
             <div className="w-16 h-16 bg-gray-200 rounded-full">
-              <img src={me?.userAvatar} alt={me?.userName} />
+              <img
+                src={me.userAvatar ?? defaultImage}
+                alt={me.userName ?? ""}
+              />
             </div>
             <div className="ml-4 text-left">
               <div className="text-lg font-semibold">{me?.userName}</div>
@@ -84,7 +87,9 @@ const MyPage = () => {
           </div>
 
           <button className="w-full h-[45px] py-2 mb-16 bg-black text-white rounded-md">
-            <Link to="profile">프로필 관리</Link>
+            <Link to="profile" state={{ user: me }}>
+              프로필 관리
+            </Link>
           </button>
         </div>
 
@@ -92,6 +97,7 @@ const MyPage = () => {
         <div className="space-y-4">
           <Link
             to="orderlist"
+            state={{ user: me }}
             className="flex justify-between items-center p-4 bg-gray-100 rounded-md cursor-pointer"
           >
             <span className="text-lg">주문내역</span>
@@ -101,6 +107,7 @@ const MyPage = () => {
           </Link>
           <Link
             to="salelist"
+            state={{ user: me }}
             className="flex justify-between items-center p-4 bg-gray-100 rounded-md cursor-pointer"
           >
             <span className="text-lg">판매목록</span>
@@ -110,6 +117,7 @@ const MyPage = () => {
           </Link>
           <Link
             to="cart"
+            state={{ user: me }}
             className="flex justify-between items-center p-4 bg-gray-100 rounded-md cursor-pointer"
           >
             <span className="text-lg">장바구니</span>

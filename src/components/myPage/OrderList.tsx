@@ -1,27 +1,27 @@
 import React from "react";
 import MyUsedItemList from "./MyUsedItemList";
-import { UserType } from "../../types/usedType";
-import { userData } from "../../types/dummyData";
+import { OrderItemsType } from "../../types/usedType";
 
-const user: UserType = userData[0];
+interface OrdersProps {
+  orders: OrderItemsType[];
+}
 
-const OrderList = () => {
+const OrderList = ({ orders }: OrdersProps) => {
+
   return (
     <div className="p-10 text-left">
       <div className="text-m text-gray-600 mb-4 pb-4 border-b">
         <span className="font-bold">전체 </span>
-        {user.orders.length}
+        {orders.length}
       </div>
 
-      {user.orders.map((order) => {
+      {orders.map((order: OrderItemsType) => {
         return (
           <div key={order.orderId} className="mb-4 border-b">
             <div>{order.orderDate}</div>
-            {order.items.map(
-              (el) => {
-                return <MyUsedItemList item={el} isCart={false} />;
-              }
-            )}
+            {order.items.map((el) => {
+              return <MyUsedItemList key={el.itemId} item={el} isCart={false} />;
+            })}
           </div>
         );
       })}
