@@ -13,7 +13,6 @@ const MyList = () => {
   const { list } = useParams();
   const location = useLocation();
   const { user }: StateProps = location.state || {};
-  console.log(user)
 
   return (
     <Layout title={list == "cart" ? "장바구니" : "주문내역"}>

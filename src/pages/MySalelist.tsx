@@ -14,7 +14,8 @@ interface StateProps {
 const MySalelist = () => {
   const location = useLocation();
   const { user }: StateProps = location.state || {};
-  const sales = user.sales
+  const sales = user.sales;
+  console.log(sales);
 
   return (
     <Layout title="판매목록">
@@ -25,23 +26,32 @@ const MySalelist = () => {
         {/* <UsedItemList /> */}
 
         <div className="p-8 pt-4 grid grid-cols-2 gap-4 mb-24">
-          {sales.salesItems.map((el,idx) => (
-            <Link
-              key={idx}
-              to={`/usedHome/detail/${el.itemId}`}
-              className=" p-3 rounded-md cursor-pointer"
-            >
-              <img
-                src={el.imageUrl}
-                alt={el.itemName}
-                className="w-full h-48 object-cover rounded-md mb-2"
-              />
-              <h2 className="text-lg font-bold pl-2">{el.itemName}</h2>
-              <p className="text-gray-500 pl-2">
-                {el.price.toLocaleString()}원
+          {!sales.salesItems ? (
+            <div>
+              판매중인 상품이 없습니다.
+              <p>
+                <Link to="/usedHome">중고 홈 구경하기</Link>
               </p>
-            </Link>
-          ))}
+            </div>
+          ) : (
+            sales.salesItems.map((el, idx) => (
+              <Link
+                key={idx}
+                to={`/usedHome/detail/${el.itemId}`}
+                className=" p-3 rounded-md cursor-pointer"
+              >
+                <img
+                  src={el.imageUrl}
+                  alt={el.itemName}
+                  className="w-full h-48 object-cover rounded-md mb-2"
+                />
+                <h2 className="text-lg font-bold pl-2">{el.itemName}</h2>
+                <p className="text-gray-500 pl-2">
+                  {el.price.toLocaleString()}원
+                </p>
+              </Link>
+            ))
+          )}
         </div>
       </div>
     </Layout>
