@@ -135,10 +135,20 @@ const UsedDetail = () => {
             {item.reviews ? <UsedCommentList reviews={item.reviews} /> : null}
 
             <UsedInputComment addComment={addComment} />
-
-            <button className="w-full py-2 mb-4 bg-[#8F5BBD] text-white rounded-md">
+            <Link
+              to="/sendMessage"
+              state={{
+                userId: user?.uid,
+                itemId: id,
+                itemName: item.itemName,
+                itemImage: item.imageArr[0],
+                price: item.price,
+                seller: item.seller,
+              }}
+              className="w-full py-2 mb-4 bg-[#8F5BBD] text-white rounded-md"
+            >
               쪽지 보내기
-            </button>
+            </Link>
           </div>
         </div>
       )}
