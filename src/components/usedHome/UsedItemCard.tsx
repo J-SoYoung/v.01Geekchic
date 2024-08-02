@@ -1,9 +1,9 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { MyUsedItemType } from "../../types/usedType";
+import { UsedItemType } from "../../types/usedType";
 
 interface UsedItemCardProps {
-  item: MyUsedItemType;
+  item: UsedItemType;
 }
 
 const UsedItemCard = ({ item }: UsedItemCardProps) => {

@@ -9,6 +9,7 @@ import {
   getWishlistItems,
   setWishlistItems,
 } from "../api/firebase";
+import Comment from "../components/main/Comment";
 
 interface Product {
   id: string;
@@ -53,7 +54,7 @@ export default function ProductsDtail() {
   };
 
   return (
-    <div className="h-[1000px] min-h-screen w-[600px]">
+    <div className="h-[1500px] min-h-screen w-[600px]">
       <img className="w-[598px] h-[450px]" src={image} alt={description} />
       <div className="flex m-[30px] gap-[20px]">
         <div className="w-[100px] h-[100px] bg-[#BEBEBE]"></div>
@@ -95,6 +96,7 @@ export default function ProductsDtail() {
           바로구매
         </button>
       </div>
+      <Comment key={product.id} product={product} />
     </div>
   );
 }
