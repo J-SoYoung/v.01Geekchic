@@ -1,8 +1,8 @@
 import UsedItemCard from "./UsedItemCard";
-import { MyUsedItemType } from "../../types/usedType";
+import { UsedItemType } from "../../types/usedType";
 
 interface UsedItemListProps {
-  searchData: MyUsedItemType[];
+  searchData: UsedItemType[];
   onClickfunc: () => void;
   searchLoading: boolean;
 }

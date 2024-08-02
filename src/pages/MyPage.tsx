@@ -1,40 +1,12 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Layout from "../components/myPage/_Layout";
 import { Link, useParams } from "react-router-dom";
 
 import { useRecoilValue } from "recoil";
 import { userState } from "../atoms/userAtom";
-import { User } from "firebase/auth";
 import { loadUserData, uploadUserData } from "../api/firebase";
-
-export interface FirebaseUserType extends User {
-  uid: string;
-  email: string | null;
-  displayName: string | null;
-  photoURL: string | null;
-  emailVerified: boolean;
-  phoneNumber: string | null;
-}
-
-export interface UserDataType {
-  userId: string;
-  userEmail: string | null;
-  userName: string | null;
-  nickname: string | null;
-  userAvatar: string | null;
-  address: string;
-  phone: string | null;
-  orders: [];
-  sales: {
-    saleId: string;
-    salesItems: [];
-  };
-  carts: {
-    cartId: string;
-    cartsItems: [];
-  };
-  wishlists: [];
-}
+import { UserDataType } from "../types/usedType";
+import { defaultImage } from "../types/dummyData";
 
 const MyPage = () => {
   // userId = firebase소셜 로그인 uid
@@ -42,15 +14,14 @@ const MyPage = () => {
   const firebaseUser = useRecoilValue(userState);
   const [me, setMe] = useState<UserDataType | null>(null);
 
-  console.log(me);
-
   useEffect(() => {
     const fetchData = async () => {
       if (userId) {
+        // firebase db에 유저 찾기
         const data = await loadUserData(userId);
         setMe(data);
-        console.log("db유저확인", data);
 
+        // firebase db에 유저 없는 경우 유저 데이터 생성
         if (!data && firebaseUser) {
           const newUser: UserDataType = {
             userId: firebaseUser.uid,
@@ -61,17 +32,10 @@ const MyPage = () => {
             address: "",
             phone: firebaseUser.phoneNumber,
             orders: [],
-            sales: {
-              saleId: `saleId_${firebaseUser.uid}`,
-              salesItems: [],
-            },
-            carts: {
-              cartId: `cartId_${firebaseUser.uid}`,
-              cartsItems: [],
-            },
+            sales: [],
+            carts: [],
             wishlists: [],
           };
-          console.log("생성할 유저데이터", newUser);
           const createdUser = await uploadUserData(newUser);
           console.log("firebase저장한 유저데이터", createdUser);
           setMe(createdUser);
@@ -79,49 +43,22 @@ const MyPage = () => {
       }
     };
     fetchData();
-  }, [userId, firebaseUser]);
+  }, [firebaseUser, userId]);
 
-  // useEffect(() => {
-  //   // 페이지 들어왔을 때, 로그인 된 유저인지 확인하기
-  //   // 유저 데이터 불러오기 ( firebase googlelogin uid 아이디 검색 )
-  //   const loadUSer = async (userId: string) => {
-  //     const data = await loadUserData(userId);
-  //     setMe(data);
-  //     console.log("db유저확인", data);
-  //     return data;
-  //   };
-  //   userId && loadUSer(userId);
-
-  //   // 없으면 유저 데이터 생성 및 firebase에 저장
-  //   if (me == null) {
-  //     const uploadUser = async () => {
-  //       const newUser = {
-  //         userId: firebaseUser && firebaseUser.uid,
-  //         userEmail: firebaseUser && firebaseUser.email,
-  //         userName: firebaseUser && firebaseUser.displayName,
-  //         nickname: firebaseUser && firebaseUser.displayName,
-  //         userAvatar: firebaseUser && firebaseUser.photoURL,
-  //         address: "",
-  //         phone: firebaseUser && firebaseUser.phoneNumber,
-  //         orders: [],
-  //         sales: {
-  //           saleId: `saleId_${firebaseUser && firebaseUser.uid}`,
-  //           salesItems: [],
-  //         },
-  //         carts: {
-  //           cartId: `cartId_${firebaseUser && firebaseUser.uid}`,
-  //           cartsItems: [],
-  //         },
-  //         wishlists: [],
-  //       };
-  //       console.log("생성할 유저데이터", newUser);
-  //       const data = await uploadUserData(newUser);
-  //       console.log("firebase저장한 유저데이터", data);
-  //       setMe(data);
-  //     };
-  //     // uploadUser();
-  //   }
-  // }, []);
+  if (me == null) {
+    // 스켈레톤으로 ㄱㄱ 로그인 여부를 확인해서 자동으로 페이지 이동
+    return (
+      <div>
+        <p>로그인이 필요합니다.</p>
+        <p>
+          <Link to={"/api/login"}>로그인 페이지로 이동합니다</Link>
+        </p>
+        <p>
+          <Link to={"/"}>아니요, 구경만할래요</Link>
+        </p>
+      </div>
+    );
+  }
 
   return (
     <Layout title="마이페이지">
@@ -130,7 +67,10 @@ const MyPage = () => {
         <div className="mb-16 border-b-2">
           <div className="flex items-center mb-8 mx-auto">
             <div className="w-16 h-16 bg-gray-200 rounded-full">
-              <img src={me?.userAvatar} alt={me?.userName} />
+              <img
+                src={me.userAvatar ?? defaultImage}
+                alt={me.userName ?? ""}
+              />
             </div>
             <div className="ml-4 text-left">
               <div className="text-lg font-semibold">{me?.userName}</div>
@@ -141,7 +81,9 @@ const MyPage = () => {
           </div>
 
           <button className="w-full h-[45px] py-2 mb-16 bg-black text-white rounded-md">
-            <Link to="profile">프로필 관리</Link>
+            <Link to="profile" state={{ user: me }}>
+              프로필 관리
+            </Link>
           </button>
         </div>
 
@@ -149,6 +91,7 @@ const MyPage = () => {
         <div className="space-y-4">
           <Link
             to="orderlist"
+            state={{ user: me }}
             className="flex justify-between items-center p-4 bg-gray-100 rounded-md cursor-pointer"
           >
             <span className="text-lg">주문내역</span>
@@ -158,20 +101,31 @@ const MyPage = () => {
           </Link>
           <Link
             to="salelist"
+            state={{ user: me }}
             className="flex justify-between items-center p-4 bg-gray-100 rounded-md cursor-pointer"
           >
             <span className="text-lg">판매목록</span>
             <span className="text-lg font-semibold">
-              {me?.sales.salesItems ? me.sales.salesItems.length : 0}
+              {me?.sales ? me.sales.length : 0}
             </span>
           </Link>
           <Link
             to="cart"
+            state={{ user: me }}
             className="flex justify-between items-center p-4 bg-gray-100 rounded-md cursor-pointer"
           >
             <span className="text-lg">장바구니</span>
             <span className="text-lg font-semibold">
-              {me?.carts.cartsItems ? me.carts.cartsItems.length : 0}
+              {me?.carts ? me.carts.length : 0}
+            </span>
+          </Link>
+          <Link
+            to="talk"
+            className="flex justify-between items-center p-4 bg-gray-100 rounded-md cursor-pointer"
+          >
+            <span className="text-lg">내 쪽지함</span>
+            <span className="text-lg font-semibold">
+              {/* {me?.carts.cartsItems ? me.carts.cartsItems.length : 0} */}
             </span>
           </Link>
         </div>

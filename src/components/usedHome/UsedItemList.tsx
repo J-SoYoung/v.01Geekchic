@@ -1,8 +1,8 @@
 import UsedItemCard from "./UsedItemCard";
-import { MyUsedItemType } from "../../types/usedType";
+import { UsedItemType } from "../../types/usedType";
 
 interface UsedItemListProps {
-  usedItems: MyUsedItemType[];
+  usedItems: UsedItemType[];
 }
 
 const UsedItemList = ({ usedItems }: UsedItemListProps) => {
