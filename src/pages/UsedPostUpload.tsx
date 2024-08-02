@@ -1,16 +1,36 @@
-import React, { useRef, useState } from "react";
-import { usedItemUpload } from "../api/firebase";
+import React, { useEffect, useRef, useState } from "react";
+import { loadUserData, usedItemUpload } from "../api/firebase";
 import { useNavigate } from "react-router-dom";
 import { uploadCloudImage } from "../api/uploader";
+import { useRecoilValue } from "recoil";
+import { userState } from "../atoms/userAtom";
+import { FirebaseUserType, UserDataType } from "../types/usedType";
 
+// ⭕ 유효성 검사 check
 const UsedPostUpload = () => {
   const navigate = useNavigate();
+  const firebaseUser: FirebaseUserType | null = useRecoilValue(userState);
+  const [dbUser, setDbUser] = useState<UserDataType | null>(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (firebaseUser?.uid) {
+        const data = await loadUserData(firebaseUser.uid);
+        if (!data && firebaseUser) {
+          setDbUser(null);
+        } else {
+          setDbUser(data);
+        }
+      }
+    };
+    fetchData();
+  }, []);
 
   const [previewImages, setPreviewImages] = useState<string[]>([]);
   const [uploadImages, setUploadImages] = useState<string[]>([]);
   const [itemName, setItemName] = useState("");
   const [size, setSize] = useState("");
-  const [price, setPrice] = useState<number>(1000);
+  const [price, setPrice] = useState<string>('1000');
   const [quantity, setQuantity] = useState<number>(1);
   const [shippingIncluded, setShippingIncluded] = useState(false);
   const [productCondition, setProductCondition] = useState("used");
@@ -24,7 +44,6 @@ const UsedPostUpload = () => {
       setPreviewImages((prevImages) => prevImages.concat(urlFile));
 
       const cloudImage = await uploadCloudImage(file);
-      console.log(cloudImage);
       setUploadImages((prevImages) => prevImages.concat(cloudImage));
     }
   };
@@ -34,8 +53,6 @@ const UsedPostUpload = () => {
     setPreviewImages((prevImages) => prevImages.filter((_, i) => i !== index));
   };
 
-  // 판매자정보는 로그인 한 유저 데이터 받아와야 함.
-  // 로그인 정보 추후 추가!
   const onClickUsedItemUpload = () => {
     const itemData = {
       description,
@@ -50,12 +67,12 @@ const UsedPostUpload = () => {
       quantity,
       size,
       seller: {
-        sellerId: "thdud11",
-        userName: "thdud11",
-        nickname: "소영짱",
-        userAvatar: "https://i.postimg.cc/FFP7t86v/profile.png",
-        address: "9 Bobwhite Avenue",
-        phone: "010-1212-6919",
+        sellerId: dbUser ? dbUser.userId : firebaseUser?.uid,
+        userName: dbUser ? dbUser.userName : firebaseUser?.displayName,
+        nickname: dbUser ? dbUser.nickname : firebaseUser?.displayName,
+        userAvatar: dbUser ? dbUser.userAvatar : firebaseUser?.photoURL,
+        address: "",
+        phone: "",
       },
     };
 
@@ -136,7 +153,7 @@ const UsedPostUpload = () => {
             type="number"
             value={price}
             onChange={(e) => {
-              setPrice(Number(e.target.value));
+              setPrice(e.target.value);
             }}
             min={1000}
             className="mt-1 block w-full border-gray-300 rounded-md shadow-sm"

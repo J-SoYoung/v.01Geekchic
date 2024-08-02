@@ -20,14 +20,14 @@ import {
   orderByChild,
   remove,
 } from "firebase/database";
-import { MyUsedItemType } from "../types/usedType";
-import { UserDataType } from "../pages/MyPage";
+import { UsedItemType, ReviewType, UserDataType } from "../types/usedType";
+import { SetterOrUpdater } from "recoil";
 
 interface AdminUser extends User {
   isAdmin: boolean;
 }
 
-interface Product {
+export interface Product {
   id: string;
   title: string;
   category: string;
@@ -222,7 +222,7 @@ export async function getCommentItems(productId: string): Promise<Comment[]> {
 }
 
 // 중고 제품 업로드
-export function usedItemUpload(itemData: MyUsedItemType) {
+export function usedItemUpload(itemData: UsedItemType) {
   const usedItemRef = ref(database, "usedItems");
   const newItemRef = push(usedItemRef);
 
@@ -233,7 +233,7 @@ export function usedItemUpload(itemData: MyUsedItemType) {
 }
 
 // 중고 메인 데이터 받아오기
-export function usedItemLists(): Promise<MyUsedItemType[]> {
+export function usedItemLists(): Promise<UsedItemType[]> {
   return new Promise((resolve, reject) => {
     const usedDataRef = ref(database, "usedItems");
     const sortUsedItem = query(usedDataRef, orderByKey());
@@ -275,11 +275,28 @@ export async function usedDetailItem(id: string) {
   }
 }
 
+// 댓글 추가 ( = 아이템 데이터 수정 )
+export function updateItemComments(id: string, reviews: ReviewType[]) {
+  console.log("db저장 - ", id, reviews);
+  const itemRef = ref(database, `usedItems/${id}/reviews`);
+  return set(itemRef, reviews);
+}
+
+// 댓글 삭제
+export async function removeItemComments(
+  id: string,
+  reviewId: string
+): Promise<void> {
+  console.log(id, reviewId);
+  const itemRef = ref(database, `usedItems/${id}/reviews/${reviewId}`);
+  await remove(itemRef); 
+}
+
 // 중고 데이터 쿼리 검색
 // firebase검색어 쿼리로는 검색하기에 한계가 있음. 따로 filter함수를 사용해서 검색
 export async function usedItemSearch(
   queryString: string
-): Promise<MyUsedItemType[]> {
+): Promise<UsedItemType[]> {
   return new Promise((resolve, reject) => {
     const usedItemRef = ref(database, "usedItems");
     const queryUsedItem = query(usedItemRef, orderByChild("itemName"));
@@ -310,21 +327,11 @@ export async function usedItemSearch(
 }
 
 // 유저 데이터 생성
-// export async function uploadUserData(data) {
-//   console.log(data);
-//   const userTestRef = ref(database, "userTestData");
-//   const newUserRef = push(userTestRef);
-
-//   return set(newUserRef, {
-//     ...data,
-//     createdAt: Date.now(),
-//   });
-// }
 export async function uploadUserData(
   data: UserDataType
 ): Promise<UserDataType> {
-  const userTestRef = ref(database, `userTestData/${data.userId}`);
-  await set(userTestRef, {
+  const userRef = ref(database, `userData/${data.userId}`);
+  await set(userRef, {
     ...data,
     createdAt: Date.now(),
   });
@@ -332,37 +339,10 @@ export async function uploadUserData(
 }
 
 // 유저 데이터 불러오기
-// uid로 바로 확인할 수 있는 법 or firebase의 id를 받아올 수 잇는 법 check
-// export async function loadUserData(userId: string) {
-//   console.log(userId);
-//   try {
-//     const userRef = ref(database, `userTestData`);
-//     const snapshot = await get(userRef);
-//     const data = snapshot.val();
-//     console.log("firebase유저전체", data);
-
-//     if (data) {
-//       const allUser = Object.keys(data).map((key) => ({
-//         id: key,
-//         ...data[key],
-//       }));
-//       const user = allUser.filter((u) =>
-//         u.userId.toLowerCase().includes(userId.toLowerCase())
-//       );
-//       console.log(user);
-//       return user;
-//     } else {
-//       return null;
-//     }
-//   } catch (error) {
-//     console.error("user not found");
-//   }
-// }
-
 export async function loadUserData(
   userId: string
 ): Promise<UserDataType | null> {
-  const userRef = ref(database, `userTestData/${userId}`);
+  const userRef = ref(database, `userData/${userId}`);
   const snapshot = await get(userRef);
   if (snapshot.exists()) {
     return snapshot.val() as UserDataType;
@@ -371,8 +351,16 @@ export async function loadUserData(
   }
 }
 
-// 유저 데이터 삭제
-export async function deleteUser(userId: string): Promise<void> {
-  const userRef = ref(database, `userTestData/${userId}`);
-  await remove(userRef);
+// 유저 프로필 수정
+export async function editUserData(
+  updatedUser: UserDataType,
+  setUser: SetterOrUpdater<UserDataType>
+) {
+  try {
+    const userEditRef = ref(database, `userData/${updatedUser.userId}`);
+    await set(userEditRef, updatedUser);
+    setUser(updatedUser);
+  } catch (err) {
+    console.error("Error 유저 프로필 수정");
+  }
 }
