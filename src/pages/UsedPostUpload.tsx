@@ -6,7 +6,7 @@ import { useRecoilValue } from "recoil";
 import { userState } from "../atoms/userAtom";
 import { FirebaseUserType, UserDataType } from "../types/usedType";
 
-
+// ⭕ 유효성 검사 check
 const UsedPostUpload = () => {
   const navigate = useNavigate();
   const firebaseUser: FirebaseUserType | null = useRecoilValue(userState);
@@ -30,7 +30,7 @@ const UsedPostUpload = () => {
   const [uploadImages, setUploadImages] = useState<string[]>([]);
   const [itemName, setItemName] = useState("");
   const [size, setSize] = useState("");
-  const [price, setPrice] = useState<number>(1000);
+  const [price, setPrice] = useState<string>('1000');
   const [quantity, setQuantity] = useState<number>(1);
   const [shippingIncluded, setShippingIncluded] = useState(false);
   const [productCondition, setProductCondition] = useState("used");
@@ -153,7 +153,7 @@ const UsedPostUpload = () => {
             type="number"
             value={price}
             onChange={(e) => {
-              setPrice(Number(e.target.value));
+              setPrice(e.target.value);
             }}
             min={1000}
             className="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
