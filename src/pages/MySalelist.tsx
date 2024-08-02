@@ -17,7 +17,7 @@ const MySalelist = () => {
     <Layout title="판매목록">
       <div className="text-left h-[100vh]">
         <div className=" text-m text-gray-600 m-8 mb-4 pb-4 border-b">
-          <span className="font-bold">전체 {sales.length}</span>
+          <span className="font-bold">전체 {sales? sales.length : 0}</span>
         </div>
 
         <div className="p-8 pt-4 grid grid-cols-2 gap-4 mb-24">
