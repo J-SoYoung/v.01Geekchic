@@ -13,7 +13,6 @@ interface Comment {
 }
 
 export default function CommentCard() {
-  // const user = useRecoilValue(userState);
   const { id } = useParams<{ id: string }>();
   const [comments, setComments] = useState<Comment[]>([]);
 
@@ -23,15 +22,33 @@ export default function CommentCard() {
     }
   }, [id]);
 
+  function formatDate(dateString: string): string {
+    const date = new Date(dateString);
+    return date.toISOString().split("T")[0];
+  }
+
   return (
-    <div>
+    <div className="text-[14px] mt-[50px]">
       {comments.length > 0 ? (
         comments.map((comment) => (
-          <div key={comment.id}>
-            <img src={comment.userPhoto} alt={comment.displayName} />
-            <h3>{comment.displayName}</h3>
-            <p>{comment.text}</p>
-            <p>Rating: {comment.rank}</p>
+          <div key={comment.id} className="mt-[40px]">
+            <div className="flex ml-[40px]">
+              <img
+                src={comment.userPhoto}
+                alt={comment.displayName}
+                className="rounded-full w-[70px]"
+              />
+              <div className="mt-[20px] ml-[15px]">
+                <h3 className="text-left text-lg font-bold">
+                  {comment.displayName}
+                </h3>
+                <p className="text-sm">{formatDate(comment.createdAt)}</p>
+              </div>
+              <p className="mt-[10px] ml-[250px]">Rating: {comment.rank}</p>
+            </div>
+            <p className="border-b-2 border-0 h-[40px] w-[500px] m-auto text-left mt-[25px] text-lg">
+              {comment.text}
+            </p>
           </div>
         ))
       ) : (
