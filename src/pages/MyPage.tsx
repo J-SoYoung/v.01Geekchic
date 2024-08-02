@@ -1,29 +1,14 @@
-import { useEffect, useState } from "react";
 import Layout from "../components/myPage/_Layout";
-import { Link, useParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 
-import { loadUserData } from "../api/firebase";
-import { UserDataType } from "../types/usedType";
 import { defaultImage } from "../types/dummyData";
+import { geekChickUser } from "../atoms/userAtom";
+import { useRecoilValue } from "recoil";
 
 const MyPage = () => {
-  // userId = firebase소셜 로그인 uid
-  const { userId } = useParams<{ userId: string }>();
-  const [me, setMe] = useState<UserDataType | null>(null);
-  console.log(me)
-
-  useEffect(() => {
-    const fetchData = async () => {
-      if (userId) {
-        const data = await loadUserData(userId);
-        setMe(data);
-      }
-    };
-    fetchData();
-  }, [userId]);
-
+  const me = useRecoilValue(geekChickUser);
+  
   if (me == null) {
-    // 스켈레톤으로 ㄱㄱ 로그인 여부를 확인해서 자동으로 페이지 이동
     return (
       <div>
         <p>로그인이 필요합니다.</p>
