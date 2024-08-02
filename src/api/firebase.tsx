@@ -20,13 +20,13 @@ import {
   orderByChild,
   remove,
 } from "firebase/database";
-import { MyUsedItemType, ReviewType, UserDataType } from "../types/usedType";
+import { UsedItemType, ReviewType, UserDataType } from "../types/usedType";
 
 interface AdminUser extends User {
   isAdmin: boolean;
 }
 
-interface Product {
+export interface Product {
   id: string;
   title: string;
   category: string;
@@ -211,7 +211,7 @@ export async function newComment(
 }
 
 // 중고 제품 업로드
-export function usedItemUpload(itemData: MyUsedItemType) {
+export function usedItemUpload(itemData: UsedItemType) {
   const usedItemRef = ref(database, "usedItems");
   const newItemRef = push(usedItemRef);
 
@@ -222,7 +222,7 @@ export function usedItemUpload(itemData: MyUsedItemType) {
 }
 
 // 중고 메인 데이터 받아오기
-export function usedItemLists(): Promise<MyUsedItemType[]> {
+export function usedItemLists(): Promise<UsedItemType[]> {
   return new Promise((resolve, reject) => {
     const usedDataRef = ref(database, "usedItems");
     const sortUsedItem = query(usedDataRef, orderByKey());
@@ -285,7 +285,7 @@ export async function removeItemComments(
 // firebase검색어 쿼리로는 검색하기에 한계가 있음. 따로 filter함수를 사용해서 검색
 export async function usedItemSearch(
   queryString: string
-): Promise<MyUsedItemType[]> {
+): Promise<UsedItemType[]> {
   return new Promise((resolve, reject) => {
     const usedItemRef = ref(database, "usedItems");
     const queryUsedItem = query(usedItemRef, orderByChild("itemName"));

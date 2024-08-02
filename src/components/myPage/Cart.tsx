@@ -1,22 +1,20 @@
 import React, { useState } from "react";
 import MyUsedItemList from "./MyUsedItemList";
-import { MyItems, UsedItems } from "../../types/usedType";
 import { Link } from "react-router-dom";
+import { Product } from "../../api/firebase";
 
 interface CartsProps {
-  carts: {
-    cartId: string;
-    cartsItems: UsedItems[];
-  };
+  carts: Product[];
 }
 
 const Cart = ({ carts }: CartsProps) => {
-  const [cartItems, setCartItems] = useState<MyItems[]>([]);
+  const [cartItems, setCartItems] = useState<Product[]>([]);
 
+  // ⭕함수 동작X -> 구현해야함 ( 수량변경 )
   const handleQuantityChange = (cartId: string, quantity: number) => {
     setCartItems((prevItems) =>
       prevItems.map((item) =>
-        item.itemId === cartId
+        item.id === cartId
           ? { ...item, quantity: Math.max(1, quantity) }
           : item
       )
@@ -24,7 +22,7 @@ const Cart = ({ carts }: CartsProps) => {
   };
 
   const handleRemove = (id: string) => {
-    setCartItems((prevItems) => prevItems.filter((item) => item.itemId !== id));
+    setCartItems((prevItems) => prevItems.filter((item) => item.id !== id));
   };
 
   return (
@@ -32,7 +30,7 @@ const Cart = ({ carts }: CartsProps) => {
       <div className="text-m text-gray-600 mb-4 pb-4 border-b">
         <span className="font-bold">전체 {cartItems.length}</span>
       </div>
-      {!carts.cartsItems ? (
+      {!carts ? (
         <div>
           장바구니 내역이 없습니다.
           <p>
@@ -40,11 +38,11 @@ const Cart = ({ carts }: CartsProps) => {
           </p>
         </div>
       ) : (
-        carts.cartsItems.map((el, idx) => {
+        carts.map((cart, idx) => {
           return (
             <MyUsedItemList
               key={idx}
-              item={el}
+              item={cart}
               isCart={true}
               onQuantityChange={handleQuantityChange}
               onRemove={handleRemove}
@@ -52,7 +50,7 @@ const Cart = ({ carts }: CartsProps) => {
           );
         })
       )}
-      {carts.cartsItems && (
+      {carts && (
         <>
           <div className="p-4 bg-gray-100 rounded-lg flex justify-between items-center text-center">
             <div className="flex flex-col ">
