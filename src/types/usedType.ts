@@ -16,8 +16,6 @@ export interface UsedItemType {
   reviews?: ReviewType[];
 }
 
-
-
 export interface ReviewType {
   reviewId: string;
   reviewInfo: CommentInfoType;
@@ -51,8 +49,8 @@ interface SellerType {
 //   options: string[];
 // }
 
-
-export interface FirebaseUserType extends User { // firebase 유저 타입
+export interface FirebaseUserType extends User {
+  // firebase 유저 타입
   uid: string;
   email: string | null;
   displayName: string | null;
@@ -61,7 +59,8 @@ export interface FirebaseUserType extends User { // firebase 유저 타입
   phoneNumber: string | null;
 }
 
-export interface UsedItems { // 중고 아이템
+export interface UsedItems {
+  // 중고 아이템
   itemId: string;
   itemName: string;
   price: string;
@@ -70,13 +69,15 @@ export interface UsedItems { // 중고 아이템
   quantity: number;
 }
 
-export interface SalesItemsType extends UsedItems { // 판매 목록
+export interface SalesItemsType extends UsedItems {
+  // 판매 목록
   createdAt: string;
   isSales: boolean;
   options: string[];
 }
 
-export interface OrderItemsType { // 주문 목록
+export interface OrderItemsType {
+  // 주문 목록
   orderId: string;
   totalPrice: string;
   items: UsedItems[] | Product[];
@@ -89,14 +90,15 @@ export interface OrderItemsType { // 주문 목록
   orderDate: string;
 }
 
-export interface UserDataType { //유저 타입
+export interface UserDataType {
+  //유저 타입
   userId: string;
-  userEmail: string | null;
-  userName: string | null;
-  nickname: string | null;
-  userAvatar: string | null;
+  userEmail: string;
+  userName: string;
+  nickname: string;
+  userAvatar: string;
   address: string;
-  phone: string | null;
+  phone: string;
   orders: OrderItemsType[];
   sales: SalesItemsType[];
   carts: Product[];

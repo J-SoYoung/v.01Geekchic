@@ -21,6 +21,7 @@ import {
   remove,
 } from "firebase/database";
 import { UsedItemType, ReviewType, UserDataType } from "../types/usedType";
+import { SetterOrUpdater } from "recoil";
 
 interface AdminUser extends User {
   isAdmin: boolean;
@@ -41,7 +42,7 @@ interface Comment {
   text: string;
   rank: number;
   createdAt: string;
-  uid: User;
+  uid: string;
   userPhoto: string;
   displayName: string;
 }
@@ -190,17 +191,17 @@ export async function getWishlistItems(userId: string): Promise<Product[]> {
 
 export async function newComment(
   productId: string,
-  comment: Omit<Comment, "id" | "createdAt">
+  comments: Omit<Comment, "id" | "createdAt">
 ): Promise<void> {
   const commentId = uuidv4();
   const newComment: Comment = {
     id: commentId,
-    text: comment.text,
-    rank: comment.rank,
+    text: comments.text,
+    rank: comments.rank,
     createdAt: new Date().toISOString(),
-    uid: comment.uid,
-    userPhoto: comment.userPhoto,
-    displayName: comment.displayName,
+    uid: comments.uid,
+    userPhoto: comments.userPhoto,
+    displayName: comments.displayName,
   };
 
   const commentRef = ref(
@@ -208,6 +209,16 @@ export async function newComment(
     `products/${productId}/comments/${commentId}`
   );
   await set(commentRef, newComment);
+}
+
+export async function getCommentItems(productId: string): Promise<Comment[]> {
+  const commentsRef = ref(getDatabase(), `products/${productId}/comments`);
+  return get(commentsRef).then((snapshot) => {
+    if (snapshot.exists()) {
+      return Object.values(snapshot.val());
+    }
+    return [];
+  });
 }
 
 // 중고 제품 업로드
@@ -340,3 +351,16 @@ export async function loadUserData(
   }
 }
 
+// 유저 프로필 수정
+export async function editUserData(
+  updatedUser: UserDataType,
+  setUser: SetterOrUpdater<UserDataType>
+) {
+  try {
+    const userEditRef = ref(database, `userData/${updatedUser.userId}`);
+    await set(userEditRef, updatedUser);
+    setUser(updatedUser);
+  } catch (err) {
+    console.error("Error 유저 프로필 수정");
+  }
+}

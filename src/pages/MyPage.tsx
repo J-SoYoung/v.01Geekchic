@@ -1,29 +1,14 @@
-import { useEffect, useState } from "react";
 import Layout from "../components/myPage/_Layout";
-import { Link, useParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 
-import { loadUserData } from "../api/firebase";
-import { UserDataType } from "../types/usedType";
 import { defaultImage } from "../types/dummyData";
+import { geekChickUser } from "../atoms/userAtom";
+import { useRecoilValue } from "recoil";
 
 const MyPage = () => {
-  // userId = firebase소셜 로그인 uid
-  const { userId } = useParams<{ userId: string }>();
-  const [me, setMe] = useState<UserDataType | null>(null);
-  console.log(me)
+  const user = useRecoilValue(geekChickUser);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      if (userId) {
-        const data = await loadUserData(userId);
-        setMe(data);
-      }
-    };
-    fetchData();
-  }, [userId]);
-
-  if (me == null) {
-    // 스켈레톤으로 ㄱㄱ 로그인 여부를 확인해서 자동으로 페이지 이동
+  if (user == null) {
     return (
       <div>
         <p>로그인이 필요합니다.</p>
@@ -45,22 +30,20 @@ const MyPage = () => {
           <div className="flex items-center mb-8 mx-auto">
             <div className="w-16 h-16 bg-gray-200 rounded-full">
               <img
-                src={me.userAvatar ?? defaultImage}
-                alt={me.userName ?? ""}
+                src={user.userAvatar ?? defaultImage}
+                alt={user.userName ?? ""}
               />
             </div>
             <div className="ml-4 text-left">
-              <div className="text-lg font-semibold">{me?.userName}</div>
+              <div className="text-lg font-semibold">{user?.userName}</div>
               <div className="text-sm text-gray-500">
-                {me?.address ? me.address : "주소를 작성해주세요"}
+                {user?.address ? user.address : "주소를 작성해주세요"}
               </div>
             </div>
           </div>
 
           <button className="w-full h-[45px] py-2 mb-16 bg-black text-white rounded-md">
-            <Link to="profile" state={{ user: me }}>
-              프로필 관리
-            </Link>
+            <Link to="profile">프로필 관리</Link>
           </button>
         </div>
 
@@ -68,32 +51,32 @@ const MyPage = () => {
         <div className="space-y-4">
           <Link
             to="orderlist"
-            state={{ user: me }}
+            state={{ user: user }}
             className="flex justify-between items-center p-4 bg-gray-100 rounded-md cursor-pointer"
           >
             <span className="text-lg">주문내역</span>
             <span className="text-lg font-semibold">
-              {me?.orders ? me.orders.length : 0}
+              {user?.orders ? user.orders.length : 0}
             </span>
           </Link>
           <Link
             to="salelist"
-            state={{ user: me }}
+            state={{ user }}
             className="flex justify-between items-center p-4 bg-gray-100 rounded-md cursor-pointer"
           >
             <span className="text-lg">판매목록</span>
             <span className="text-lg font-semibold">
-              {me?.sales ? me.sales.length : 0}
+              {user?.sales ? user.sales.length : 0}
             </span>
           </Link>
           <Link
             to="cart"
-            state={{ user: me }}
+            state={{ user }}
             className="flex justify-between items-center p-4 bg-gray-100 rounded-md cursor-pointer"
           >
             <span className="text-lg">장바구니</span>
             <span className="text-lg font-semibold">
-              {me?.carts ? me.carts.length : 0}
+              {user?.carts ? user.carts.length : 0}
             </span>
           </Link>
           <Link

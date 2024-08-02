@@ -5,9 +5,9 @@ import SearchHeader from "../components/common/SearchHeader";
 import { useQuery } from "@tanstack/react-query";
 import ProductCard from "../components/main/ProductCard";
 import useProducts, { loadUserData, uploadUserData } from "../api/firebase";
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { Link } from "react-router-dom";
-import { userState } from "../atoms/userAtom";
+import { userState, geekChickUser } from "../atoms/userAtom";
 import { UserDataType } from "../types/usedType";
 
 interface Product {
@@ -23,6 +23,8 @@ interface Product {
 export default function Home() {
   const { keyword } = useParams<{ keyword: string }>();
   const user = useRecoilValue(userState);
+  const [geekUser,setGeekUser] = useRecoilState(geekChickUser);
+
   const searchKeyword = keyword || "";
   const { search } = useProducts();
 
@@ -44,9 +46,11 @@ export default function Home() {
 
   useEffect(() => {
     const fetchData = async () => {
+      // 로그인을 했는지 확인
       if (user) {
         // firebase db에 유저 찾기
         const data = await loadUserData(user.uid);
+        setGeekUser(data);
         console.log("firebase유저있음?", data);
 
         // firebase db에 유저 없는 경우 유저 데이터 생성
@@ -65,6 +69,7 @@ export default function Home() {
             wishlists: [],
           };
           const createdUser = await uploadUserData(newUser);
+          setGeekUser(newUser);
           console.log("firebase저장한 유저데이터", createdUser);
         }
       }
