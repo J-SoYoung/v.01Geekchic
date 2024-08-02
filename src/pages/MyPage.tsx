@@ -32,18 +32,12 @@ const MyPage = () => {
             address: "",
             phone: firebaseUser.phoneNumber,
             orders: [],
-            sales: {
-              saleId: `saleId_${firebaseUser.uid}`,
-              salesItems: [],
-            },
-            carts: {
-              cartId: `cartId_${firebaseUser.uid}`,
-              cartsItems: [],
-            },
+            sales: [],
+            carts: [],
             wishlists: [],
           };
-          // 유저 데이터 db저장
           const createdUser = await uploadUserData(newUser);
+          console.log("firebase저장한 유저데이터", createdUser);
           setMe(createdUser);
         }
       }
@@ -112,7 +106,7 @@ const MyPage = () => {
           >
             <span className="text-lg">판매목록</span>
             <span className="text-lg font-semibold">
-              {me?.sales.salesItems ? me.sales.salesItems.length : 0}
+              {me?.sales ? me.sales.length : 0}
             </span>
           </Link>
           <Link
@@ -122,7 +116,7 @@ const MyPage = () => {
           >
             <span className="text-lg">장바구니</span>
             <span className="text-lg font-semibold">
-              {me?.carts.cartsItems ? me.carts.cartsItems.length : 0}
+              {me?.carts ? me.carts.length : 0}
             </span>
           </Link>
           <Link
