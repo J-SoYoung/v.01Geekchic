@@ -2,48 +2,25 @@ import { useEffect, useState } from "react";
 import Layout from "../components/myPage/_Layout";
 import { Link, useParams } from "react-router-dom";
 
-import { useRecoilValue } from "recoil";
-import { userState } from "../atoms/userAtom";
-import { loadUserData, uploadUserData } from "../api/firebase";
+import { loadUserData } from "../api/firebase";
 import { UserDataType } from "../types/usedType";
 import { defaultImage } from "../types/dummyData";
 
 const MyPage = () => {
   // userId = firebase소셜 로그인 uid
   const { userId } = useParams<{ userId: string }>();
-  const firebaseUser = useRecoilValue(userState);
   const [me, setMe] = useState<UserDataType | null>(null);
+  console.log(me)
 
   useEffect(() => {
     const fetchData = async () => {
       if (userId) {
-        // firebase db에 유저 찾기
         const data = await loadUserData(userId);
         setMe(data);
-
-        // firebase db에 유저 없는 경우 유저 데이터 생성
-        if (!data && firebaseUser) {
-          const newUser: UserDataType = {
-            userId: firebaseUser.uid,
-            userEmail: firebaseUser.email,
-            userName: firebaseUser.displayName,
-            nickname: firebaseUser.displayName,
-            userAvatar: firebaseUser.photoURL,
-            address: "",
-            phone: firebaseUser.phoneNumber,
-            orders: [],
-            sales: [],
-            carts: [],
-            wishlists: [],
-          };
-          const createdUser = await uploadUserData(newUser);
-          console.log("firebase저장한 유저데이터", createdUser);
-          setMe(createdUser);
-        }
       }
     };
     fetchData();
-  }, [firebaseUser, userId]);
+  }, [userId]);
 
   if (me == null) {
     // 스켈레톤으로 ㄱㄱ 로그인 여부를 확인해서 자동으로 페이지 이동

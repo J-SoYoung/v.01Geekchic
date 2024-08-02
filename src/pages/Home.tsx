@@ -1,13 +1,14 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import Header from "../components/common/Header";
 import SearchHeader from "../components/common/SearchHeader";
 import { useQuery } from "@tanstack/react-query";
 import ProductCard from "../components/main/ProductCard";
-import useProducts from "../api/firebase";
+import useProducts, { loadUserData, uploadUserData } from "../api/firebase";
 import { useRecoilValue } from "recoil";
 import { Link } from "react-router-dom";
 import { userState } from "../atoms/userAtom";
+import { UserDataType } from "../types/usedType";
 
 interface Product {
   id: string;
@@ -40,6 +41,36 @@ export default function Home() {
   {
     error && <p>Something is wrong</p>;
   }
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (user) {
+        // firebase db에 유저 찾기
+        const data = await loadUserData(user.uid);
+        console.log("firebase유저있음?", data);
+
+        // firebase db에 유저 없는 경우 유저 데이터 생성
+        if (!data && user) {
+          const newUser: UserDataType = {
+            userId: user.uid,
+            userEmail: user.email,
+            userName: user.displayName,
+            nickname: user.displayName,
+            userAvatar: user.photoURL,
+            address: "",
+            phone: user.phoneNumber,
+            orders: [],
+            sales: [],
+            carts: [],
+            wishlists: [],
+          };
+          const createdUser = await uploadUserData(newUser);
+          console.log("firebase저장한 유저데이터", createdUser);
+        }
+      }
+    };
+    fetchData();
+  }, [user]);
 
   return (
     <div className="h-full min-h-screen">
