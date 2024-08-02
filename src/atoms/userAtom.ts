@@ -43,7 +43,7 @@ export const wishlistState = atom<Product[]>({
   default: [],
 });
 
-export const geekChickUser = atom<UserDataType | null>({
+export const geekChickUser = atom<UserDataType>({
   key: "geekChickUser",
   default: {
     userId: "",

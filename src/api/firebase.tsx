@@ -21,6 +21,7 @@ import {
   remove,
 } from "firebase/database";
 import { UsedItemType, ReviewType, UserDataType } from "../types/usedType";
+import { SetterOrUpdater } from "recoil";
 
 interface AdminUser extends User {
   isAdmin: boolean;
@@ -340,3 +341,16 @@ export async function loadUserData(
   }
 }
 
+// 유저 프로필 수정
+export async function editUserData(
+  updatedUser: UserDataType,
+  setUser: SetterOrUpdater<UserDataType>
+) {
+  try {
+    const userEditRef = ref(database, `userData/${updatedUser.userId}`);
+    await set(userEditRef, updatedUser);
+    setUser(updatedUser);
+  } catch (err) {
+    console.error("Error 유저 프로필 수정");
+  }
+}
