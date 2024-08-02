@@ -40,7 +40,6 @@ export default function Home() {
   {
     error && <p>Something is wrong</p>;
   }
-
   return (
     <div className="h-full min-h-screen">
       <Header />

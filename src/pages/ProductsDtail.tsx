@@ -10,6 +10,7 @@ import {
   setWishlistItems,
 } from "../api/firebase";
 import Comment from "../components/main/Comment";
+import CommentCard from "../components/main/CommentCard";
 
 interface Product {
   id: string;
@@ -97,6 +98,7 @@ export default function ProductsDtail() {
         </button>
       </div>
       <Comment key={product.id} product={product} />
+      <CommentCard />
     </div>
   );
 }
