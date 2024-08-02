@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 
-import { MyUsedItemType } from "../types/usedType";
+import { UsedItemType } from "../types/usedType";
 import { usedItemLists, usedItemSearch } from "../api/firebase";
 
 import SearchList from "../components/usedHome/SearchList";
@@ -14,7 +14,7 @@ const UsedHome = () => {
   const [searchQuery, setSearchQuery] = useState("");
 
   const { data: usedItems, isLoading: usedItemLoading } = useQuery<
-    MyUsedItemType[],
+    UsedItemType[],
     Error
   >({
     queryKey: ["usedItems"],
@@ -22,7 +22,7 @@ const UsedHome = () => {
   });
 
   const { data: searchResultData, isLoading: searchLoading } = useQuery<
-    MyUsedItemType[],
+    UsedItemType[],
     Error
   >({
     queryKey: ["searchUsedItems", searchQuery],

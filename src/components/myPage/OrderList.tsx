@@ -30,9 +30,9 @@ const OrderList = ({ orders }: OrdersProps) => {
         return (
           <div key={order.orderId} className="mb-4 border-b">
             <div>{order.orderDate}</div>
-            {order.items.map((el) => {
+            {order.items.map((item, idx) => {
               return (
-                <MyUsedItemList key={el.itemId} item={el} isCart={false} />
+                <MyUsedItemList key={idx} item={item} isCart={false} />
               );
             })}
           </div>

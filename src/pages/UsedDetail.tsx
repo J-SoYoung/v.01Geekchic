@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import Chevron_left from "../assets/icons/chevron_left.svg";
 import { updateItemComments, usedDetailItem } from "../api/firebase";
-import { MyUsedItemType, ReviewType } from "../types/usedType";
+import { UsedItemType, ReviewType } from "../types/usedType";
 import UsedCommentList from "../components/usedDetail/UsedCommentList";
 import { useRecoilValue } from "recoil";
 import { userState } from "../atoms/userAtom";
@@ -13,7 +13,7 @@ const UsedDetail = () => {
   const { id } = useParams();
 
   const user = useRecoilValue(userState);
-  const [item, setItem] = useState<MyUsedItemType>();
+  const [item, setItem] = useState<UsedItemType>();
 
   useEffect(() => {
     const fetchItem = async () => {
