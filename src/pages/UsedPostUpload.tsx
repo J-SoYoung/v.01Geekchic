@@ -44,7 +44,6 @@ const UsedPostUpload = () => {
       setPreviewImages((prevImages) => prevImages.concat(urlFile));
 
       const cloudImage = await uploadCloudImage(file);
-      console.log(cloudImage);
       setUploadImages((prevImages) => prevImages.concat(cloudImage));
     }
   };

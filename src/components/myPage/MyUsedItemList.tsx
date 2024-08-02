@@ -18,8 +18,8 @@ const MyUsedItemList = ({
   onQuantityChange,
   onRemove,
 }: UsedItemListType) => {
-  console.log(item);
 
+  // 타입 체크 후 컴포넌트 렌더링
   const isProduct = (item: Product | UsedItems): item is Product => {
     return (item as Product).id !== undefined;
   };
