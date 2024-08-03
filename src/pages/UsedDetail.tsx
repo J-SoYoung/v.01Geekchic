@@ -2,57 +2,39 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import Chevron_left from "../assets/icons/chevron_left.svg";
 import { updateItemComments, usedDetailItem } from "../api/firebase";
-import { UsedItemType, ReviewType } from "../types/usedType";
+import { UsedItemType } from "../types/usedType";
 import UsedCommentList from "../components/usedDetail/UsedCommentList";
 import { useRecoilValue } from "recoil";
-import { userState } from "../atoms/userAtom";
+import { geekChickUser } from "../atoms/userAtom";
 import UsedInputComment from "../components/usedDetail/UsedInputComment";
 
 const UsedDetail = () => {
   const navigate = useNavigate();
+  // item id
   const { id } = useParams();
 
-  const user = useRecoilValue(userState);
+  const user = useRecoilValue(geekChickUser);
   const [item, setItem] = useState<UsedItemType>();
-
+  console.log(item);
   useEffect(() => {
     const fetchItem = async () => {
       if (id) {
-        const data = await usedDetailItem(id);
+        const data: UsedItemType = await usedDetailItem(id);
         setItem(data);
       }
     };
     fetchItem();
   }, [id]);
 
-  const addComment = async (review: string) => {
-    if (user) {
-      const newReview: ReviewType = {
-        reviewId: `review_${id}_${Date.now()}`,
-        reviewInfo: {
-          userId: user.uid,
-          userName: `${user.displayName}`,
-          userAvatar: `${user?.photoURL}`,
-          review,
-          createdAt: new Date().toISOString().split("T")[0],
-        },
+  const addComment = async (comment: string) => {
+    if (user && item && id) {
+      const comments = {
+        comment,
+        userId: user.userId,
+        nickname: user.nickname,
+        userAvatar: user.userAvatar,
       };
-      
-      if (item) {
-        const updatedReviews = [...(item.reviews || []), newReview];
-        setItem({
-          ...item,
-          reviews: updatedReviews,
-        });
-
-        if (id) {
-          try {
-            await updateItemComments(id, updatedReviews);
-          } catch (error) {
-            console.error("Failed to update reviews", error);
-          }
-        }
-      }
+      await updateItemComments(id, comments, setItem, item);
     }
   };
 
@@ -132,13 +114,13 @@ const UsedDetail = () => {
               <p className="text-gray-700">{item.description}</p>
             </div>
 
-            {item.reviews ? <UsedCommentList reviews={item.reviews} /> : null}
+            {item.comments && <UsedCommentList comments={item.comments} />}
 
             <UsedInputComment addComment={addComment} />
             <Link
               to="/sendMessage"
               state={{
-                userId: user?.uid,
+                userId: user?.userId,
                 itemId: id,
                 itemName: item.itemName,
                 itemImage: item.imageArr[0],
