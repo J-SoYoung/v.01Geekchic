@@ -30,7 +30,7 @@ const UsedPostUpload = () => {
   const [uploadImages, setUploadImages] = useState<string[]>([]);
   const [itemName, setItemName] = useState("");
   const [size, setSize] = useState("");
-  const [price, setPrice] = useState<string>('1000');
+  const [price, setPrice] = useState<string>("1000");
   const [quantity, setQuantity] = useState<number>(1);
   const [shippingIncluded, setShippingIncluded] = useState(false);
   const [productCondition, setProductCondition] = useState("used");
@@ -55,6 +55,7 @@ const UsedPostUpload = () => {
 
   const onClickUsedItemUpload = () => {
     const itemData = {
+      id: "",
       description,
       imageArr: uploadImages,
       isSales: false,
