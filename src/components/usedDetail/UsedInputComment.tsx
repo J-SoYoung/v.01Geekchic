@@ -1,16 +1,16 @@
 import React, { useState } from "react";
 
-interface CommentListProps {
-  addComment: (review: string) => void;
+interface Props {
+  addComment: (comment: string) => void;
 }
 
-const UsedInputComment = ({ addComment }: CommentListProps) => {
-  const [newReview, setNewReview] = useState("");
+const UsedInputComment = ({ addComment }: Props) => {
+  const [newUsedComment, setNewUsedComment] = useState("");
 
-  const handleAddReview = () => {
-    if (newReview.trim()) {
-      addComment(newReview);
-      setNewReview("");
+  const handleAddComment = () => {
+    if (newUsedComment.trim()) {
+      addComment(newUsedComment);
+      setNewUsedComment("");
     }
   };
 
@@ -22,11 +22,11 @@ const UsedInputComment = ({ addComment }: CommentListProps) => {
           type="text"
           className="h-[100%] flex-1 px-4 border rounded-l-md m-0"
           placeholder="댓글을 입력하세요"
-          value={newReview}
-          onChange={(e) => setNewReview(e.target.value)}
+          value={newUsedComment}
+          onChange={(e) => setNewUsedComment(e.target.value)}
         />
         <button
-          onClick={handleAddReview}
+          onClick={handleAddComment}
           className="px-4 py-2 bg-[#8F5BBD] text-white rounded-r-md"
         >
           댓글 추가

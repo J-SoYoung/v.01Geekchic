@@ -19,7 +19,10 @@ const UsedItemCard = ({ item }: UsedItemCardProps) => {
           className="w-full h-48 object-cover rounded-md mb-2"
         />
       ) : (
-        <img src="/" className="w-full h-48 object-cover rounded-md mb-2 border" />
+        <img
+          src="/"
+          className="w-full h-48 object-cover rounded-md mb-2 border"
+        />
       )}
 
       <h2 className="text-lg font-bold pl-2">{item.itemName}</h2>

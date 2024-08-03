@@ -2,7 +2,7 @@ import React, { useRef, useState } from "react";
 import Layout from "../components/myPage/_Layout";
 import { UserDataType } from "../types/usedType";
 import Icon_Pencile from "../assets/icons/pencil.svg";
-import { defaultImage } from "../types/dummyData";
+import { defaultImage } from "../../dummyData";
 import ContentBox from "../components/myPage/ContentBox";
 import { useRecoilState } from "recoil";
 import { geekChickUser } from "../atoms/userAtom";
@@ -49,7 +49,7 @@ const MyProfile = () => {
   const handleClickCancel = () => {
     setEditUser(user);
     setIsEditing(false);
-    setPreviewImage(user.userAvatar);
+    setPreviewImage(user.userAvatar ?? "");
   };
 
   // ⭕이미지 컴포넌트 따로 분리?
@@ -61,7 +61,7 @@ const MyProfile = () => {
             {isEditing ? (
               <>
                 <img
-                  src={previewImage ? previewImage : user && user.userAvatar}
+                  src={previewImage ?? user.userAvatar}
                   alt="Profile"
                   className="w-full h-full object-cover rounded-full"
                 />
@@ -93,21 +93,21 @@ const MyProfile = () => {
         <div className="text-left">
           <ContentBox
             title={"닉네임"}
-            value={editUser.nickname}
+            value={editUser.nickname ?? ""}
             isEditing={isEditing}
             inputName={"nickname"}
             onChange={handleInputChange}
           />
           <ContentBox
             title={"이름"}
-            value={editUser.userName}
+            value={editUser.userName ?? ""}
             isEditing={isEditing}
             inputName={"userName"}
             onChange={handleInputChange}
           />
           <ContentBox
             title={"전화번호"}
-            value={editUser.phone}
+            value={editUser.phone ?? ""}
             isEditing={isEditing}
             inputName={"phone"}
             onChange={handleInputChange}
