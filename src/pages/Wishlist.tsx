@@ -38,7 +38,7 @@ export default function Wishlist() {
   };
 
   return (
-    <div className="max-h-100vh h-[1300px] w-[600px]">
+    <div className="container w-[600px]">
       <div className="p-11 mb-[10px]">
         <h1 className="text-3xl font-bold text-left">관심물품</h1>
       </div>

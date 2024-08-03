@@ -23,6 +23,7 @@
   text-align: center;
   border-width: 0 1px 0 1px;
   border: 1px solid black;
+  /* padding-bottom: 80px; */
   /* padding: 2rem; */
   /* 최대 너비를 설정 */
   /* @apply w-full max-w-screen-2xl; */
@@ -45,4 +46,9 @@ code {
 
 input {
   @apply p-4 outline-none border border-gray-300 my-1;
+}
+
+.container {
+  min-height: 100vh; /* Viewport 전체 높이를 차지하도록 설정 */
+  padding-bottom: 150px; /* bottomNav 높이만큼 여백 추가 */
 }
