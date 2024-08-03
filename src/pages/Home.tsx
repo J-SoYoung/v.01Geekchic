@@ -23,7 +23,7 @@ interface Product {
 export default function Home() {
   const { keyword } = useParams<{ keyword: string }>();
   const user = useRecoilValue(userState);
-  const [geekUser,setGeekUser] = useRecoilState(geekChickUser);
+  const [geekUser, setGeekUser] = useRecoilState(geekChickUser);
 
   const searchKeyword = keyword || "";
   const { search } = useProducts();
@@ -43,7 +43,8 @@ export default function Home() {
   {
     error && <p>Something is wrong</p>;
   }
-
+  
+  // ⭕ 타입해결
   useEffect(() => {
     const fetchData = async () => {
       // 로그인을 했는지 확인
@@ -75,7 +76,7 @@ export default function Home() {
       }
     };
     fetchData();
-  }, [user]);
+  }, [user, setGeekUser]);
 
   return (
     <div className="h-full min-h-screen">
