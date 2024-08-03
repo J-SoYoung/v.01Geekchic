@@ -26,7 +26,7 @@ interface Comment {
 export default function Comment({ product }: { product: Product }) {
   const [isUploading, setIsUploading] = useState(false);
   const [success, setSuccess] = useState<string | null>(null);
-  const [comment, setComment] = useState<Omit<Comment, "id" | "createdAt">>({
+  const [comments, setComments] = useState<Omit<Comment, "id" | "createdAt">>({
     text: "",
     rank: 0,
     uid: "",
@@ -37,7 +37,7 @@ export default function Comment({ product }: { product: Product }) {
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setComment((comment) => ({ ...comment, [name]: value }));
+    setComments((comment) => ({ ...comment, [name]: value }));
   };
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -48,8 +48,8 @@ export default function Comment({ product }: { product: Product }) {
     }
     setIsUploading(true);
     await newComment(product.id, {
-      text: comment.text ?? "",
-      rank: comment.rank ?? 0,
+      text: comments.text ?? "",
+      rank: comments.rank ?? 0,
       uid: user.uid,
       userPhoto: user.photoURL || "",
       displayName: user.displayName || "",
@@ -60,7 +60,7 @@ export default function Comment({ product }: { product: Product }) {
     }, 4000);
     setIsUploading(false);
   };
-  console.log(user);
+
   return (
     <>
       {success && <p className="my-2">✅ {success}</p>}
@@ -76,12 +76,12 @@ export default function Comment({ product }: { product: Product }) {
           type="number"
           placeholder="평점"
           name="rank"
-          value={comment.rank ?? 0}
+          value={comments.rank ?? 0}
           required
           onChange={handleChange}
         />
         <button
-          className="w-[50px] h-[40px] ml-[450px] -mb-[30px] z-0 bg-[#8F5BBD] text-[#fff] border border-[#8F5BBD] rounded-md hover:bg-[#fff] hover:text-[#8F5BBD] duration-200"
+          className="w-[70px] h-[40px] ml-[430px] -mb-[30px] z-0 bg-[#000] text-[#fff] border border-[#000] rounded-full hover:bg-[#fff] hover:text-[#000] duration-200"
           disabled={isUploading}
         >
           {isUploading ? "업로드중..." : "등록"}
@@ -91,7 +91,7 @@ export default function Comment({ product }: { product: Product }) {
           type="text"
           placeholder="리뷰를 작성해주세요."
           name="text"
-          value={comment.text ?? ""}
+          value={comments.text ?? ""}
           required
           onChange={handleChange}
         />

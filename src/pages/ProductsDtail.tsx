@@ -10,6 +10,7 @@ import {
   setWishlistItems,
 } from "../api/firebase";
 import Comment from "../components/main/Comment";
+import CommentCard from "../components/main/CommentCard";
 
 interface Product {
   id: string;
@@ -54,7 +55,7 @@ export default function ProductsDtail() {
   };
 
   return (
-    <div className="h-[1500px] min-h-screen w-[600px]">
+    <div className="container w-[600px]">
       <img className="w-[598px] h-[450px]" src={image} alt={description} />
       <div className="flex m-[30px] gap-[20px]">
         <div className="w-[100px] h-[100px] bg-[#BEBEBE]"></div>
@@ -97,6 +98,7 @@ export default function ProductsDtail() {
         </button>
       </div>
       <Comment key={product.id} product={product} />
+      <CommentCard />
     </div>
   );
 }
