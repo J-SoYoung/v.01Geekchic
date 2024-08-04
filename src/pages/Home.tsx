@@ -36,7 +36,7 @@ export default function Home() {
     queryKey: ["products", searchKeyword],
     queryFn: () => search(searchKeyword),
   });
-
+  console.log(user);
   {
     isLoading && <p>Loading..</p>;
   }
