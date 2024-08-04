@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import HeartIcon from "../assets/icons/heart.svg";
 import HeartFullIcon from "../assets/icons/heart_full.svg";
 import { useRecoilValue, useSetRecoilState } from "recoil";
@@ -24,18 +24,26 @@ interface Product {
 
 export default function ProductsDtail() {
   const location = useLocation();
+  const navigate = useNavigate();
   const { product } = location.state as { product: Product };
   const { description, image, price, options } = product;
-  const [selected, setSelected] = useState<string | undefined>(
-    options && options[0]
-  );
+  const [selected, setSelected] = useState<string>(options && options[0]);
+  // const [payProduct, setPayProduct] = useState<Product | undefined>(undefined);
   const user = useRecoilValue(userState);
   const setWishlist = useSetRecoilState(wishlistState);
   const wishlist = useRecoilValue(wishlistState);
   const isInWishlist = wishlist.some((item) => item.id === product.id);
+  const id = user?.uid;
 
   const handleSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelected(e.target.value);
+  };
+
+  const handlePayment = async () => {
+    const selectedProduct = { ...product, options: [selected] };
+    navigate(`/payment/${id}`, {
+      state: { payProduct: selectedProduct, user },
+    });
   };
 
   const handleWishlist = async () => {
@@ -93,7 +101,10 @@ export default function ProductsDtail() {
         <button className="w-[250px] py-3 bg-[#D34D4D] text-[#fff] border border-[#D34D4D] rounded-md hover:bg-[#fff] hover:text-[#D34D4D] duration-200">
           장바구니 담기
         </button>
-        <button className="w-[250px] py-3 bg-[#8F5BBD] text-[#fff] border border-[#8F5BBD] rounded-md hover:bg-[#fff] hover:text-[#8F5BBD] duration-200">
+        <button
+          onClick={handlePayment}
+          className="w-[250px] py-3 bg-[#8F5BBD] text-[#fff] border border-[#8F5BBD] rounded-md hover:bg-[#fff] hover:text-[#8F5BBD] duration-200"
+        >
           바로구매
         </button>
       </div>

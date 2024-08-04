@@ -23,7 +23,7 @@ interface Product {
 export default function Home() {
   const { keyword } = useParams<{ keyword: string }>();
   const user = useRecoilValue(userState);
-  const [geekUser,setGeekUser] = useRecoilState(geekChickUser);
+  const [geekUser, setGeekUser] = useRecoilState(geekChickUser);
 
   const searchKeyword = keyword || "";
   const { search } = useProducts();
@@ -36,7 +36,7 @@ export default function Home() {
     queryKey: ["products", searchKeyword],
     queryFn: () => search(searchKeyword),
   });
-
+  console.log(user);
   {
     isLoading && <p>Loading..</p>;
   }
