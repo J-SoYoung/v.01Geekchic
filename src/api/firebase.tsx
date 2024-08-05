@@ -22,7 +22,6 @@ import {
 } from "firebase/database";
 import { UsedItemType, UserDataType, UsedCommentType } from "../types/usedType";
 import { SetterOrUpdater } from "recoil";
-import { usedItems } from "../../dummyData";
 interface AdminUser extends User {
   isAdmin: boolean;
 }
@@ -400,11 +399,11 @@ export async function editUserData(
 }
 
 // 중고 데이터 새로 고침
-export async function updateData() {
-  const data = usedItems;
-  const dataRef = ref(database, "usedItems");
-  await set(dataRef, {
-    ...data,
-  });
-  return data;
-}
+// export async function updateData() {
+//   const data = usedItems;
+//   const dataRef = ref(database, "usedItems");
+//   await set(dataRef, {
+//     ...data,
+//   });
+//   return data;
+// }
