@@ -11,30 +11,30 @@ import UsedInputComment from "../components/usedDetail/UsedInputComment";
 const UsedDetail = () => {
   const navigate = useNavigate();
   // item id
-  const { id } = useParams();
+  const { itemId } = useParams();
 
   const user = useRecoilValue(geekChickUser);
   const [item, setItem] = useState<UsedItemType>();
-  console.log(item);
+
   useEffect(() => {
     const fetchItem = async () => {
-      if (id) {
-        const data: UsedItemType = await usedDetailItem(id);
+      if (itemId) {
+        const data: UsedItemType = await usedDetailItem(itemId);
         setItem(data);
       }
     };
     fetchItem();
-  }, [id]);
+  }, [itemId]);
 
   const addComment = async (comment: string) => {
-    if (user && item && id) {
+    if (user && item && itemId) {
       const comments = {
         comment,
         userId: user.userId,
         nickname: user.nickname,
         userAvatar: user.userAvatar,
       };
-      await updateItemComments(id, comments, setItem, item);
+      await updateItemComments(itemId, comments, setItem, item);
     }
   };
 
@@ -121,7 +121,7 @@ const UsedDetail = () => {
               to="/sendMessage"
               state={{
                 userId: user?.userId,
-                itemId: id,
+                itemId: itemId,
                 itemName: item.itemName,
                 itemImage: item.imageArr[0],
                 price: item.price,

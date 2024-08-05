@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 
 import { UsedItemType } from "../types/usedType";
-import { updateData, usedItemLists, usedItemSearch } from "../api/firebase";
+import { usedItemLists, usedItemSearch } from "../api/firebase";
 
 import SearchList from "../components/usedHome/SearchList";
 import UsedItemList from "../components/usedHome/UsedItemList";
@@ -20,7 +20,6 @@ const UsedHome = () => {
     queryKey: ["usedItems"],
     queryFn: () => usedItemLists(),
   });
-
   const { data: searchResultData, isLoading: searchLoading } = useQuery<
     UsedItemType[],
     Error
@@ -54,13 +53,6 @@ const UsedHome = () => {
 
         {/* 검색바 */}
         <UsedSearchBar onSearch={onClickSearch} />
-        {/* <button
-          onClick={async () => {
-            await updateData();
-          }}
-        >
-          버튼
-        </button> */}
       </header>
 
       <div>
