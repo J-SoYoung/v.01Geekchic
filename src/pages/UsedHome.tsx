@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 
 import { UsedItemType } from "../types/usedType";
-import { updateData, usedItemLists, usedItemSearch } from "../api/firebase";
+import { usedItemLists, usedItemSearch } from "../api/firebase";
 
 import SearchList from "../components/usedHome/SearchList";
 import UsedItemList from "../components/usedHome/UsedItemList";
@@ -13,7 +13,8 @@ const UsedHome = () => {
   const [isSearching, setIsSearching] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
-  const { data: usedItems, isLoading: usedItemLoading } = useQuery<
+  // GET 중고 데이터 & Update recoil State
+  const { data: usedItems, isLoading: usedItemLoading, isError: usedItemError } = useQuery<
     UsedItemType[],
     Error
   >({
@@ -40,7 +41,13 @@ const UsedHome = () => {
     setIsSearching(false);
   };
 
-  if (usedItemLoading) return <div>로딩중입니다</div>;
+  if (usedItemError)
+    return (
+      <div>
+        <p>데이터를 가져오는 동안 문제가 발생했습니다</p>
+        <Link to={"/"}>메인으로 이동하기</Link>
+      </div>
+    );
 
   return (
     <div className="h-[100%] w-[600px]">
@@ -54,16 +61,10 @@ const UsedHome = () => {
 
         {/* 검색바 */}
         <UsedSearchBar onSearch={onClickSearch} />
-        {/* <button
-          onClick={async () => {
-            await updateData();
-          }}
-        >
-          버튼
-        </button> */}
       </header>
 
       <div>
+        {usedItemLoading && <div className="min-h-screen">로딩중입니다</div>}
         {isSearching ? (
           <SearchList
             searchData={searchResultData || []}
