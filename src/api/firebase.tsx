@@ -19,10 +19,10 @@ import {
   onValue,
   orderByChild,
   remove,
+  update,
 } from "firebase/database";
 import { UsedItemType, UserDataType, UsedCommentType } from "../types/usedType";
 import { SetterOrUpdater } from "recoil";
-import { usedItems } from "../../dummyData";
 interface AdminUser extends User {
   isAdmin: boolean;
 }
@@ -262,11 +262,15 @@ export function usedItemLists(): Promise<UsedItemType[]> {
 }
 
 // 중고 상세페이지 데이터 받아오기
-export async function usedDetailItem(id: string) {
+export async function usedDetailItem(
+  itemId: string,
+  setItem: SetterOrUpdater<UsedItemType>
+) {
   try {
-    const itemRef = ref(database, `usedItems/${id}`);
+    const itemRef = ref(database, `usedItems/${itemId}`);
     const snapshot = await get(itemRef);
     if (snapshot.exists()) {
+      setItem(snapshot.val());
       return snapshot.val();
     } else {
       return null;
@@ -276,6 +280,7 @@ export async function usedDetailItem(id: string) {
   }
 }
 
+// ⭕ 댓글 최신순으로 db에 저장 or db에서 가져오기
 // 댓글 추가 ( = 아이템 데이터 수정 )
 interface DataType {
   comment: string;
@@ -283,16 +288,15 @@ interface DataType {
   nickname: string | null;
   userAvatar: string | null;
 }
-
-export async function updateItemComments(
+export async function addUsedComment(
   itemId: string,
   comments: DataType,
-  setItem: React.Dispatch<React.SetStateAction<UsedItemType | undefined>>,
+  setItem: SetterOrUpdater<never[]>,
   item: UsedItemType
 ) {
   try {
     const itemRef = ref(database, `usedItems/${itemId}/comments`);
-    const commentKeyRef = push(itemRef); // 새로운 아이템에 대한 고유 key 생성
+    const commentKeyRef = push(itemRef);
 
     const commentData: UsedCommentType = {
       commentId: commentKeyRef.key ?? `${new Date()}_${comments.userId}`,
@@ -302,13 +306,13 @@ export async function updateItemComments(
       nickname: comments.nickname ?? "",
       userAvatar: comments.userAvatar ?? "",
     };
-
     await set(commentKeyRef, commentData);
 
     const updatedComments = {
       [commentData.commentId]: commentData,
       ...item.comments,
     };
+
     setItem({ ...item, comments: updatedComments });
   } catch (err) {
     console.error("댓글 작성 에러", err);
@@ -316,14 +320,24 @@ export async function updateItemComments(
 }
 
 // 댓글 삭제
-export async function removeItemComments(
-  id: string,
+export async function removeUsedComment(
+  itemId: string,
   commentId: string,
   userId: string
 ): Promise<void> {
-  console.log(id, commentId, userId);
-  const itemRef = ref(database, `usedItems/${id}/comments/${commentId}`);
+  console.log(itemId, commentId, userId);
+  const itemRef = ref(database, `usedItems/${itemId}/comments/${commentId}`);
   await remove(itemRef);
+}
+
+// 댓글 수정
+export async function editUsedComment(itemId: string|undefined, commentId: string, data:UsedCommentType) {
+  const itemRef = ref(database, `usedItems/${itemId}/comments/${commentId}`);
+  try {
+    await update(itemRef, data);
+  } catch (err) {
+    console.error("댓글 수정 에러", err);
+  }
 }
 
 // 중고 데이터 쿼리 검색
@@ -400,11 +414,11 @@ export async function editUserData(
 }
 
 // 중고 데이터 새로 고침
-export async function updateData() {
-  const data = usedItems;
-  const dataRef = ref(database, "usedItems");
-  await set(dataRef, {
-    ...data,
-  });
-  return data;
-}
+// export async function updateData() {
+//   const data = usedItems;
+//   const dataRef = ref(database, "usedItems");
+//   await set(dataRef, {
+//     ...data,
+//   });
+//   return data;
+// }

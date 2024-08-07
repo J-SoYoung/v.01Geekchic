@@ -2,7 +2,6 @@ import React, { useRef, useState } from "react";
 import Layout from "../components/myPage/_Layout";
 import { UserDataType } from "../types/usedType";
 import Icon_Pencile from "../assets/icons/pencil.svg";
-import { defaultImage } from "../../dummyData";
 import ContentBox from "../components/myPage/ContentBox";
 import { useRecoilState } from "recoil";
 import { geekChickUser } from "../atoms/userAtom";
@@ -82,7 +81,7 @@ const MyProfile = () => {
               </>
             ) : (
               <img
-                src={(user && user.userAvatar) ?? defaultImage}
+                src={(user && user.userAvatar) ?? ""}
                 alt="Profile"
                 className="w-full h-full object-cover rounded-full"
               />

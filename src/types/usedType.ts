@@ -6,6 +6,7 @@ export interface UsedItemType {
   id: string;
   itemName: string;
   size: string;
+  createdAt: string;
   quantity: number;
   description: string;
   price: string;
@@ -13,7 +14,6 @@ export interface UsedItemType {
   isSales: boolean;
   options: string[];
   seller: SellerType;
-  // comments?: { [key: string]: UsedCommentType };
   comments?: UsedCommentType;
 }
 

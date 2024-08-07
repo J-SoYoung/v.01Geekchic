@@ -5,7 +5,7 @@ import SearchHeader from "../components/common/SearchHeader";
 import { useQuery } from "@tanstack/react-query";
 import ProductCard from "../components/main/ProductCard";
 import useProducts, { loadUserData, uploadUserData } from "../api/firebase";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import { Link } from "react-router-dom";
 import { userState, geekChickUser } from "../atoms/userAtom";
 import { UserDataType } from "../types/usedType";
@@ -23,7 +23,7 @@ interface Product {
 export default function Home() {
   const { keyword } = useParams<{ keyword: string }>();
   const user = useRecoilValue(userState);
-  const [geekUser, setGeekUser] = useRecoilState(geekChickUser);
+  const setGeekUser = useSetRecoilState(geekChickUser);
 
   const searchKeyword = keyword || "";
   const { search } = useProducts();
@@ -36,7 +36,6 @@ export default function Home() {
     queryKey: ["products", searchKeyword],
     queryFn: () => search(searchKeyword),
   });
-
   {
     isLoading && <p>Loading..</p>;
   }
@@ -52,7 +51,6 @@ export default function Home() {
         // firebase db에 유저 찾기
         const data = await loadUserData(user.uid);
         setGeekUser(data);
-        console.log("firebase유저있음?", data);
 
         // firebase db에 유저 없는 경우 유저 데이터 생성
         if (!data && user) {
@@ -69,9 +67,8 @@ export default function Home() {
             carts: [],
             wishlists: [],
           };
-          const createdUser = await uploadUserData(newUser);
+          await uploadUserData(newUser);
           setGeekUser(newUser);
-          console.log("firebase저장한 유저데이터", createdUser);
         }
       }
     };

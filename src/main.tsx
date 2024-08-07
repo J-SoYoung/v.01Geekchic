@@ -18,6 +18,7 @@ import NewProduct from "./pages/NewProduct.tsx";
 import Products from "./pages/Products.tsx";
 import Wishlist from "./pages/Wishlist.tsx";
 import UsedMessage from "./pages/UsedMessage.tsx";
+import Payment from "./pages/Payment.tsx";
 
 const router = createBrowserRouter([
   {
@@ -33,13 +34,14 @@ const router = createBrowserRouter([
       { path: "/products/detail/:id", element: <ProductsDtail /> },
       { path: "/api/login", element: <Login /> },
       { path: "/usedHome", element: <UsedHome /> },
-      { path: "/usedHome/detail/:id", element: <UsedDetail /> },
+      { path: "/usedHome/detail/:itemId", element: <UsedDetail /> },
       { path: "/usedPostUpload", element: <UsedPostUpload /> },
       { path: "/my/:userId", element: <MyPage /> },
-      { path: "/my/:id/salelist", element: <MySalelist /> },
-      { path: "/my/:id/:list", element: <MyList /> },
-      { path: "/my/:id/profile", element: <MyProfile /> },
+      { path: "/my/:userId/salelist", element: <MySalelist /> },
+      { path: "/my/:userId/:list", element: <MyList /> },
+      { path: "/my/:userId/profile", element: <MyProfile /> },
       { path: "/sendMessage", element: <UsedMessage /> },
+      { path: "/payment/:id", element: <Payment /> },
     ],
   },
 ]);
