@@ -1,43 +1,36 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import Chevron_left from "../assets/icons/chevron_left.svg";
-import { updateItemComments, usedDetailItem } from "../api/firebase";
-import { UsedItemType } from "../types/usedType";
+import { usedDetailItem } from "../api/firebase";
 import UsedCommentList from "../components/usedDetail/UsedCommentList";
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { geekChickUser } from "../atoms/userAtom";
 import UsedInputComment from "../components/usedDetail/UsedInputComment";
+import { usedItemDetailState } from "../atoms/usedItemAtom";
+import { calculateDaysAgo } from "../types/utils";
 
 const UsedDetail = () => {
   const navigate = useNavigate();
   // item id
   const { itemId } = useParams();
-
   const user = useRecoilValue(geekChickUser);
-  const [item, setItem] = useState<UsedItemType>();
+  const [item, setItem] = useRecoilState(usedItemDetailState);
 
   useEffect(() => {
     const fetchItem = async () => {
       if (itemId) {
-        const data: UsedItemType = await usedDetailItem(itemId);
-        setItem(data);
+        try {
+          await usedDetailItem(itemId, setItem);
+        } catch (err) {
+          console.error("상세페이지 불러오기 ERror-", err);
+        }
       }
     };
     fetchItem();
-  }, [itemId]);
+  }, [itemId, setItem]);
 
-  const addComment = async (comment: string) => {
-    if (user && item && itemId) {
-      const comments = {
-        comment,
-        userId: user.userId,
-        nickname: user.nickname,
-        userAvatar: user.userAvatar,
-      };
-      await updateItemComments(itemId, comments, setItem, item);
-    }
-  };
 
+  //⭕ detail 로딩중 표시 - 로딩중과 에러 페이지 분리
   return (
     <>
       {!item ? (
@@ -92,8 +85,7 @@ const UsedDetail = () => {
 
             <div className="my-8 border-b pb-8">
               <div className="text-xl font-bold">{item.itemName}</div>
-              {/* 상품 업로드 한 날짜를 db에 넣어야 함 */}
-              {/* <div className="text-sm text-gray-500">10일전</div> */}
+              <div className="text-sm text-gray-500">{calculateDaysAgo(item.createdAt)}</div>
               <div className="text-xl font-bold mt-2">
                 {item.price.toLocaleString()}원
               </div>
@@ -116,21 +108,23 @@ const UsedDetail = () => {
 
             {item.comments && <UsedCommentList comments={item.comments} />}
 
-            <UsedInputComment addComment={addComment} />
-            <Link
-              to="/sendMessage"
-              state={{
-                userId: user?.userId,
-                itemId: itemId,
-                itemName: item.itemName,
-                itemImage: item.imageArr[0],
-                price: item.price,
-                seller: item.seller,
-              }}
-              className="w-full py-2 mb-4 bg-[#8F5BBD] text-white rounded-md"
-            >
-              쪽지 보내기
-            </Link>
+            <UsedInputComment />
+            <button className="w-full">
+              <Link
+                to="/sendMessage"
+                state={{
+                  userId: user?.userId,
+                  itemId: itemId,
+                  itemName: item.itemName,
+                  itemImage: item.imageArr[0],
+                  price: item.price,
+                  seller: item.seller,
+                }}
+                className="w-full inline-block text-center py-3 mb-4 bg-[#8F5BBD] text-white rounded-md"
+              >
+                쪽지 보내기
+              </Link>
+            </button>
           </div>
         </div>
       )}
