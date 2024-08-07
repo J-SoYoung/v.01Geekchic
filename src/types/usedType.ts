@@ -3,9 +3,10 @@ import { Product } from "../api/firebase";
 
 // 중고 데이터 타입
 export interface UsedItemType {
-  id?: string;
+  id: string;
   itemName: string;
   size: string;
+  createdAt: string;
   quantity: number;
   description: string;
   price: string;
@@ -13,21 +14,16 @@ export interface UsedItemType {
   isSales: boolean;
   options: string[];
   seller: SellerType;
-  reviews?: ReviewType[];
+  comments?: UsedCommentType;
 }
 
-export interface ReviewType {
-  reviewId: string;
-  reviewInfo: CommentInfoType;
-}
-
-// 유저타입 지정되면 공통 부분 정리하기
-interface CommentInfoType {
-  userId: string;
-  userName: string;
-  userAvatar: string;
-  review: string;
+export interface UsedCommentType {
+  commentId: string;
   createdAt: string;
+  comment: string;
+  userId: string;
+  nickname: string;
+  userAvatar: string;
 }
 
 interface SellerType {
@@ -38,16 +34,6 @@ interface SellerType {
   address: string;
   phone: string;
 }
-
-// interface Product {
-//   id: string;
-//   title: string;
-//   category: string;
-//   description: string;
-//   price: string;
-//   image: string;
-//   options: string[];
-// }
 
 export interface FirebaseUserType extends User {
   // firebase 유저 타입
@@ -93,12 +79,12 @@ export interface OrderItemsType {
 export interface UserDataType {
   //유저 타입
   userId: string;
-  userEmail: string;
-  userName: string;
-  nickname: string;
-  userAvatar: string;
+  userEmail: string | null;
+  userName: string | null;
+  nickname: string | null;
+  userAvatar: string | null;
   address: string;
-  phone: string;
+  phone: string | null;
   orders: OrderItemsType[];
   sales: SalesItemsType[];
   carts: Product[];

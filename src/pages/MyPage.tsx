@@ -1,7 +1,7 @@
 import Layout from "../components/myPage/_Layout";
 import { Link } from "react-router-dom";
 
-import { defaultImage } from "../types/dummyData";
+// ⭕default Image 클라우디너리에 업로드해서 사용하기
 import { geekChickUser } from "../atoms/userAtom";
 import { useRecoilValue } from "recoil";
 
@@ -30,8 +30,9 @@ const MyPage = () => {
           <div className="flex items-center mb-8 mx-auto">
             <div className="w-16 h-16 bg-gray-200 rounded-full">
               <img
-                src={user.userAvatar ?? defaultImage}
+                src={user.userAvatar ?? ""}
                 alt={user.userName ?? ""}
+                className="w-full h-full object-cover rounded-full"
               />
             </div>
             <div className="ml-4 text-left">

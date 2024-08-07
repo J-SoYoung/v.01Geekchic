@@ -1,32 +1,43 @@
 import React, { useState } from "react";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { usedItemDetailState } from "../../atoms/usedItemAtom";
+import { geekChickUser } from "../../atoms/userAtom";
+import { addUsedComment } from "../../api/firebase";
+import { useParams } from "react-router-dom";
+import { UsedItemType } from "../../types/usedType";
 
-interface CommentListProps {
-  addComment: (review: string) => void;
-}
+const UsedInputComment = () => {
+  const user = useRecoilValue(geekChickUser);
+  const { itemId } = useParams();
+  const [newUsedComment, setNewUsedComment] = useState("");
+  const [item, setItem] = useRecoilState<UsedItemType>(usedItemDetailState);
 
-const UsedInputComment = ({ addComment }: CommentListProps) => {
-  const [newReview, setNewReview] = useState("");
-
-  const handleAddReview = () => {
-    if (newReview.trim()) {
-      addComment(newReview);
-      setNewReview("");
+  const handleAddUsedItemComment = async () => {
+    if (user && item && itemId) {
+      const comments = {
+        comment: newUsedComment,
+        userId: user.userId,
+        nickname: user.nickname,
+        userAvatar: user.userAvatar,
+      };
+      await addUsedComment(itemId, comments, setItem, item);
+      setNewUsedComment("");
     }
   };
 
   return (
     <div className="mb-10">
-      {/* 리뷰 입력칸 */}
       <div className="flex mt-4 h-[50px]">
         <input
           type="text"
           className="h-[100%] flex-1 px-4 border rounded-l-md m-0"
           placeholder="댓글을 입력하세요"
-          value={newReview}
-          onChange={(e) => setNewReview(e.target.value)}
+          value={newUsedComment}
+          onChange={(e) => setNewUsedComment(e.target.value)}
         />
+
         <button
-          onClick={handleAddReview}
+          onClick={handleAddUsedItemComment}
           className="px-4 py-2 bg-[#8F5BBD] text-white rounded-r-md"
         >
           댓글 추가
