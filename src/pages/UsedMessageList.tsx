@@ -1,28 +1,11 @@
-import { useRecoilValue } from "recoil";
 import Layout from "../components/myPage/_Layout";
 import { useLocation } from "react-router-dom";
-import { geekChickUser } from "../atoms/userAtom";
 
-const UsedMessage = () => {
+const UsedMessageList = () => {
   const location = useLocation();
-  const user = useRecoilValue(geekChickUser);
-  const { itemName, price, seller, itemImage } = location.state;
-  console.log(user);
-  console.log(seller)
-  const messages = [
-    {
-      id: "message_1",
-      sender: "seller",
-      usedItem: itemName,
-      message: `${itemName} 제품 판매자 ${seller.nickname}입니다`,
-    },
-    {
-      id: "message_2",
-      sender: user.userId === seller.sellerId ? "seller" : "buyer",
-      usedItem: itemName,
-      message: "안녕하세요, 가격 흥정이 가능한가요?",
-    },
-  ];
+  const { itemId, userId, itemName, price, seller, itemImage } = location.state;
+
+  console.log(itemId, userId, itemName, price, seller);
 
   // const [messages, setMessages] = useState([
   //   {
@@ -48,24 +31,27 @@ const UsedMessage = () => {
   // }, [itemId, userId]);
 
   return (
-    <Layout title={"쪽지 보내기"}>
-      <div className="w-[596px] min-h-screen p-8 flex flex-col bg-gray-100 relative">
+    <Layout title="내 쪽지함">
+      <div className="w-[596px] min-h-screen p-8 flex flex-col bg-gray-100">
+
         {/* 판매자정보 */}
-        <div className="p-4 border-b bg-white flex">
-          <img src={itemImage} alt="Product" className="w-20 h-20 rounded-md" />
-          <div className="ml-2 text-left">
+        <div className="p-4 border-b bg-white flex items-center">
+          <img
+            src={itemImage}
+            alt="Product"
+            className="w-20 h-20 rounded-md"
+          />
+          <div className="ml-2">
             <div className="text-lg font-bold">{seller.nickname}</div>
             <div className="text-gray-500">{itemName}</div>
-            <div className="text-lg font-semibold text-blue-500">
-              {price.toLocaleString()}원
-            </div>
+            <div className="text-lg font-semibold text-blue-500">{price.toLocaleString()}원</div>
           </div>
           <button className="ml-auto text-blue-500">결제하기</button>
         </div>
 
         {/* 대화창 */}
-        <div className="py-4  overflow-y-auto">
-          {messages.map((message) => (
+        <div className="p-4  overflow-y-auto">
+          {/* {messages.map((message) => (
             <div
               key={message.id}
               className={`flex mb-4 ${
@@ -79,14 +65,14 @@ const UsedMessage = () => {
                     : "bg-gray-200 text-black"
                 }`}
               >
-                {message.message}
+                {message.text}
               </div>
             </div>
-          ))}
+          ))} */}
         </div>
 
         {/* 대화 입력창 */}
-        <div className="">
+        <div>
           <textarea
             className="border p-2 w-full mb-4"
             // value={message}
@@ -104,4 +90,4 @@ const UsedMessage = () => {
     </Layout>
   );
 };
-export default UsedMessage;
+export default UsedMessageList;

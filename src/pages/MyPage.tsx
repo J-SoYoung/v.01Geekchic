@@ -4,9 +4,22 @@ import { Link } from "react-router-dom";
 // ⭕default Image 클라우디너리에 업로드해서 사용하기
 import { geekChickUser } from "../atoms/userAtom";
 import { useRecoilValue } from "recoil";
+import { UsedSaleItem } from "../types/usedType";
 
 const MyPage = () => {
   const user = useRecoilValue(geekChickUser);
+  console.log(user);
+
+  const makeArr = (data) => {
+    return Object.entries(data).map(([, value]) => ({
+      ...value,
+    }));
+  };
+
+  const sales = makeArr(user.sales);
+  // const carts = makeArr<CartWishlistItem>(user.carts);
+  // const orders = makeArr<OrderItem>(user.orders);
+  // const wishlists = makeArr<CartWishlistItem>(user.wishlists);
 
   if (user == null) {
     return (
@@ -67,7 +80,7 @@ const MyPage = () => {
           >
             <span className="text-lg">판매목록</span>
             <span className="text-lg font-semibold">
-              {user?.sales ? user.sales.length : 0}
+              {user? sales.length : 0}
             </span>
           </Link>
           <Link
