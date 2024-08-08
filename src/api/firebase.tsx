@@ -240,7 +240,7 @@ export async function addOrderList(
   orderDetails: OrderDetails
 ) {
   const ordersId = uuidv4();
-  const orderRef = ref(database, `userData/${userId}/orders/`);
+  const orderRef = ref(database, `userData/${userId}/orders`);
   const newOrderRef = push(orderRef);
 
   const orderData = {
