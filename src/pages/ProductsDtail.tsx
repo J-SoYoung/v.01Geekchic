@@ -40,7 +40,7 @@ export default function ProductsDtail() {
   };
 
   const handlePayment = async () => {
-    const selectedProduct = { ...product, options: [selected] };
+    const selectedProduct = { ...product, options: [selected], quantity: 1 };
     navigate(`/payment/${id}`, {
       state: { payProduct: selectedProduct, user },
     });

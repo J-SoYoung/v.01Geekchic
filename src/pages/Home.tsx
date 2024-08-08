@@ -63,9 +63,10 @@ export default function Home() {
             address: "",
             phone: user.phoneNumber,
             orders: [],
-            sales: [],
+            sales: [], 
             carts: [],
             wishlists: [],
+            messages:[],
           };
           await uploadUserData(newUser);
           setGeekUser(newUser);

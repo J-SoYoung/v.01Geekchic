@@ -21,7 +21,7 @@ import {
   remove,
   update,
 } from "firebase/database";
-import { UsedItemType, UserDataType, UsedCommentType } from "../types/usedType";
+import { UsedItemType, UserDataType, UsedCommentType, UsedSaleItem } from "../types/usedType";
 import { SetterOrUpdater } from "recoil";
 interface AdminUser extends User {
   isAdmin: boolean;
@@ -35,6 +35,19 @@ export interface Product {
   price: string;
   image: string;
   options: string[];
+}
+
+export interface PayProduct extends Product {
+  quantity: number;
+}
+
+interface OrderDetails {
+  ordersId?: string;
+  name: string;
+  phone: string;
+  address: string;
+  paymentMethod: string;
+  createdAt?: string;
 }
 
 interface Comment {
@@ -221,15 +234,83 @@ export async function getCommentItems(productId: string): Promise<Comment[]> {
   });
 }
 
+export async function addOrderList(
+  userId: string,
+  product: PayProduct,
+  orderDetails: OrderDetails
+) {
+  const ordersId = uuidv4();
+  const orderRef = ref(database, `userData/${userId}/orders`);
+  const newOrderRef = push(orderRef);
+
+  const orderData = {
+    items: {
+      description: product.description,
+      image: product.image,
+      price: product.price,
+      options: product.options,
+      title: product.title,
+      quantity: product.quantity,
+    },
+    ordersId,
+    name: orderDetails.name,
+    phone: orderDetails.phone,
+    address: orderDetails.address,
+    paymentMethod: orderDetails.paymentMethod,
+    createdAt: new Date().toISOString(),
+  };
+
+  return set(newOrderRef, orderData);
+}
+
 // 중고 제품 업로드
-export function usedItemUpload(itemData: UsedItemType) {
+export async function usedItemUpload(
+  itemData: UsedItemType,
+  setUser: SetterOrUpdater<UserDataType>,
+  user: UserDataType
+) {
+  // UsedItems
   const usedItemRef = ref(database, "usedItems");
   const newItemRef = push(usedItemRef);
   itemData.id = newItemRef.key ?? `${new Date()}_${itemData.itemName}`;
-  return set(newItemRef, {
-    ...itemData,
-    createdAt: new Date().toISOString().split("T")[0],
-  });
+
+  // UserData/sales
+  const userSaleItemsRef = ref(
+    database,
+    `userData/${itemData.seller.sellerId}/sales`
+  );
+  const newSaleItemRef = push(userSaleItemsRef);
+  const {
+    createdAt,
+    id,
+    imageArr,
+    isSales,
+    itemName,
+    options,
+    price,
+    quantity,
+    size,
+  } = itemData;
+  const saleItem:UsedSaleItem = {
+    createdAt,
+    id,
+    imageArr,
+    isSales,
+    itemName,
+    options,
+    price,
+    quantity,
+    size,
+  };
+
+  // UsedItems, UserData/sales 둘다 업로드
+  const updates = {
+    [`usedItems/${id}`]: itemData,
+    [`userData/${itemData.seller.sellerId}/sales/${newSaleItemRef.key}`]:
+      saleItem,
+  };
+  await update(ref(database), updates);
+  setUser({ ...user, sales: {...saleItem} });
 }
 
 // 중고 메인 데이터 받아오기
@@ -331,7 +412,11 @@ export async function removeUsedComment(
 }
 
 // 댓글 수정
-export async function editUsedComment(itemId: string|undefined, commentId: string, data:UsedCommentType) {
+export async function editUsedComment(
+  itemId: string | undefined,
+  commentId: string,
+  data: UsedCommentType
+) {
   const itemRef = ref(database, `usedItems/${itemId}/comments/${commentId}`);
   try {
     await update(itemRef, data);

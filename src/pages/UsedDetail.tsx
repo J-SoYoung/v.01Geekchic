@@ -16,6 +16,7 @@ const UsedDetail = () => {
   const user = useRecoilValue(geekChickUser);
   const [item, setItem] = useRecoilState(usedItemDetailState);
 
+  
   useEffect(() => {
     const fetchItem = async () => {
       if (itemId) {
@@ -28,7 +29,6 @@ const UsedDetail = () => {
     };
     fetchItem();
   }, [itemId, setItem]);
-
 
   //⭕ detail 로딩중 표시 - 로딩중과 에러 페이지 분리
   return (
@@ -71,7 +71,7 @@ const UsedDetail = () => {
           <div className="p-8">
             <div className="flex pb-6 border-b">
               <div className="w-12 h-12 bg-gray-200 rounded-full">
-                <img src={item.seller.userAvatar} alt="유저" />
+                <img src={item.seller.userAvatar ?? ""} alt="유저" />
               </div>
               <div className="ml-4 ">
                 <div className="text-lg font-semibold">
@@ -85,7 +85,9 @@ const UsedDetail = () => {
 
             <div className="my-8 border-b pb-8">
               <div className="text-xl font-bold">{item.itemName}</div>
-              <div className="text-sm text-gray-500">{calculateDaysAgo(item.createdAt)}</div>
+              <div className="text-sm text-gray-500">
+                {calculateDaysAgo(item.createdAt)}
+              </div>
               <div className="text-xl font-bold mt-2">
                 {item.price.toLocaleString()}원
               </div>
@@ -107,24 +109,26 @@ const UsedDetail = () => {
             </div>
 
             {item.comments && <UsedCommentList comments={item.comments} />}
-
             <UsedInputComment />
-            <button className="w-full">
-              <Link
-                to="/sendMessage"
-                state={{
-                  userId: user?.userId,
-                  itemId: itemId,
-                  itemName: item.itemName,
-                  itemImage: item.imageArr[0],
-                  price: item.price,
-                  seller: item.seller,
-                }}
-                className="w-full inline-block text-center py-3 mb-4 bg-[#8F5BBD] text-white rounded-md"
-              >
-                쪽지 보내기
-              </Link>
-            </button>
+
+            {user.userId !== item.seller.sellerId && (
+              <button className="w-full">
+                <Link
+                  to={`/message/${itemId}/${user.userId}`}
+                  state={{
+                    userId: user?.userId,
+                    itemId: itemId,
+                    itemName: item.itemName,
+                    itemImage: item.imageArr[0],
+                    price: item.price,
+                    seller: item.seller,
+                  }}
+                  className="w-full inline-block text-center py-3 mb-4 bg-[#8F5BBD] text-white rounded-md"
+                >
+                  쪽지 보내기
+                </Link>
+              </button>
+            )}
           </div>
         </div>
       )}
