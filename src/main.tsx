@@ -40,7 +40,7 @@ const router = createBrowserRouter([
       { path: "/my/:userId/salelist", element: <MySalelist /> },
       { path: "/my/:userId/:list", element: <MyList /> },
       { path: "/my/:userId/profile", element: <MyProfile /> },
-      { path: "/sendMessage", element: <UsedMessage /> },
+      { path: "/message/:itemId/:userId", element: <UsedMessage /> },
       { path: "/payment/:id", element: <Payment /> },
     ],
   },
