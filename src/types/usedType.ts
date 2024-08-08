@@ -1,38 +1,30 @@
 import { User } from "firebase/auth";
 import { Product } from "../api/firebase";
 
-// 중고 데이터 타입
-export interface UsedItemType {
-  id: string;
-  itemName: string;
-  size: string;
-  createdAt: string;
-  quantity: number;
+export interface UsedItemType extends UsedSaleItem {
+  // 중고 데이터 타입 ( 중고 판매 타입 확장 )
   description: string;
-  price: string;
-  imageArr: string[];
-  isSales: boolean;
-  options: string[];
   seller: SellerType;
   comments?: UsedCommentType;
 }
 
 export interface UsedCommentType {
+  userId: string;
   commentId: string;
   createdAt: string;
   comment: string;
-  userId: string;
   nickname: string;
   userAvatar: string;
 }
 
 interface SellerType {
-  sellerId: string;
-  userName: string;
-  nickname: string;
-  userAvatar: string;
-  address: string;
-  phone: string;
+  // 판매자 정보
+  sellerId: string | null;
+  userName: string | null;
+  nickname: string | null;
+  userAvatar: string | null;
+  address: string | null;
+  phone: string | null;
 }
 
 export interface FirebaseUserType extends User {
@@ -45,28 +37,25 @@ export interface FirebaseUserType extends User {
   phoneNumber: string | null;
 }
 
-export interface UsedItems {
-  // 중고 아이템
-  itemId: string;
+export interface UsedSaleItem {
+  // 중고 판매목록 아이템 타입
+  id: string;
   itemName: string;
-  price: string;
   size: string;
-  imageUrl: string;
-  quantity: number;
-}
-
-export interface SalesItemsType extends UsedItems {
-  // 판매 목록
   createdAt: string;
+  quantity: number;
+  price: string;
+  imageArr: string[];
   isSales: boolean;
   options: string[];
 }
 
 export interface OrderItemsType {
-  // 주문 목록
+  // 주문내역 아이템 타입
   orderId: string;
   totalPrice: string;
-  items: UsedItems[] | Product[];
+  // items: UsedItems[] | Product[];
+  items: UsedSaleItem[] | Product[];
   buyerInfo: {
     name: string;
     address: string;
@@ -75,6 +64,8 @@ export interface OrderItemsType {
   paymentMethod: string;
   orderDate: string;
 }
+
+export interface Message {}
 
 export interface UserDataType {
   //유저 타입
@@ -86,7 +77,8 @@ export interface UserDataType {
   address: string;
   phone: string | null;
   orders: OrderItemsType[];
-  sales: SalesItemsType[];
+  sales: UsedSaleItem;
   carts: Product[];
   wishlists: Product[];
+  messages: Message[];
 }

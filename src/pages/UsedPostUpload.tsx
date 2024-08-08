@@ -1,30 +1,16 @@
-import React, { useEffect, useRef, useState } from "react";
-import { loadUserData, usedItemUpload } from "../api/firebase";
+import React, { useRef, useState } from "react";
+import { usedItemUpload } from "../api/firebase";
 import { useNavigate } from "react-router-dom";
 import { uploadCloudImage } from "../api/uploader";
-import { useRecoilValue } from "recoil";
-import { userState } from "../atoms/userAtom";
-import { FirebaseUserType, UserDataType } from "../types/usedType";
+import { useRecoilState } from "recoil";
+import { geekChickUser } from "../atoms/userAtom";
+import {  UsedItemType} from "../types/usedType";
 
 // ⭕ 유효성 검사 check
 const UsedPostUpload = () => {
   const navigate = useNavigate();
-  const firebaseUser: FirebaseUserType | null = useRecoilValue(userState);
-  const [dbUser, setDbUser] = useState<UserDataType | null>(null);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      if (firebaseUser?.uid) {
-        const data = await loadUserData(firebaseUser.uid);
-        if (!data && firebaseUser) {
-          setDbUser(null);
-        } else {
-          setDbUser(data);
-        }
-      }
-    };
-    fetchData();
-  }, []);
+  const [user, setUser] = useRecoilState(geekChickUser);
+  console.log(user);
 
   const [previewImages, setPreviewImages] = useState<string[]>([]);
   const [uploadImages, setUploadImages] = useState<string[]>([]);
@@ -37,6 +23,7 @@ const UsedPostUpload = () => {
   const [description, setDescription] = useState("");
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const file = e.target.files[0];
@@ -53,8 +40,8 @@ const UsedPostUpload = () => {
     setPreviewImages((prevImages) => prevImages.filter((_, i) => i !== index));
   };
 
-  const onClickUsedItemUpload = () => {
-    const itemData = {
+  const onClickUsedItemUpload = async () => {
+    const itemData: UsedItemType = {
       id: "",
       description,
       imageArr: uploadImages,
@@ -68,16 +55,16 @@ const UsedPostUpload = () => {
       quantity,
       size,
       seller: {
-        sellerId: dbUser ? dbUser.userId : firebaseUser?.uid,
-        userName: dbUser ? dbUser.userName : firebaseUser?.displayName,
-        nickname: dbUser ? dbUser.nickname : firebaseUser?.displayName,
-        userAvatar: dbUser ? dbUser.userAvatar : firebaseUser?.photoURL,
-        address: "",
-        phone: "",
+        sellerId: user.userId || null,
+        userName: user.userName || null,
+        nickname: user.nickname || null,
+        userAvatar: user.userAvatar || null,
+        address: user.address || null,
+        phone: user.phone || null,
       },
+      createdAt: new Date().toISOString().split("T")[0],
     };
-
-    usedItemUpload(itemData)
+    await usedItemUpload(itemData, setUser, user)
       .then(() => {
         navigate("/usedHome");
       })
