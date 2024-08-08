@@ -37,6 +37,19 @@ export interface Product {
   options: string[];
 }
 
+export interface PayProduct extends Product {
+  quantity: number;
+}
+
+interface OrderDetails {
+  ordersId?: string;
+  name: string;
+  phone: string;
+  address: string;
+  paymentMethod: string;
+  createdAt?: string;
+}
+
 interface Comment {
   id: string;
   text: string;
@@ -221,6 +234,35 @@ export async function getCommentItems(productId: string): Promise<Comment[]> {
   });
 }
 
+export async function addOrderList(
+  userId: string,
+  product: PayProduct,
+  orderDetails: OrderDetails
+) {
+  const ordersId = uuidv4();
+  const orderRef = ref(database, `userData/${userId}/orders/`);
+  const newOrderRef = push(orderRef);
+
+  const orderData = {
+    items: {
+      description: product.description,
+      image: product.image,
+      price: product.price,
+      options: product.options,
+      title: product.title,
+      quantity: product.quantity,
+    },
+    ordersId,
+    name: orderDetails.name,
+    phone: orderDetails.phone,
+    address: orderDetails.address,
+    paymentMethod: orderDetails.paymentMethod,
+    createdAt: new Date().toISOString(),
+  };
+
+  return set(newOrderRef, orderData);
+}
+
 // 중고 제품 업로드
 export function usedItemUpload(itemData: UsedItemType) {
   const usedItemRef = ref(database, "usedItems");
@@ -331,7 +373,11 @@ export async function removeUsedComment(
 }
 
 // 댓글 수정
-export async function editUsedComment(itemId: string|undefined, commentId: string, data:UsedCommentType) {
+export async function editUsedComment(
+  itemId: string | undefined,
+  commentId: string,
+  data: UsedCommentType
+) {
   const itemRef = ref(database, `usedItems/${itemId}/comments/${commentId}`);
   try {
     await update(itemRef, data);
