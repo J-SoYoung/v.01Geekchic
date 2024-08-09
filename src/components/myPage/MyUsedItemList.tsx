@@ -4,7 +4,7 @@ import Minus from "../../assets/icons/square_minus.svg";
 import { PayProduct } from "../../api/firebase";
 
 export interface UsedItemListType {
-  item: PayProduct
+  item: PayProduct;
   isCart: boolean;
   onQuantityChange?: (id: string, quantity: number) => void;
   onRemove?: (id: string) => void;

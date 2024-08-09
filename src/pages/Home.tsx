@@ -61,11 +61,6 @@ export default function Home() {
             userAvatar: user.photoURL,
             address: "",
             phone: user.phoneNumber,
-            orders: [],
-            sales: [],
-            carts: [],
-            wishlists: [],
-            messages: [],
           };
           await uploadUserData(newUser);
           setGeekUser(newUser);

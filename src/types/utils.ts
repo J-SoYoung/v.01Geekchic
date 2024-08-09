@@ -4,7 +4,7 @@ export const calculateDaysAgo = (createdAt: string): string => {
   const currentDate = new Date();
   const timeDifference = currentDate.getTime() - uploadDate.getTime();
   const daysDifference = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
-  
+
   return `${daysDifference}일전`;
 };
 
@@ -15,3 +15,6 @@ export const makeArr = (data) => {
     ...value,
   }));
 };
+
+// defaultImage
+export const defaultImage = "https://via.placeholder.com/150";
