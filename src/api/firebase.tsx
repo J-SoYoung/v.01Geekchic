@@ -37,6 +37,19 @@ export interface Product {
   options: string[];
 }
 
+export interface PayProduct extends Product {
+  quantity: number;
+}
+
+interface OrderDetails {
+  ordersId?: string;
+  name: string;
+  phone: string;
+  address: string;
+  paymentMethod: string;
+  createdAt?: string;
+}
+
 interface Comment {
   id: string;
   text: string;
@@ -221,7 +234,35 @@ export async function getCommentItems(productId: string): Promise<Comment[]> {
   });
 }
 
-// ⭕firebase데이터 업로드 코드 통일화 시키기
+export async function addOrderList(
+  userId: string,
+  product: PayProduct,
+  orderDetails: OrderDetails
+) {
+  const ordersId = uuidv4();
+  const orderRef = ref(database, `userData/${userId}/orders`);
+  const newOrderRef = push(orderRef);
+
+  const orderData = {
+    items: {
+      description: product.description,
+      image: product.image,
+      price: product.price,
+      options: product.options,
+      title: product.title,
+      quantity: product.quantity,
+    },
+    ordersId,
+    name: orderDetails.name,
+    phone: orderDetails.phone,
+    address: orderDetails.address,
+    paymentMethod: orderDetails.paymentMethod,
+    createdAt: new Date().toISOString(),
+  };
+
+  return set(newOrderRef, orderData);
+}
+
 // 중고 제품 업로드
 export async function usedItemUpload(
   itemData: UsedItemType,
