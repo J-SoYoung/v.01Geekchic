@@ -3,6 +3,7 @@ import { useRecoilValue, useRecoilState } from "recoil";
 import { wishlistState, userState } from "../atoms/userAtom";
 import { getWishlistItems, setWishlistItems } from "../api/firebase";
 import closedIcon from "../assets/icons/close.svg";
+import { useNavigate } from "react-router-dom";
 
 interface Product {
   id: string;
@@ -17,6 +18,7 @@ interface Product {
 export default function Wishlist() {
   const [wishlist, setWishlist] = useRecoilState(wishlistState);
   const user = useRecoilValue(userState);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (user) {
@@ -48,10 +50,25 @@ export default function Wishlist() {
             <p>전체</p>
             <p>{wishlist.length}</p>
           </div>
-          <ul className="px-11 py-4 pb-4">
+          <ul className="px-11 py-2 pb-4">
             {wishlist.map((product: Product) => (
               <>
-                <li className="flex mb-4 w-[550px]" key={product.id}>
+                <button onClick={() => handleWishlist(product)}>
+                  <img
+                    src={closedIcon}
+                    alt="closed"
+                    className="w-[15px] h-[15px] ml-[500px] brightness-150"
+                  />
+                </button>
+                <li
+                  onClick={() => {
+                    navigate(`/products/detail/${product.id}`, {
+                      state: { product },
+                    });
+                  }}
+                  className="flex mb-4 w-[550px] hover:hover:brightness-75 cursor-pointer"
+                  key={product.id}
+                >
                   <img
                     className="w-[150px] h-[150px] rounded-[5px]"
                     src={product.image}
@@ -62,13 +79,6 @@ export default function Wishlist() {
                       <h3 className="text-xl font-bold mb-[10px]">
                         {product.title}
                       </h3>
-                      <button onClick={() => handleWishlist(product)}>
-                        <img
-                          src={closedIcon}
-                          alt="closed"
-                          className="w-[15px] h-[15px] brightness-150"
-                        />
-                      </button>
                     </div>
                     <p className="text-xl mb-[55px]">{product.description}</p>
                     <p className="text-xl font-bold text-right">{`${product.price}원`}</p>

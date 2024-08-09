@@ -1,12 +1,11 @@
 import React, { useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import Header from "../components/common/Header";
 import SearchHeader from "../components/common/SearchHeader";
 import { useQuery } from "@tanstack/react-query";
 import ProductCard from "../components/main/ProductCard";
 import useProducts, { loadUserData, uploadUserData } from "../api/firebase";
 import { useRecoilValue, useSetRecoilState } from "recoil";
-import { Link } from "react-router-dom";
 import { userState, geekChickUser } from "../atoms/userAtom";
 import { UserDataType } from "../types/usedType";
 
@@ -42,7 +41,7 @@ export default function Home() {
   {
     error && <p>Something is wrong</p>;
   }
-  
+
   // ⭕ 타입해결
   useEffect(() => {
     const fetchData = async () => {
@@ -63,10 +62,10 @@ export default function Home() {
             address: "",
             phone: user.phoneNumber,
             orders: [],
-            sales: [], 
+            sales: [],
             carts: [],
             wishlists: [],
-            messages:[],
+            messages: [],
           };
           await uploadUserData(newUser);
           setGeekUser(newUser);

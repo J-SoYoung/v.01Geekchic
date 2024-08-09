@@ -19,6 +19,7 @@ import Products from "./pages/Products.tsx";
 import Wishlist from "./pages/Wishlist.tsx";
 import UsedMessage from "./pages/UsedMessage.tsx";
 import Payment from "./pages/Payment.tsx";
+import OrdersDetail from "./pages/OrdersDetail.tsx";
 
 const router = createBrowserRouter([
   {
@@ -42,6 +43,7 @@ const router = createBrowserRouter([
       { path: "/my/:userId/profile", element: <MyProfile /> },
       { path: "/message/:itemId/:userId", element: <UsedMessage /> },
       { path: "/payment/:id", element: <Payment /> },
+      { path: "/orders/detail/:ordersid", element: <OrdersDetail /> },
     ],
   },
 ]);
