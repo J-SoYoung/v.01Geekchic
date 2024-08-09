@@ -10,7 +10,6 @@ import {  UsedItemType} from "../types/usedType";
 const UsedPostUpload = () => {
   const navigate = useNavigate();
   const [user, setUser] = useRecoilState(geekChickUser);
-  console.log(user);
 
   const [previewImages, setPreviewImages] = useState<string[]>([]);
   const [uploadImages, setUploadImages] = useState<string[]>([]);

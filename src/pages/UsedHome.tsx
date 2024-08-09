@@ -62,7 +62,7 @@ const UsedHome = () => {
     );
 
   return (
-    <div className="h-[100%] w-[600px]">
+    <div className="min-h-screen w-[600px]">
       <header className="p-11 pb-4 text-right">
         <h1 className="text-3xl font-bold text-left mb-5 ">
           <Link to="/usedHome">중고거래</Link>
@@ -84,6 +84,7 @@ const UsedHome = () => {
             searchLoading={searchLoading}
           />
         ) : (
+          // ⭕본인이 판매하는 제품 아이콘 표시하기 
           usedItems && <UsedItemList usedItems={usedItems} />
         )}
       </div>

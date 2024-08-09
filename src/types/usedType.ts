@@ -52,17 +52,13 @@ export interface UsedSaleItem {
 
 export interface OrderItemsType {
   // 주문내역 아이템 타입
-  orderId: string;
-  totalPrice: string;
-  // items: UsedItems[] | Product[];
-  items: UsedSaleItem[] | Product[];
-  buyerInfo: {
-    name: string;
-    address: string;
-    phone: string;
-  };
+  address: string;
+  createdAt: string;
+  items: Product;
+  name: string;
+  ordersId: string;
   paymentMethod: string;
-  orderDate: string;
+  phone: string;
 }
 
 export interface Message {}
@@ -76,9 +72,9 @@ export interface UserDataType {
   userAvatar: string | null;
   address: string;
   phone: string | null;
-  orders: OrderItemsType[];
-  sales: UsedSaleItem;
-  carts: Product[];
-  wishlists: Product[];
-  messages: Message[];
+  orders?: OrderItemsType;
+  sales?: UsedSaleItem;
+  carts?: Product[];
+  wishlists?: Product[];
+  messages?: Message;
 }
