@@ -1,12 +1,10 @@
-import React from "react";
 import TrashIcon from "../../assets/icons/trash.svg";
 import Plus from "../../assets/icons/square_plus.svg";
 import Minus from "../../assets/icons/square_minus.svg";
-import { Product } from "../../api/firebase";
-import { UsedItems } from "../../types/usedType";
+import { PayProduct } from "../../api/firebase";
 
 export interface UsedItemListType {
-  item: Product | UsedItems;
+  item: PayProduct;
   isCart: boolean;
   onQuantityChange?: (id: string, quantity: number) => void;
   onRemove?: (id: string) => void;
@@ -19,82 +17,59 @@ const MyUsedItemList = ({
   onRemove,
 }: UsedItemListType) => {
 
-  // 타입 체크 후 컴포넌트 렌더링
-  const isProduct = (item: Product | UsedItems): item is Product => {
-    return (item as Product).id !== undefined;
-  };
-
-  if (isProduct(item)) {
-    return (
-      <div className={isCart ? "border-b mb-8" : ""}>
-        <div key={item.id} className="flex mb-4">
-          <img
-            src={item.image}
-            alt={item.title}
-            className="w-20 h-20 object-cover rounded-lg mr-4"
-          />
-          <div className="w-full flex justify-between ">
-            <div>
-              <div className="font-semibold">{item.title}</div>
-              <div className="text-sm text-gray-500">{item.options[0]}</div>
-              <div className="font-bold text-lg">{item.price}원</div>
-            </div>
-            {isCart && (
-              <div className="flex">
-                <div className="flex items-center">
-                  <button
-                    onClick={() =>
-                      onQuantityChange && onQuantityChange(item.id, 1)
-                    }
-                  >
-                    <img
-                      src={Minus}
-                      alt="빼기"
-                      className="w-5 h-5 mx-auto mx-2.5"
-                    />
-                  </button>
-                  <span className="">1</span>
-                  <button
-                    onClick={() =>
-                      onQuantityChange && onQuantityChange(item.id, 1)
-                    }
-                  >
-                    <img
-                      src={Plus}
-                      alt="추가하기"
-                      className="w-5 h-5 mx-auto mx-2.5"
-                    />
-                  </button>
-                </div>
-                <button onClick={() => onRemove && onRemove(item.id)}>
-                  <img src={TrashIcon} alt="삭제" className="w-5 h-5 mx-auto" />
+  return (
+    <div className={isCart ? "border-b mb-8" : ""}>
+      <div key={item.id} className="flex mb-4">
+        <img
+          src={item.image}
+          alt={item.title}
+          className="w-20 h-20 object-cover rounded-lg mr-4"
+        />
+        <div className="w-full flex justify-between ">
+          <div>
+            <p className="font-semibold">{item.title}</p>
+            <p className="font-semibold">{item.description}</p>
+            <p className="text-sm text-gray-500">
+              {item.options[0]} | {item.quantity}개
+            </p>
+            <p className="font-bold text-lg">{item.price}원 </p>
+          </div>
+          {isCart && (
+            <div className="flex">
+              <div className="flex items-center">
+                <button
+                  onClick={() =>
+                    onQuantityChange && onQuantityChange(item.id, 1)
+                  }
+                >
+                  <img
+                    src={Minus}
+                    alt="빼기"
+                    className="w-5 h-5 mx-auto mx-2.5"
+                  />
+                </button>
+                <span className="">1</span>
+                <button
+                  onClick={() =>
+                    onQuantityChange && onQuantityChange(item.id, 1)
+                  }
+                >
+                  <img
+                    src={Plus}
+                    alt="추가하기"
+                    className="w-5 h-5 mx-auto mx-2.5"
+                  />
                 </button>
               </div>
-            )}
-          </div>
-        </div>
-      </div>
-    );
-  } else {
-    return (
-      <div className={isCart ? "border-b mb-8" : ""}>
-        <div key={item.itemId} className="flex mb-4">
-          <img
-            src={item.imageUrl}
-            alt={item.itemName}
-            className="w-20 h-20 object-cover rounded-lg mr-4"
-          />
-          <div className="w-full flex justify-between ">
-            <div>
-              <div className="font-semibold">{item.itemName}</div>
-              <div className="text-sm text-gray-500">{item.size}</div>
-              <div className="font-bold text-lg">{item.price}원</div>
+              <button onClick={() => onRemove && onRemove(item.id)}>
+                <img src={TrashIcon} alt="삭제" className="w-5 h-5 mx-auto" />
+              </button>
             </div>
-          </div>
+          )}
         </div>
       </div>
-    );
-  }
+    </div>
+  );
 };
 
 export default MyUsedItemList;

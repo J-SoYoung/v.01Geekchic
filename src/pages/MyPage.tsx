@@ -3,23 +3,26 @@ import { Link } from "react-router-dom";
 
 // ⭕default Image 클라우디너리에 업로드해서 사용하기
 import { geekChickUser } from "../atoms/userAtom";
-import { useRecoilValue } from "recoil";
-import { UsedSaleItem } from "../types/usedType";
+import { useRecoilState } from "recoil";
+import { defaultImage, makeArr } from "../types/utils";
+import { useEffect } from "react";
+import { loadUserData } from "../api/firebase";
 
 const MyPage = () => {
-  const user = useRecoilValue(geekChickUser);
+  const [user, setUser] = useRecoilState(geekChickUser);
   console.log(user);
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await loadUserData(user.userId);
+      data && setUser(data);
+    };
+    fetchData();
+  }, [user.userId, setUser]);
 
-  const makeArr = (data) => {
-    return Object.entries(data).map(([, value]) => ({
-      ...value,
-    }));
-  };
-
-  const sales = makeArr(user.sales);
-  // const carts = makeArr<CartWishlistItem>(user.carts);
-  // const orders = makeArr<OrderItem>(user.orders);
-  // const wishlists = makeArr<CartWishlistItem>(user.wishlists);
+  const sales = makeArr(user.sales || []);
+  const orders = makeArr(user.orders || []);
+  const messages = makeArr(user.messages || []);
+  const carts = makeArr(user.carts || []);
 
   if (user == null) {
     return (
@@ -37,13 +40,13 @@ const MyPage = () => {
 
   return (
     <Layout title="마이페이지">
-      <div className="m-16 p-4 h-[100vh]">
+      <div className="m-16 p-4">
         {/* 프로필 관리 */}
         <div className="mb-16 border-b-2">
           <div className="flex items-center mb-8 mx-auto">
             <div className="w-16 h-16 bg-gray-200 rounded-full">
               <img
-                src={user.userAvatar ?? ""}
+                src={user.userAvatar ?? defaultImage}
                 alt={user.userName ?? ""}
                 className="w-full h-full object-cover rounded-full"
               />
@@ -69,9 +72,7 @@ const MyPage = () => {
             className="flex justify-between items-center p-4 bg-gray-100 rounded-md cursor-pointer"
           >
             <span className="text-lg">주문내역</span>
-            <span className="text-lg font-semibold">
-              {user?.orders ? user.orders.length : 0}
-            </span>
+            <span className="text-lg font-semibold">{orders.length}</span>
           </Link>
           <Link
             to="salelist"
@@ -79,9 +80,7 @@ const MyPage = () => {
             className="flex justify-between items-center p-4 bg-gray-100 rounded-md cursor-pointer"
           >
             <span className="text-lg">판매목록</span>
-            <span className="text-lg font-semibold">
-              {user? sales.length : 0}
-            </span>
+            <span className="text-lg font-semibold">{sales.length}</span>
           </Link>
           <Link
             to="cart"
@@ -89,18 +88,15 @@ const MyPage = () => {
             className="flex justify-between items-center p-4 bg-gray-100 rounded-md cursor-pointer"
           >
             <span className="text-lg">장바구니</span>
-            <span className="text-lg font-semibold">
-              {user?.carts ? user.carts.length : 0}
-            </span>
+            <span className="text-lg font-semibold">{carts.length}</span>
           </Link>
           <Link
-            to="talk"
+            to="messageList"
+            state={{ user }}
             className="flex justify-between items-center p-4 bg-gray-100 rounded-md cursor-pointer"
           >
             <span className="text-lg">내 쪽지함</span>
-            <span className="text-lg font-semibold">
-              {/* {me?.carts.cartsItems ? me.carts.cartsItems.length : 0} */}
-            </span>
+            <span className="text-lg font-semibold">{messages.length}</span>
           </Link>
         </div>
       </div>
