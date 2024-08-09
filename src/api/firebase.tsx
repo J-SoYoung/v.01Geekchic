@@ -21,7 +21,12 @@ import {
   remove,
   update,
 } from "firebase/database";
-import { UsedItemType, UserDataType, UsedCommentType, UsedSaleItem } from "../types/usedType";
+import {
+  UsedItemType,
+  UserDataType,
+  UsedCommentType,
+  UsedSaleItem,
+} from "../types/usedType";
 import { SetterOrUpdater } from "recoil";
 interface AdminUser extends User {
   isAdmin: boolean;
@@ -263,6 +268,16 @@ export async function addOrderList(
   return set(newOrderRef, orderData);
 }
 
+export async function getOrderItems(userId: string): Promise<Comment[]> {
+  const orderItemsRef = ref(getDatabase(), `userData/${userId}/orders`);
+  return get(orderItemsRef).then((snapshot) => {
+    if (snapshot.exists()) {
+      return Object.values(snapshot.val());
+    }
+    return [];
+  });
+}
+
 // 중고 제품 업로드
 export async function usedItemUpload(
   itemData: UsedItemType,
@@ -291,7 +306,7 @@ export async function usedItemUpload(
     quantity,
     size,
   } = itemData;
-  const saleItem:UsedSaleItem = {
+  const saleItem: UsedSaleItem = {
     createdAt,
     id,
     imageArr,
@@ -310,7 +325,7 @@ export async function usedItemUpload(
       saleItem,
   };
   await update(ref(database), updates);
-  setUser({ ...user, sales: {...saleItem} });
+  setUser({ ...user, sales: { ...saleItem } });
 }
 
 // 중고 메인 데이터 받아오기
