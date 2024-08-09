@@ -12,8 +12,7 @@ interface Product {
 }
 
 export default function ProductCard({ product }: { product: Product }) {
-  const { image } = product;
-  const { id } = product;
+  const { image, id } = product;
   const navigate = useNavigate();
   return (
     <li
