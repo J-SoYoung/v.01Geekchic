@@ -21,7 +21,12 @@ import {
   remove,
   update,
 } from "firebase/database";
-import { UsedItemType, UserDataType, UsedCommentType, UsedSaleItem } from "../types/usedType";
+import {
+  UsedItemType,
+  UserDataType,
+  UsedCommentType,
+  UsedSaleItem,
+} from "../types/usedType";
 import { SetterOrUpdater } from "recoil";
 interface AdminUser extends User {
   isAdmin: boolean;
@@ -262,8 +267,8 @@ export async function addOrderList(
 
   return set(newOrderRef, orderData);
 }
-
-// 중고 제품 업로드
+// ⭕ 주석/함수이름 통일 => 추가Add, 삭제Remove, 수정Edit, 불러오기Load
+// 중고 제품 추가
 export async function usedItemUpload(
   itemData: UsedItemType,
   setUser: SetterOrUpdater<UserDataType>,
@@ -291,7 +296,7 @@ export async function usedItemUpload(
     quantity,
     size,
   } = itemData;
-  const saleItem:UsedSaleItem = {
+  const saleItem: UsedSaleItem = {
     createdAt,
     id,
     imageArr,
@@ -310,7 +315,7 @@ export async function usedItemUpload(
       saleItem,
   };
   await update(ref(database), updates);
-  setUser({ ...user, sales: {...saleItem} });
+  setUser({ ...user, sales: { ...saleItem } });
 }
 
 // 중고 메인 데이터 받아오기
@@ -466,7 +471,7 @@ export async function uploadUserData(
   const userRef = ref(database, `userData/${data.userId}`);
   await set(userRef, {
     ...data,
-    createdAt: Date.now(),
+    createdAt: new Date().toISOString(),
   });
   return data;
 }
@@ -498,12 +503,23 @@ export async function editUserData(
   }
 }
 
-// 중고 데이터 새로 고침
-// export async function updateData() {
-//   const data = usedItems;
-//   const dataRef = ref(database, "usedItems");
-//   await set(dataRef, {
-//     ...data,
-//   });
-//   return data;
-// }
+// 메세지 생성
+export async function addUsedMessage(messageData) {
+  try {
+    const usedMessageRef = ref(
+      database,
+      `userData/${messageData.userId}/messages`
+    );
+
+    const newItemRef = push(usedMessageRef);
+    messageData.messageId =
+      newItemRef.key ?? `${new Date().toISOString()}_${messageData.userId}`;
+
+    await set(newItemRef, {
+      ...messageData,
+      createdAt: new Date().toISOString(),
+    });
+  } catch (err) {
+    console.error("메세지 생성 에러", err);
+  }
+}

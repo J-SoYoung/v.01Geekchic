@@ -17,9 +17,10 @@ import ProductsDtail from "./pages/ProductsDtail.tsx";
 import NewProduct from "./pages/NewProduct.tsx";
 import Products from "./pages/Products.tsx";
 import Wishlist from "./pages/Wishlist.tsx";
-import UsedMessage from "./pages/UsedMessage.tsx";
 import Payment from "./pages/Payment.tsx";
 import OrdersDetail from "./pages/OrdersDetail.tsx";
+import UsedMessageList from "./pages/UsedMessageList.tsx";
+import UsedMessage from "./pages/UsedMessage.tsx";
 
 const router = createBrowserRouter([
   {
@@ -41,6 +42,7 @@ const router = createBrowserRouter([
       { path: "/my/:userId/salelist", element: <MySalelist /> },
       { path: "/my/:userId/:list", element: <MyList /> },
       { path: "/my/:userId/profile", element: <MyProfile /> },
+      { path: "/my/:userId/messageList", element: <UsedMessageList /> },
       { path: "/message/:itemId/:userId", element: <UsedMessage /> },
       { path: "/payment/:id", element: <Payment /> },
       { path: "/orders/detail/:ordersid", element: <OrdersDetail /> },
