@@ -4,21 +4,15 @@ import { Link } from "react-router-dom";
 // ⭕default Image 클라우디너리에 업로드해서 사용하기
 import { geekChickUser } from "../atoms/userAtom";
 import { useRecoilValue } from "recoil";
-import { UsedSaleItem } from "../types/usedType";
+import { makeArr } from "../types/utils";
 
 const MyPage = () => {
   const user = useRecoilValue(geekChickUser);
-  console.log(user);
-
-  const makeArr = (data) => {
-    return Object.entries(data).map(([, value]) => ({
-      ...value,
-    }));
-  };
 
   const sales = makeArr(user.sales);
+  const orders = makeArr(user.orders);
+  console.log(orders)
   // const carts = makeArr<CartWishlistItem>(user.carts);
-  // const orders = makeArr<OrderItem>(user.orders);
   // const wishlists = makeArr<CartWishlistItem>(user.wishlists);
 
   if (user == null) {
@@ -70,7 +64,7 @@ const MyPage = () => {
           >
             <span className="text-lg">주문내역</span>
             <span className="text-lg font-semibold">
-              {user?.orders ? user.orders.length : 0}
+              {user? orders.length : 0}
             </span>
           </Link>
           <Link
