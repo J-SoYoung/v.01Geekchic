@@ -267,8 +267,19 @@ export async function addOrderList(
 
   return set(newOrderRef, orderData);
 }
+
+export async function getOrderItems(userId: string): Promise<Comment[]> {
+  const orderItemsRef = ref(getDatabase(), `userData/${userId}/orders`);
+  return get(orderItemsRef).then((snapshot) => {
+    if (snapshot.exists()) {
+      return Object.values(snapshot.val());
+    }
+    return [];
+  });
+}
+
+// 중고 제품 업로드
 // ⭕ 주석/함수이름 통일 => 추가Add, 삭제Remove, 수정Edit, 불러오기Load
-// 중고 제품 추가
 export async function usedItemUpload(
   itemData: UsedItemType,
   setUser: SetterOrUpdater<UserDataType>,
