@@ -1,11 +1,10 @@
-import React from "react";
 import TrashIcon from "../../assets/icons/trash.svg";
 import Plus from "../../assets/icons/square_plus.svg";
 import Minus from "../../assets/icons/square_minus.svg";
-import { Product } from "../../api/firebase";
+import { PayProduct } from "../../api/firebase";
 
 export interface UsedItemListType {
-  item: Product
+  item: PayProduct
   isCart: boolean;
   onQuantityChange?: (id: string, quantity: number) => void;
   onRemove?: (id: string) => void;
