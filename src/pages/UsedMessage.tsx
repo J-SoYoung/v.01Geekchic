@@ -2,99 +2,76 @@ import { useRecoilValue } from "recoil";
 import Layout from "../components/myPage/_Layout";
 import { useLocation } from "react-router-dom";
 import { geekChickUser } from "../atoms/userAtom";
+import { makeArr } from "../types/utils";
 
 const UsedMessage = () => {
   const location = useLocation();
-  const user = useRecoilValue(geekChickUser);
-  const { itemName, price, seller, itemImage } = location.state;
-  console.log(user);
-  console.log(seller)
-  const messages = [
-    {
-      id: "message_1",
-      sender: "seller",
-      usedItem: itemName,
-      message: `${itemName} 제품 판매자 ${seller.nickname}입니다`,
-    },
-    {
-      id: "message_2",
-      sender: user.userId === seller.sellerId ? "seller" : "buyer",
-      usedItem: itemName,
-      message: "안녕하세요, 가격 흥정이 가능한가요?",
-    },
-  ];
-
-  // const [messages, setMessages] = useState([
-  //   {
-  //     id: 1,
-  //     sender: "seller",
-  //     text: "안녕하세요, 이 낚싯대는 여전히 판매 중입니다!",
-  //   },
-  //   { id: 2, sender: "buyer", text: "안녕하세요, 가격 흥정이 가능한가요?" },
-  // ]);
-  // const [newMessage, setNewMessage] = useState("");
-
-  // useEffect(() => {
-  //   const fetchUsedItem = async () => {
-  //     if (itemId && userId) {
-  //       const itemData = await usedDetailItem(itemId);
-  //       setUsedItem(itemData);
-
-  //       const userData = await loadUserData(userId);
-  //       setUser(userData);
-  //     }
-  //   };
-  //   fetchUsedItem();
-  // }, [itemId, userId]);
-
+  // const { m } = location.state || {};
+  // const {
+  //   createdAt,
+  //   itemId,
+  //   itemImage,
+  //   itemName,
+  //   message,
+  //   messageId,
+  //   price,
+  //   seller,
+  //   userId,
+  // } = m;
+  
+  
   return (
     <Layout title={"쪽지 보내기"}>
       <div className="w-[596px] min-h-screen p-8 flex flex-col bg-gray-100 relative">
         {/* 판매자정보 */}
-        <div className="p-4 border-b bg-white flex">
-          <img src={itemImage} alt="Product" className="w-20 h-20 rounded-md" />
+        {/* <div className="p-4 border-b bg-white flex mb-8">
+          <img src={itemImage} alt="Product" className="w-20 h-20 rounded-md object-cover" />
           <div className="ml-2 text-left">
             <div className="text-lg font-bold">{seller.nickname}</div>
             <div className="text-gray-500">{itemName}</div>
-            <div className="text-lg font-semibold text-blue-500">
+            <div className="text-lg font-semibold text-[#8F5BBD]">
               {price.toLocaleString()}원
             </div>
           </div>
-          <button className="ml-auto text-blue-500">결제하기</button>
-        </div>
+          <button className="ml-auto font-bold text-[#8F5BBD]">결제하기</button>
+        </div> */}
 
         {/* 대화창 */}
-        <div className="py-4  overflow-y-auto">
-          {messages.map((message) => (
+        {/* <div className=" max-w-xs p-3 rounded-lg mb-4 bg-gray-200 text-black">
+          {itemName} 제품 판매자<br/>
+          {seller.nickname}입니다
+        </div>
+        {makeArr(message).map((m) => {
+          return (
             <div
-              key={message.id}
+              key={m.id}
               className={`flex mb-4 ${
-                message.sender === "buyer" ? "justify-end" : "justify-start"
+                m.sender === "buyer" ? "justify-end" : "justify-start"
               }`}
             >
               <div
                 className={`max-w-xs p-3 rounded-lg ${
-                  message.sender === "buyer"
-                    ? "bg-blue-500 text-white"
+                  m.sender === "buyer"
+                    ? "bg-[#8F5BBD] text-white"
                     : "bg-gray-200 text-black"
                 }`}
               >
-                {message.message}
+                {m.message}
               </div>
             </div>
-          ))}
-        </div>
+          );
+        })} */}
 
         {/* 대화 입력창 */}
-        <div className="">
+        <div className="w-[532px] flex items-center fixed bottom-24">
           <textarea
-            className="border p-2 w-full mb-4"
+            className="border w-full p-2 resize-none outline-0"
             // value={message}
             // onChange={(e) => setMessage(e.target.value)}
             placeholder="메시지를 입력하세요"
           />
           <button
-            className="bg-blue-500 text-white px-4 py-2 rounded"
+            className="bg-[#8F5BBD] text-white px-4 py-2 rounded"
             // onClick={sendMessage}
           >
             전송
