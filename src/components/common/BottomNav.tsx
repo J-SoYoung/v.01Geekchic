@@ -18,7 +18,7 @@ const BottomNav = () => {
   const firebaseUser = useRecoilValue(userState);
 
   return (
-    <nav className="fixed bottom-0 mx-auto w-[598px] max-w-[600px] border-t-2 bg-[#fff]">
+    <nav className="fixed bottom-0 mx-auto w-[598px] max-w-[597px] border-t-2 bg-[#fff]">
       <ul className="flex justify-around p-4">
         <Link to="/" className="text-center cursor-pointer">
           <img

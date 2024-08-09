@@ -16,7 +16,7 @@ const MyList = () => {
 
   return (
     <Layout title={list == "cart" ? "장바구니" : "주문내역"}>
-      <div className="h-[100vh] p-4">
+      <div className="p-4">
         <h1>{list == "cart" ? <Cart carts={user.carts} /> : <OrderList orders={user.orders} />}</h1>
       </div>
     </Layout>

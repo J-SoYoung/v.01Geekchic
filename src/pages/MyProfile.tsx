@@ -7,6 +7,8 @@ import { useRecoilState } from "recoil";
 import { geekChickUser } from "../atoms/userAtom";
 import { editUserData } from "../api/firebase";
 import { uploadCloudImage } from "../api/uploader";
+import { defaultImage } from "../types/utils";
+
 
 // ⭕ 데이터 형태 세세하게 지정하기 ex)phone 010-1111-1110 하이픈넣기, 주소명 등
 const MyProfile = () => {
@@ -30,10 +32,9 @@ const MyProfile = () => {
     if (imageFile) {
       const cloudImage = await uploadCloudImage(imageFile);
       updatedUser = { ...editUser, userAvatar: cloudImage };
-
-      await editUserData(updatedUser, setUser);
-      setIsEditing(false);
     }
+    await editUserData(updatedUser, setUser);
+    setIsEditing(false);
   };
 
   const handleClickImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -54,7 +55,7 @@ const MyProfile = () => {
   // ⭕이미지 컴포넌트 따로 분리?
   return (
     <Layout title="내 프로필 관리">
-      <div className="h-[100vh] p-8">
+      <div className="p-8">
         <div>
           <div className="w-24 h-24 bg-gray-200 rounded-full mx-auto mb-10 relative">
             {isEditing ? (
@@ -81,7 +82,7 @@ const MyProfile = () => {
               </>
             ) : (
               <img
-                src={(user && user.userAvatar) ?? ""}
+                src={(user && user.userAvatar) ?? defaultImage}
                 alt="Profile"
                 className="w-full h-full object-cover rounded-full"
               />

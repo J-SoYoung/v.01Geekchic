@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import MyUsedItemList from "./MyUsedItemList";
 import { Link } from "react-router-dom";
 import { Product } from "../../api/firebase";
+import { makeArr } from "../../types/utils";
 
 interface CartsProps {
   carts: Product[];
@@ -9,14 +10,14 @@ interface CartsProps {
 
 const Cart = ({ carts }: CartsProps) => {
   const [cartItems, setCartItems] = useState<Product[]>([]);
+  const cartsArr = makeArr(carts || []);
+  console.log(cartsArr);
 
   // ⭕함수 동작X -> 구현해야함 ( 수량변경 )
   const handleQuantityChange = (cartId: string, quantity: number) => {
     setCartItems((prevItems) =>
       prevItems.map((item) =>
-        item.id === cartId
-          ? { ...item, quantity: Math.max(1, quantity) }
-          : item
+        item.id === cartId ? { ...item, quantity: Math.max(1, quantity) } : item
       )
     );
   };
@@ -27,7 +28,18 @@ const Cart = ({ carts }: CartsProps) => {
 
   return (
     <div className="p-10 text-left">
-      <div className="text-m text-gray-600 mb-4 pb-4 border-b">
+      {cartsArr.length == 0 && (
+        <div>
+          <p>쪽지가 없습니다</p>
+          <Link to={"/usedHome"}>중고 제품을 둘러보세요</Link>
+        </div>
+      )}
+
+      <div>
+        orders랑 비슷하게 에러 날거같아서 일단 주석처리해놨어요 cart업데이트
+        되면 렌더링부분 수정할게요 콘솔에 데이터 확인만 일단 ㅎㅎ
+      </div>
+      {/* <div className="text-m text-gray-600 mb-4 pb-4 border-b">
         <span className="font-bold">전체 {cartItems.length}</span>
       </div>
       {!carts ? (
@@ -56,12 +68,12 @@ const Cart = ({ carts }: CartsProps) => {
             <div className="flex flex-col ">
               <span>상품 총액</span>
               <span>
-                {/* {cartItems
+                {cartItems
               .reduce(
                 (acc, cartItem) => acc + cartItem.price * cartItem.quantity,
                 0
               )
-              .toLocaleString()} */}
+              .toLocaleString()}
                 원
               </span>
             </div>
@@ -74,12 +86,12 @@ const Cart = ({ carts }: CartsProps) => {
             <div className="flex flex-col font-bold">
               <span>총 금액</span>
               <span>
-                {/* {(
+                {(
               cartItems.reduce(
                 (acc, cartItem) => acc + cartItem.price * cartItem.quantity,
                 0
               ) + 3000
-            ).toLocaleString()} */}
+            ).toLocaleString()}
                 원
               </span>
             </div>
@@ -88,7 +100,7 @@ const Cart = ({ carts }: CartsProps) => {
             주문하기
           </button>
         </>
-      )}
+      )} */}
     </div>
   );
 };
