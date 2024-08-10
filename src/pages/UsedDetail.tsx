@@ -15,23 +15,36 @@ const UsedDetail = () => {
   const [item, setItem] = useRecoilState(usedItemDetailState);
 
   const { userId, messages } = useRecoilValue(geekChickUser);
-  const isMessage = makeArr(messages || []).some((m) => m.itemId === itemId);
+
+  // ⭕내용정리 (some, find, filter 차이! )
+  // 현재 제품에 대한 쪽지 여부 및 데이터 확인
+  // const isMessage = makeArr(messages || []).some((m) => m.itemId === itemId);
+  const curMessageData = makeArr(messages || []).find(
+    (m) => m.itemId === itemId
+  );
+  console.log(curMessageData);
 
   const onClickSendMessage = async () => {
-    if (!isMessage) {
+    let messageData;
+    if (!curMessageData) {
       const messageData = {
         itemId,
         itemImage: item.imageArr[0],
         itemName: item.itemName,
-        message: "",
+        messageList: "",
         messageId: "",
         price: item.price,
         seller: item.seller,
         userId,
       };
+      console.log("쪽지보내기 방 생성");
       await addUsedMessage(messageData);
+    } else {
+      messageData = { ...curMessageData };
     }
-    navigate(`/message/${itemId}/${userId}`);
+    navigate(`/message/${itemId}/${userId}`, {
+      state: { messageData },
+    });
   };
 
   useEffect(() => {
@@ -105,7 +118,7 @@ const UsedDetail = () => {
                   className="w-40 inline-block text-center py-3 mb-4 bg-[#8F5BBD] text-white rounded-md "
                   onClick={onClickSendMessage}
                 >
-                  {isMessage ? "쪽지 이어하기" : "쪽지보내기"}
+                  {curMessageData ? "쪽지 이어하기" : "쪽지보내기"}
                 </button>
               )}
             </div>
