@@ -11,18 +11,18 @@ import { addNewProduct } from "../api/firebase";
 //   options: string;
 // }
 
-interface Product {
+interface addProduct {
   id: string;
   title: string;
   category: string;
   description: string;
   price: string;
   image: string;
-  options: string[];
+  options: string;
 }
 
 export default function NewProduct() {
-  const [product, setProduct] = useState<Partial<Product>>({});
+  const [product, setProduct] = useState<Partial<addProduct>>({});
   const [file, setFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [success, setSuccess] = useState<string | null>(null);
@@ -43,7 +43,7 @@ export default function NewProduct() {
     if (file) {
       const url = await uploadImage(file);
       console.log(url);
-      addNewProduct(product as Product, url);
+      addNewProduct(product as addProduct, url);
       setSuccess("성공적으로 제품이 추가되었습니다.");
       setTimeout(() => {
         setSuccess(null);
@@ -54,7 +54,7 @@ export default function NewProduct() {
     }
   };
   return (
-    <section className="w-[600px] h-[1200px] text-center">
+    <section className="w-[600px] container text-center">
       <h2 className="text-2xl font-bold my-4">새로운 제품 등록</h2>
       {success && <p className="my-2">✅ {success}</p>}
       {file && (

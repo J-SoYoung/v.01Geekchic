@@ -42,17 +42,47 @@ export interface Product {
   options: string[];
 }
 
+export interface addProduct {
+  id: string;
+  title: string;
+  category: string;
+  description: string;
+  price: string;
+  image: string;
+  options: string;
+}
+
 export interface PayProduct extends Product {
   quantity: number;
 }
 
-interface OrderDetails {
+interface testProduct {
+  title: string;
+  description: string;
+  price: string;
+  image: string;
+  options: string[];
+  quantity: number;
+}
+
+interface getOrderDetails {
   ordersId?: string;
   name: string;
   phone: string;
   address: string;
   paymentMethod: string;
   createdAt?: string;
+  items: testProduct[];
+}
+
+interface getOrderDetails {
+  ordersId?: string;
+  name: string;
+  phone: string;
+  address: string;
+  paymentMethod: string;
+  createdAt?: string;
+  items: testProduct[];
 }
 
 interface Comment {
@@ -159,7 +189,7 @@ export async function getProducts(): Promise<Product[]> {
 }
 
 export async function addNewProduct(
-  product: Product,
+  product: addProduct,
   image: string
 ): Promise<void> {
   const id = uuidv4();
@@ -170,8 +200,8 @@ export async function addNewProduct(
     id,
     price: product.price,
     image,
-    options: product.options,
-    // options: product.options.split(","),
+    // options: product.options,
+    options: product.options.split(","),
   });
 }
 
@@ -268,11 +298,34 @@ export async function addOrderList(
   return set(newOrderRef, orderData);
 }
 
-export async function getOrderItems(userId: string): Promise<Comment[]> {
+// export async function getOrderItems(
+//   userId: string
+// ): Promise<getOrderDetails[]> {
+//   const orderItemsRef = ref(getDatabase(), `userData/${userId}/orders`);
+//   return get(orderItemsRef).then((snapshot) => {
+//     if (snapshot.exists()) {
+//       return Object.values(snapshot.val());
+//     }
+//     return [];
+//   });
+// }
+export async function getOrderItems(
+  userId: string
+): Promise<getOrderDetails[]> {
   const orderItemsRef = ref(getDatabase(), `userData/${userId}/orders`);
   return get(orderItemsRef).then((snapshot) => {
     if (snapshot.exists()) {
-      return Object.values(snapshot.val());
+      const data = snapshot.val();
+      const orders = Object.values(data) as getOrderDetails[];
+
+      // items 필드를 배열로 변환하는 작업
+      orders.forEach((order) => {
+        if (order.items && !Array.isArray(order.items)) {
+          order.items = Object.values(order.items) as testProduct[];
+        }
+      });
+
+      return orders;
     }
     return [];
   });
