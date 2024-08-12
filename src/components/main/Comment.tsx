@@ -54,7 +54,7 @@ export default function Comment({ product }: { product: Product }) {
       userPhoto: user.photoURL || "",
       displayName: user.displayName || "",
     });
-    setSuccess("성공적으로 제품이 추가되었습니다.");
+    setSuccess("리뷰 추가 완료!");
     setTimeout(() => {
       setSuccess(null);
     }, 4000);

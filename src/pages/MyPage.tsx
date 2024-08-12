@@ -10,7 +10,7 @@ import { loadUserData } from "../api/firebase";
 
 const MyPage = () => {
   const [user, setUser] = useRecoilState(geekChickUser);
-  console.log(user);
+
   useEffect(() => {
     const fetchData = async () => {
       const data = await loadUserData(user.userId);

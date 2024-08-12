@@ -84,6 +84,7 @@ const UsedHome = () => {
             searchLoading={searchLoading}
           />
         ) : (
+          // ⭕본인이 판매하는 제품 아이콘 표시하기 
           usedItems && <UsedItemList usedItems={usedItems} />
         )}
       </div>

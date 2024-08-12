@@ -21,7 +21,12 @@ import {
   remove,
   update,
 } from "firebase/database";
-import { UsedItemType, UserDataType, UsedCommentType, UsedSaleItem } from "../types/usedType";
+import {
+  UsedItemType,
+  UserDataType,
+  UsedCommentType,
+  UsedSaleItem,
+} from "../types/usedType";
 import { SetterOrUpdater } from "recoil";
 interface AdminUser extends User {
   isAdmin: boolean;
@@ -37,11 +42,49 @@ export interface Product {
   options: string[];
 }
 
+export interface addProduct {
+  id: string;
+  title: string;
+  category: string;
+  description: string;
+  price: string;
+  image: string;
+  options: string;
+}
+
 export interface PayProduct extends Product {
   quantity: number;
 }
 
-interface OrderDetails {
+export interface testOrderProduct {
+  title: string;
+  description: string;
+  price: string;
+  image: string;
+  options: string;
+  quantity: number;
+}
+
+export interface testProduct {
+  title: string;
+  description: string;
+  price: string;
+  image: string;
+  options: string[];
+  quantity: number;
+}
+
+export interface getOrderDetails {
+  ordersId?: string;
+  name: string;
+  phone: string;
+  address: string;
+  paymentMethod: string;
+  createdAt?: string;
+  items: testProduct[];
+}
+
+export interface OrderDetails {
   ordersId?: string;
   name: string;
   phone: string;
@@ -154,7 +197,7 @@ export async function getProducts(): Promise<Product[]> {
 }
 
 export async function addNewProduct(
-  product: Product,
+  product: addProduct,
   image: string
 ): Promise<void> {
   const id = uuidv4();
@@ -165,8 +208,8 @@ export async function addNewProduct(
     id,
     price: product.price,
     image,
-    options: product.options,
-    // options: product.options.split(","),
+    // options: product.options,
+    options: product.options.split(","),
   });
 }
 
@@ -238,10 +281,10 @@ export async function addOrderList(
   userId: string,
   product: PayProduct,
   orderDetails: OrderDetails
-) {
+): Promise<void> {
   const ordersId = uuidv4();
-  const orderRef = ref(database, `userData/${userId}/orders`);
-  const newOrderRef = push(orderRef);
+  const orderRef = ref(database, `userData/${userId}/orders/${ordersId}`);
+  // const newOrderRef = push(orderRef);
 
   const orderData = {
     items: {
@@ -260,10 +303,23 @@ export async function addOrderList(
     createdAt: new Date().toISOString(),
   };
 
-  return set(newOrderRef, orderData);
+  return set(orderRef, orderData);
+}
+
+export async function getOrderItems(
+  userId: string
+): Promise<getOrderDetails[]> {
+  const orderItemsRef = ref(getDatabase(), `userData/${userId}/orders`);
+  return get(orderItemsRef).then((snapshot) => {
+    if (snapshot.exists()) {
+      return Object.values(snapshot.val());
+    }
+    return [];
+  });
 }
 
 // 중고 제품 업로드
+// ⭕ 주석/함수이름 통일 => 추가Add, 삭제Remove, 수정Edit, 불러오기Load
 export async function usedItemUpload(
   itemData: UsedItemType,
   setUser: SetterOrUpdater<UserDataType>,
@@ -291,7 +347,7 @@ export async function usedItemUpload(
     quantity,
     size,
   } = itemData;
-  const saleItem:UsedSaleItem = {
+  const saleItem: UsedSaleItem = {
     createdAt,
     id,
     imageArr,
@@ -310,7 +366,7 @@ export async function usedItemUpload(
       saleItem,
   };
   await update(ref(database), updates);
-  setUser({ ...user, sales: {...saleItem} });
+  setUser({ ...user, sales: { ...saleItem } });
 }
 
 // 중고 메인 데이터 받아오기
@@ -466,7 +522,7 @@ export async function uploadUserData(
   const userRef = ref(database, `userData/${data.userId}`);
   await set(userRef, {
     ...data,
-    createdAt: Date.now(),
+    createdAt: new Date().toISOString(),
   });
   return data;
 }
@@ -498,12 +554,23 @@ export async function editUserData(
   }
 }
 
-// 중고 데이터 새로 고침
-// export async function updateData() {
-//   const data = usedItems;
-//   const dataRef = ref(database, "usedItems");
-//   await set(dataRef, {
-//     ...data,
-//   });
-//   return data;
-// }
+// 메세지 생성
+export async function addUsedMessage(messageData) {
+  try {
+    const usedMessageRef = ref(
+      database,
+      `userData/${messageData.userId}/messages`
+    );
+
+    const newItemRef = push(usedMessageRef);
+    messageData.messageId =
+      newItemRef.key ?? `${new Date().toISOString()}_${messageData.userId}`;
+
+    await set(newItemRef, {
+      ...messageData,
+      createdAt: new Date().toISOString(),
+    });
+  } catch (err) {
+    console.error("메세지 생성 에러", err);
+  }
+}

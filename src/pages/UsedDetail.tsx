@@ -1,22 +1,52 @@
 import React, { useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import Chevron_left from "../assets/icons/chevron_left.svg";
-import { usedDetailItem } from "../api/firebase";
+import { addUsedMessage, usedDetailItem } from "../api/firebase";
 import UsedCommentList from "../components/usedDetail/UsedCommentList";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { geekChickUser } from "../atoms/userAtom";
 import UsedInputComment from "../components/usedDetail/UsedInputComment";
 import { usedItemDetailState } from "../atoms/usedItemAtom";
-import { calculateDaysAgo } from "../types/utils";
+import { calculateDaysAgo, makeArr } from "../types/utils";
 
 const UsedDetail = () => {
   const navigate = useNavigate();
-  // item id
   const { itemId } = useParams();
-  const user = useRecoilValue(geekChickUser);
   const [item, setItem] = useRecoilState(usedItemDetailState);
 
-  
+  const { userId, messages } = useRecoilValue(geekChickUser);
+
+  // ⭕내용정리 (some, find, filter 차이! )
+  // 현재 제품에 대한 쪽지 여부 및 데이터 확인
+  // const isMessage = makeArr(messages || []).some((m) => m.itemId === itemId);
+  const curMessageData = makeArr(messages || []).find(
+    (m) => m.itemId === itemId
+  );
+  console.log(curMessageData);
+
+  const onClickSendMessage = async () => {
+    let messageData;
+    if (!curMessageData) {
+      const messageData = {
+        itemId,
+        itemImage: item.imageArr[0],
+        itemName: item.itemName,
+        messageList: "",
+        messageId: "",
+        price: item.price,
+        seller: item.seller,
+        userId,
+      };
+      console.log("쪽지보내기 방 생성");
+      await addUsedMessage(messageData);
+    } else {
+      messageData = { ...curMessageData };
+    }
+    navigate(`/message/${itemId}/${userId}`, {
+      state: { messageData },
+    });
+  };
+
   useEffect(() => {
     const fetchItem = async () => {
       if (itemId) {
@@ -39,7 +69,7 @@ const UsedDetail = () => {
           <Link to="/usedHome">중고 메인페이지로 돌아가기</Link>
         </>
       ) : (
-        <div className="w-[600px] h-[100%] mb-20 text-left">
+        <div className="w-[600px] min-h-screen mb-20 text-left">
           <div>
             <button
               className="w-10 h-10 top-2 cursor-pointer fixed"
@@ -68,19 +98,29 @@ const UsedDetail = () => {
             </div>
           </div>
 
-          <div className="p-8">
-            <div className="flex pb-6 border-b">
-              <div className="w-12 h-12 bg-gray-200 rounded-full">
-                <img src={item.seller.userAvatar ?? ""} alt="유저" />
-              </div>
-              <div className="ml-4 ">
-                <div className="text-lg font-semibold">
-                  {item.seller.nickname}
+          <div className="p-8 relative">
+            <div className="flex justify-between items-center border-b">
+              <div className="flex pb-6">
+                <div className="w-12 h-12 bg-gray-200 rounded-full">
+                  <img src={item.seller.userAvatar ?? ""} alt="유저" />
                 </div>
-                <div className="text-sm text-gray-500">
-                  {item.seller.address}
+                <div className="ml-4 ">
+                  <div className="text-lg font-semibold">
+                    {item.seller.nickname}
+                  </div>
+                  <div className="text-sm text-gray-500">
+                    {item.seller.address}
+                  </div>
                 </div>
               </div>
+              {userId !== item.seller.sellerId && (
+                <button
+                  className="w-40 inline-block text-center py-3 mb-4 bg-[#8F5BBD] text-white rounded-md "
+                  onClick={onClickSendMessage}
+                >
+                  {curMessageData ? "쪽지 이어하기" : "쪽지보내기"}
+                </button>
+              )}
             </div>
 
             <div className="my-8 border-b pb-8">
@@ -110,25 +150,6 @@ const UsedDetail = () => {
 
             {item.comments && <UsedCommentList comments={item.comments} />}
             <UsedInputComment />
-
-            {user.userId !== item.seller.sellerId && (
-              <button className="w-full">
-                <Link
-                  to={`/message/${itemId}/${user.userId}`}
-                  state={{
-                    userId: user?.userId,
-                    itemId: itemId,
-                    itemName: item.itemName,
-                    itemImage: item.imageArr[0],
-                    price: item.price,
-                    seller: item.seller,
-                  }}
-                  className="w-full inline-block text-center py-3 mb-4 bg-[#8F5BBD] text-white rounded-md"
-                >
-                  쪽지 보내기
-                </Link>
-              </button>
-            )}
           </div>
         </div>
       )}

@@ -26,7 +26,7 @@ const UsedInputComment = () => {
   };
 
   return (
-    <div className="mb-10">
+    <div className="mb-10 w-[535px] h-[120px] fixed bottom-0 bg-white">
       <div className="flex mt-4 h-[50px]">
         <input
           type="text"
