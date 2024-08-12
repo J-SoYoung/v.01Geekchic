@@ -99,7 +99,7 @@ export default function Payment() {
       </div>
       <div>
         <div className="flex justify-end mr-[40px] gap-2">
-          <p className="text-[#959595]">배송 비</p>
+          <p className="text-[#959595]">상품 합</p>
           <p>{price}원</p>
         </div>
         <div className="flex justify-end mr-[40px] gap-2">
