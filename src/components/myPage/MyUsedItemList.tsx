@@ -16,7 +16,6 @@ const MyUsedItemList = ({
   onQuantityChange,
   onRemove,
 }: UsedItemListType) => {
-
   return (
     <div className={isCart ? "border-b mb-8" : ""}>
       <div key={item.id} className="flex mb-4">
