@@ -56,7 +56,16 @@ export interface PayProduct extends Product {
   quantity: number;
 }
 
-interface testProduct {
+export interface testOrderProduct {
+  title: string;
+  description: string;
+  price: string;
+  image: string;
+  options: string;
+  quantity: number;
+}
+
+export interface testProduct {
   title: string;
   description: string;
   price: string;
@@ -65,7 +74,7 @@ interface testProduct {
   quantity: number;
 }
 
-interface getOrderDetails {
+export interface getOrderDetails {
   ordersId?: string;
   name: string;
   phone: string;
@@ -75,14 +84,13 @@ interface getOrderDetails {
   items: testProduct[];
 }
 
-interface getOrderDetails {
+export interface OrderDetails {
   ordersId?: string;
   name: string;
   phone: string;
   address: string;
   paymentMethod: string;
   createdAt?: string;
-  items: testProduct[];
 }
 
 interface Comment {
@@ -273,10 +281,10 @@ export async function addOrderList(
   userId: string,
   product: PayProduct,
   orderDetails: OrderDetails
-) {
+): Promise<void> {
   const ordersId = uuidv4();
-  const orderRef = ref(database, `userData/${userId}/orders`);
-  const newOrderRef = push(orderRef);
+  const orderRef = ref(database, `userData/${userId}/orders/${ordersId}`);
+  // const newOrderRef = push(orderRef);
 
   const orderData = {
     items: {
@@ -295,37 +303,16 @@ export async function addOrderList(
     createdAt: new Date().toISOString(),
   };
 
-  return set(newOrderRef, orderData);
+  return set(orderRef, orderData);
 }
 
-// export async function getOrderItems(
-//   userId: string
-// ): Promise<getOrderDetails[]> {
-//   const orderItemsRef = ref(getDatabase(), `userData/${userId}/orders`);
-//   return get(orderItemsRef).then((snapshot) => {
-//     if (snapshot.exists()) {
-//       return Object.values(snapshot.val());
-//     }
-//     return [];
-//   });
-// }
 export async function getOrderItems(
   userId: string
 ): Promise<getOrderDetails[]> {
   const orderItemsRef = ref(getDatabase(), `userData/${userId}/orders`);
   return get(orderItemsRef).then((snapshot) => {
     if (snapshot.exists()) {
-      const data = snapshot.val();
-      const orders = Object.values(data) as getOrderDetails[];
-
-      // items 필드를 배열로 변환하는 작업
-      orders.forEach((order) => {
-        if (order.items && !Array.isArray(order.items)) {
-          order.items = Object.values(order.items) as testProduct[];
-        }
-      });
-
-      return orders;
+      return Object.values(snapshot.val());
     }
     return [];
   });

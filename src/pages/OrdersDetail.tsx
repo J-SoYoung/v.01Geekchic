@@ -1,8 +1,5 @@
 import React from "react";
-import { useQuery } from "@tanstack/react-query";
-import getOrderItems from "../api/firebase";
-import { useRecoilValue } from "recoil";
-import { userState } from "../atoms/userAtom";
+import { useLocation } from "react-router-dom";
 
 interface testProduct {
   title: string;
@@ -24,21 +21,14 @@ interface getOrderDetails {
 }
 
 export default function OrdersDetail() {
-  const user = useRecoilValue(userState);
-  const userId = user?.uid;
+  const location = useLocation();
+  const { orders } = location.state as { orders: getOrderDetails };
 
-  const {
-    isLoading,
-    error,
-    data: orders,
-  } = useQuery<getOrderDetails[]>({
-    queryKey: ["orders", userId],
-    queryFn: () => getOrderItems(userId as string),
-    enabled: !!userId, // userId가 존재할 때만 실행
-  });
-
-  if (isLoading) return <p>Loading..</p>;
-  if (error) return <p>Something is wrong</p>;
   console.log(orders);
-  return <div>주문내역</div>;
+  return (
+    <>
+      <div>주문내역</div>
+      {/* <div>{orders.name}</div> */}
+    </>
+  );
 }
