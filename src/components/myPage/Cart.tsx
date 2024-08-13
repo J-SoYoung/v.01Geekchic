@@ -30,8 +30,8 @@ const Cart = ({ carts }: CartsProps) => {
     <div className="p-10 text-left">
       {cartsArr.length == 0 && (
         <div>
-          <p>쪽지가 없습니다</p>
-          <Link to={"/usedHome"}>중고 제품을 둘러보세요</Link>
+          <p>장바구니가 비었습니다</p>
+          <Link to={"/"}>제품 구경하러 홈으로 이동!</Link>
         </div>
       )}
 
