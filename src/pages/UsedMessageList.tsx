@@ -1,17 +1,17 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
-import { UserDataType } from "../types/usedType";
+import { MessagesType, UserDataType } from "../types/usedType";
 import { makeArr } from "../types/utils";
 import Layout from "../components/myPage/_Layout";
 
-interface StateProps {
-  user: UserDataType;
+interface Props {
+  messages: MessagesType[];
 }
 
 const UsedMessageList = () => {
   const location = useLocation();
-  const { user }: StateProps = location.state || {};
-  const messages = makeArr(user.messages || []);
+  const { messages }: Props = location.state || [];
+  console.log(messages);
 
   return (
     <Layout title="쪽지보내기">
@@ -32,7 +32,7 @@ const UsedMessageList = () => {
                 <Link
                   key={m.messageId}
                   to={`/message/${m.itemId}/${m.userId}`}
-                  state={{ messageData: m }}
+                  state={{ userId: m.userId, messageId: m.messageId }}
                   className="flex items-center p-2"
                 >
                   <div className="w-24 h-24 mr-2">

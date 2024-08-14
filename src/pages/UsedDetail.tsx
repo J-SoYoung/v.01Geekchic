@@ -1,50 +1,56 @@
 import React, { useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
-import Chevron_left from "../assets/icons/chevron_left.svg";
-import { addUsedMessage, usedDetailItem } from "../api/firebase";
-import UsedCommentList from "../components/usedDetail/UsedCommentList";
 import { useRecoilState, useRecoilValue } from "recoil";
+import { v4 as uuidv4 } from "uuid";
+
 import { geekChickUser } from "../atoms/userAtom";
-import UsedInputComment from "../components/usedDetail/UsedInputComment";
 import { usedItemDetailState } from "../atoms/usedItemAtom";
+import Chevron_left from "../assets/icons/chevron_left.svg";
+import { addUsedMessagePage, usedDetailItem } from "../api/firebase";
 import { calculateDaysAgo, makeArr } from "../types/utils";
+
+import UsedCommentList from "../components/usedDetail/UsedCommentList";
+import UsedInputComment from "../components/usedDetail/UsedInputComment";
 
 const UsedDetail = () => {
   const navigate = useNavigate();
   const { itemId } = useParams();
   const [item, setItem] = useRecoilState(usedItemDetailState);
-
   const { userId, messages } = useRecoilValue(geekChickUser);
 
   // ⭕내용정리 (some, find, filter 차이! )
-  // 현재 제품에 대한 쪽지 여부 및 데이터 확인
+  // 현재 제품에 대한 쪽지 여부 및 데이터 확인, messageData 사용안하는 부분 지우기.
   // const isMessage = makeArr(messages || []).some((m) => m.itemId === itemId);
   const curMessageData = makeArr(messages || []).find(
     (m) => m.itemId === itemId
   );
-  console.log(curMessageData);
 
-  const onClickSendMessage = async () => {
-    let messageData;
+  const onClickAddMessagePage = async () => {
     if (!curMessageData) {
+      const messageId = uuidv4();
       const messageData = {
+        createdAt: new Date().toISOString(),
         itemId,
         itemImage: item.imageArr[0],
         itemName: item.itemName,
         messageList: "",
-        messageId: "",
+        messageId: messageId,
         price: item.price,
         seller: item.seller,
         userId,
       };
-      console.log("쪽지보내기 방 생성");
-      await addUsedMessage(messageData);
+      // ⭕ navigation 조건부로 나눠서 보내기 -> 중복제거하기 
+      console.log("쪽지보내기 방 생성", messageData);
+      await addUsedMessagePage(messageData);
+      navigate(`/message/${itemId}/${userId}`, {
+        state: { userId, messageId },
+      });
     } else {
-      messageData = { ...curMessageData };
+      navigate(`/message/${itemId}/${userId}`, {
+        state: { userId, messageId: curMessageData.messageId },
+      });
     }
-    navigate(`/message/${itemId}/${userId}`, {
-      state: { messageData },
-    });
+    // navigate(`/message/${itemId}/${userId}`);
   };
 
   useEffect(() => {
@@ -116,7 +122,7 @@ const UsedDetail = () => {
               {userId !== item.seller.sellerId && (
                 <button
                   className="w-40 inline-block text-center py-3 mb-4 bg-[#8F5BBD] text-white rounded-md "
-                  onClick={onClickSendMessage}
+                  onClick={onClickAddMessagePage}
                 >
                   {curMessageData ? "쪽지 이어하기" : "쪽지보내기"}
                 </button>
