@@ -9,6 +9,7 @@ import { useEffect } from "react";
 import { loadUserData } from "../api/firebase";
 
 const MyPage = () => {
+  // ⭕ user useEffect로 업데이트하는데, recoil쓸 필요있나? 생각해보기
   const [user, setUser] = useRecoilState(geekChickUser);
 
   useEffect(() => {
@@ -92,7 +93,7 @@ const MyPage = () => {
           </Link>
           <Link
             to="messageList"
-            state={{ user }}
+            state={{ messages }}
             className="flex justify-between items-center p-4 bg-gray-100 rounded-md cursor-pointer"
           >
             <span className="text-lg">내 쪽지함</span>
