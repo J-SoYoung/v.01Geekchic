@@ -104,6 +104,17 @@ interface Comment {
   displayName: string;
 }
 
+export interface CartProduct {
+  id: string;
+  title: string;
+  category: string;
+  description: string;
+  price: string;
+  image: string;
+  options: string;
+  quantity: number;
+}
+
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_APP_FIREBASE_API_KEY,
   authDomain: import.meta.env.VITE_APP_FIREBASE_AUTH_DOMAIN,
@@ -318,6 +329,21 @@ export async function getOrderItems(
     }
     return [];
   });
+}
+
+export async function getCart(userId: string): Promise<PayProduct[]> {
+  return get(ref(database, `userData/${userId}carts`)).then((snapshot) => {
+    const items = snapshot.val() || {};
+    return Object.values(items);
+  });
+}
+
+export async function addOrUpdateToCart(userId: string, product: CartProduct) {
+  return set(ref(database, `userData/${userId}/carts/${product.id}`), product);
+}
+
+export async function removeFromCart(userId: string, productId: string) {
+  return remove(ref(database, `userData/${userId}/carts/${productId}`));
 }
 
 // 중고 제품 업로드
