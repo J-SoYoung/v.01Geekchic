@@ -84,8 +84,8 @@ const MyPage = () => {
             <span className="text-lg font-semibold">{sales.length}</span>
           </Link>
           <Link
-            to="cart"
-            state={{ user }}
+            to="carts"
+            // state={{ user }}
             className="flex justify-between items-center p-4 bg-gray-100 rounded-md cursor-pointer"
           >
             <span className="text-lg">장바구니</span>

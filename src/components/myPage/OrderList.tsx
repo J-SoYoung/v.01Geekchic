@@ -42,13 +42,13 @@ const OrderList = ({ orders }: OrdersProps) => {
               <p className="font-bold">{orders.createdAt.split("T")[0]}</p>
               주문 상세보기
             </div>
-            {makeArr(orders.items).map((item, idx) => {
+            {/* {makeArr(orders.items).map((item, idx) => {
               return (
                 <div>
                   <MyUsedItemList key={idx} item={item} isCart={false} />
                 </div>
               );
-            })}
+            })} */}
           </div>
         );
       })}
