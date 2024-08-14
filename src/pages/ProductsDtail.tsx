@@ -8,6 +8,7 @@ import {
   addWishlistItem,
   getWishlistItems,
   setWishlistItems,
+  addOrUpdateToCart,
 } from "../api/firebase";
 import Comment from "../components/main/Comment";
 import CommentCard from "../components/main/CommentCard";
@@ -39,11 +40,15 @@ export default function ProductsDtail() {
     setSelected(e.target.value);
   };
 
-  const handlePayment = async () => {
+  const handleClickPayment = async () => {
     const selectedProduct = { ...product, options: [selected], quantity: 1 };
     navigate(`/payment/${id}`, {
       state: { payProduct: selectedProduct, user },
     });
+  };
+  const handleClickCarts = async () => {
+    const selectedProduct = { ...product, options: selected, quantity: 1 };
+    addOrUpdateToCart(id as string, selectedProduct);
   };
 
   const handleWishlist = async () => {
@@ -98,11 +103,14 @@ export default function ProductsDtail() {
       </div>
       <p className="border border-[#D9D9D9] w-[550px] m-auto"></p>
       <div className="flex justify-center gap-[50px] mt-[30px]">
-        <button className="w-[250px] py-3 bg-[#D34D4D] text-[#fff] border border-[#D34D4D] rounded-md hover:bg-[#fff] hover:text-[#D34D4D] duration-200">
+        <button
+          onClick={handleClickCarts}
+          className="w-[250px] py-3 bg-[#D34D4D] text-[#fff] border border-[#D34D4D] rounded-md hover:bg-[#fff] hover:text-[#D34D4D] duration-200"
+        >
           장바구니 담기
         </button>
         <button
-          onClick={handlePayment}
+          onClick={handleClickPayment}
           className="w-[250px] py-3 bg-[#8F5BBD] text-[#fff] border border-[#8F5BBD] rounded-md hover:bg-[#fff] hover:text-[#8F5BBD] duration-200"
         >
           바로구매
