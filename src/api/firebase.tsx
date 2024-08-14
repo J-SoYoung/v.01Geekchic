@@ -26,6 +26,7 @@ import {
   UserDataType,
   UsedCommentType,
   UsedSaleItem,
+  MessagesType,
 } from "../types/usedType";
 import { SetterOrUpdater } from "recoil";
 interface AdminUser extends User {
@@ -239,6 +240,7 @@ export async function getWishlistItems(userId: string): Promise<Product[]> {
   const wishlistRef = ref(database, `wishlist/${userId}`);
   return get(wishlistRef).then((snapshot) => {
     if (snapshot.exists()) {
+      console.log(Object.values(snapshot.val()));
       return Object.values(snapshot.val());
     }
     return [];
@@ -320,6 +322,7 @@ export async function getOrderItems(
 
 // 중고 제품 업로드
 // ⭕ 주석/함수이름 통일 => 추가Add, 삭제Remove, 수정Edit, 불러오기Load
+// ⭕ 아래 변수 구조분해할당 한 부분 뭐가 다른거지?
 export async function usedItemUpload(
   itemData: UsedItemType,
   setUser: SetterOrUpdater<UserDataType>,
@@ -554,23 +557,94 @@ export async function editUserData(
   }
 }
 
-// 메세지 생성
-export async function addUsedMessage(messageData) {
+// 쪽지 보내기 페이지 생성
+export async function addUsedMessagePage(messageData: MessagesType) {
+  const { seller, userId, messageId } = messageData;
   try {
-    const usedMessageRef = ref(
-      database,
-      `userData/${messageData.userId}/messages`
-    );
-
-    const newItemRef = push(usedMessageRef);
-    messageData.messageId =
-      newItemRef.key ?? `${new Date().toISOString()}_${messageData.userId}`;
-
-    await set(newItemRef, {
-      ...messageData,
-      createdAt: new Date().toISOString(),
-    });
+    const updates = {
+      [`/userData/${seller.sellerId}/messages/${messageId}`]: messageData,
+      [`/userData/${userId}/messages/${messageId}`]: messageData,
+    };
+    await update(ref(database), updates);
   } catch (err) {
     console.error("메세지 생성 에러", err);
+  }
+}
+
+interface loadUsedMessagePropsType {
+  userId: string;
+  messageId: string;
+}
+// 쪽지 페이지 불러오기
+export async function loadUsedMessage({
+  userId,
+  messageId,
+}: loadUsedMessagePropsType) {
+  try {
+    const messageRef = ref(
+      database,
+      `userData/${userId}/messages/${messageId}`
+    );
+    const snapshot = await get(messageRef);
+    if (snapshot.exists()) {
+      return snapshot.val();
+    }
+    return {};
+  } catch (err) {
+    console.error('쪽지페이지 불러오기 에러',err);
+  }
+}
+
+interface sendUsedMessagePropsType {
+  messages: MessagesType;
+  userId: string;
+  messageId: string;
+  sellerId: string;
+}
+// 쪽지 보내기 ( messageList저장 )
+export async function sendUsedMessage({
+  messages,
+  userId,
+  messageId,
+  sellerId,
+}: sendUsedMessagePropsType) {
+  try {
+    // 랜덤키 생성
+    const generateRandomKey = () => {
+      const tempRef = push(ref(database)); 
+      return tempRef.key ?? new Date().toISOString();
+    };
+    messages.id = generateRandomKey();
+    
+    const updates = {
+      [`/userData/${sellerId}/messages/${messageId}/messageList/${messages.id}`]:
+        messages,
+      [`/userData/${userId}/messages/${messageId}/messageList/${messages.id}`]:
+        messages,
+    };
+    await update(ref(database), updates);
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+// 쪽지 데이터 불러오기
+export async function getUsedMessage(userId, messageId, setMessages) {
+  try {
+    const usedMessageListRef = query(
+      ref(database, `userData/${userId}/messages/${messageId}/messageList`),
+      orderByChild("createdAt")
+    );
+    onValue(usedMessageListRef, (snapshot) => {
+      if (snapshot.exists()) {
+        const messageArray = [];
+        snapshot.forEach((childSnapshot) => {
+          messageArray.push(childSnapshot.val());
+        });
+        setMessages(messageArray);
+      }
+    });
+  } catch (err) {
+    console.error(err);
   }
 }

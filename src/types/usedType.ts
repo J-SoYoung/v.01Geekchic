@@ -17,7 +17,7 @@ export interface UsedCommentType {
   userAvatar: string;
 }
 
-interface SellerType {
+export interface SellerType {
   // 판매자 정보
   sellerId: string | null;
   userName: string | null;
@@ -61,7 +61,25 @@ export interface OrderItemsType {
   phone: string;
 }
 
-export interface Message {}
+// ⭕ type 상세설정 : sender, buyer 둘중하나임
+export interface MessageListType {
+  id?: string;
+  message: string;
+  sender: string;
+  createdAt: string;
+}
+
+export interface MessagesType {
+  createdAt: string;
+  itemId: string;
+  itemImage: string;
+  itemName: string;
+  messageId: string;
+  messageList: MessageListType;
+  price: string;
+  seller: SellerType;
+  userId: string;
+}
 
 export interface UserDataType {
   //유저 타입
@@ -76,5 +94,5 @@ export interface UserDataType {
   sales?: UsedSaleItem;
   carts?: Product[];
   wishlists?: Product[];
-  messages?: Message;
+  messages?: MessagesType;
 }
