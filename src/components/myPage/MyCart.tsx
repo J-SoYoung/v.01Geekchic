@@ -4,7 +4,9 @@ import { getCart } from "../../api/firebase";
 import { useRecoilValue } from "recoil";
 import { userState } from "../../atoms/userAtom";
 import CartItem from "./CartItem";
-// import PlusIcon from "../../assets/icons/square_plus.svg";
+import PriceCard from "./PriceCard";
+import TotalPlusIcon from "../../assets/icons/totalPlus.svg";
+import EqualsIcon from "../../assets/icons/totalEquals.svg";
 
 export interface CartProducts {
   id: string;
@@ -34,7 +36,14 @@ export default function MyCart() {
   {
     isLoading && <p>Loading..</p>;
   }
-  console.log(carts);
+
+  const SHIPPING = 3000;
+  const totalPrice: number =
+    carts?.reduce(
+      (prev, current) => prev + parseInt(current.price) * current.quantity,
+      0
+    ) || 0;
+
   return (
     <div className="container w-[600px]">
       <div className="flex justify-center mt-[80px] mb-[10px]">
@@ -51,6 +60,17 @@ export default function MyCart() {
             <CartItem key={product.id} carts={product} /* uid={uid} */ />
           ))}
       </ul>
+      <p className="border border-[#D9D9D9] w-[520px] m-auto mt-[30px] mb-[45px]"></p>
+      <div className="flex justify-between items-center mb-10 px-2 md:px-8">
+        <PriceCard text="상품 총액" price={totalPrice} />
+        <img src={TotalPlusIcon} alt="TotalPlusIcon" />
+        <PriceCard text="배송액" price={SHIPPING} />
+        <img src={EqualsIcon} alt="EqualsIcon" />
+        <PriceCard text="총가격" price={totalPrice + SHIPPING} />
+      </div>
+      <button className="w-[520px] mb-[100px] mt-[10px] py-3 bg-[#8F5BBD] text-[#fff] border border-[#8F5BBD] rounded-md hover:bg-[#fff] hover:text-[#8F5BBD] duration-200">
+        주문하기
+      </button>
     </div>
   );
 }

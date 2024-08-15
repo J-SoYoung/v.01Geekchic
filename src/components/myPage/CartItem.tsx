@@ -17,21 +17,31 @@ export default function CartItem({ carts }: { carts: CartProducts }) {
   const { id, title, description, price, image, options, quantity } = carts;
   return (
     <>
-      <li className="flex mb-4 w-[550px] cursor-pointer">
+      <li className="flex mb-5 w-[550px]">
         <img
-          className="w-[150px] h-[150px] rounded-[5px]"
+          className="w-[130px] h-[130px] rounded-[5px]"
           src={image}
           alt={title}
         />
-        <div className="text-left px-4 w-[380px]">
-          <div className="flex gap-[280px] items-start">
-            <h3 className="text-xl font-bold mb-[10px]">{title}</h3>
+        <div className="flex text-left px-1 w-[380px]">
+          <div className="text-left px-4 w-[380px]">
+            <p>{title}</p>
+            <p className="mt-[5px] font-bold">{description}</p>
+            <p className="text-[#959595]">{options}</p>
+            <p className="mt-[25px] text-xl text-nowrap font-bold">{price}원</p>
           </div>
-          <p className="text-xl mb-[55px]">{description}</p>
-          <p className="text-xl font-bold text-right">{`${price}원`}</p>
+          <div className="flex items-center">
+            <img className="w-[20px] mr-[5px]" src={PlusIcon} alt="PlusIcon" />
+            <p className="w-[20px] mr-[5px]">{quantity}</p>
+            <img
+              className="w-[20px] mr-[5px]"
+              src={MinusIcon}
+              alt="MinusIcon"
+            />
+            <img className="w-[20px]" src={TrashIcon} alt="TrashIcon" />
+          </div>
         </div>
       </li>
-      <p className="border border-[#D9D9D9] w-[520px] m-auto mt-[40px] mb-[45px]"></p>
     </>
   );
 }
