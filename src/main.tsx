@@ -21,6 +21,7 @@ import Payment from "./pages/Payment.tsx";
 import OrdersDetail from "./pages/OrdersDetail.tsx";
 import UsedMessageList from "./pages/UsedMessageList.tsx";
 import UsedMessage from "./pages/UsedMessage.tsx";
+import MyCart from "./components/myPage/MyCart.tsx";
 
 const router = createBrowserRouter([
   {
@@ -43,6 +44,7 @@ const router = createBrowserRouter([
       { path: "/my/:userId/:list", element: <MyList /> },
       { path: "/my/:userId/profile", element: <MyProfile /> },
       { path: "/my/:userId/messageList", element: <UsedMessageList /> },
+      { path: "/my/:userId/carts", element: <MyCart /> },
       { path: "/message/:itemId/:userId", element: <UsedMessage /> },
       { path: "/payment/:id", element: <Payment /> },
       { path: "/orders/detail/:ordersid", element: <OrdersDetail /> },

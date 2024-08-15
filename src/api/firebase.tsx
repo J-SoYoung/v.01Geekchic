@@ -104,7 +104,7 @@ interface Comment {
   displayName: string;
 }
 
-export interface CartProduct {
+export interface CartProducts {
   id: string;
   title: string;
   category: string;
@@ -331,14 +331,14 @@ export async function getOrderItems(
   });
 }
 
-export async function getCart(userId: string): Promise<PayProduct[]> {
-  return get(ref(database, `userData/${userId}carts`)).then((snapshot) => {
+export async function getCart(userId: string): Promise<CartProducts[]> {
+  return get(ref(database, `userData/${userId}/carts`)).then((snapshot) => {
     const items = snapshot.val() || {};
     return Object.values(items);
   });
 }
 
-export async function addOrUpdateToCart(userId: string, product: CartProduct) {
+export async function addOrUpdateToCart(userId: string, product: CartProducts) {
   return set(ref(database, `userData/${userId}/carts/${product.id}`), product);
 }
 
@@ -617,7 +617,7 @@ export async function loadUsedMessage({
     }
     return {};
   } catch (err) {
-    console.error('쪽지페이지 불러오기 에러',err);
+    console.error("쪽지페이지 불러오기 에러", err);
   }
 }
 
@@ -637,11 +637,11 @@ export async function sendUsedMessage({
   try {
     // 랜덤키 생성
     const generateRandomKey = () => {
-      const tempRef = push(ref(database)); 
+      const tempRef = push(ref(database));
       return tempRef.key ?? new Date().toISOString();
     };
     messages.id = generateRandomKey();
-    
+
     const updates = {
       [`/userData/${sellerId}/messages/${messageId}/messageList/${messages.id}`]:
         messages,
