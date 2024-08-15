@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { UsedItemType } from "../../types/usedType";
+import { IsSeller } from "../common/IsSeller";
 
 interface UsedItemCardProps {
   item: UsedItemType;
@@ -26,7 +27,12 @@ const UsedItemCard = ({ item }: UsedItemCardProps) => {
       )}
 
       <h2 className="text-lg font-bold pl-2">{item.itemName}</h2>
-      <p className="text-gray-500 pl-2">{item.price.toLocaleString()}원</p>
+      <div className="flex items-center justify-center">
+        <p className="text-gray-500 pl-2 mr-1">
+          {item.price.toLocaleString()}원
+        </p>
+        <IsSeller sellerId={item?.seller.sellerId} />
+      </div>
     </Link>
   );
 };

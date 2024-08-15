@@ -11,7 +11,7 @@ interface OrdersProps {
 }
 
 const OrderList = ({ orders }: OrdersProps) => {
-  const ordersArr = makeArr(orders || []);
+  const ordersArr = makeArr(orders);
   const navigate = useNavigate();
 
   return (
