@@ -3,15 +3,19 @@ import Chevron_left from "../../assets/icons/chevron_left.svg";
 import { useNavigate } from "react-router-dom";
 import { useRecoilValue } from "recoil";
 import { userState } from "../../atoms/userAtom";
+import { MessagesType } from "../../types/usedType";
+import { makeArr } from "../../types/utils";
 
 interface LayoutProps {
   children: React.ReactNode;
   title: string;
+  data?: MessagesType;
 }
 
-const Layout: React.FC<LayoutProps> = ({ children, title }) => {
+const Layout: React.FC<LayoutProps> = ({ children, title, data }) => {
   const user = useRecoilValue(userState);
   const navigate = useNavigate();
+  const messages = makeArr(data);
 
   return (
     <div className="w-[600px] min-h-screen">
@@ -21,7 +25,13 @@ const Layout: React.FC<LayoutProps> = ({ children, title }) => {
             src={Chevron_left}
             alt="이전 페이지로"
             className="w-10 h-10 cursor-pointer "
-            onClick={() => navigate(-1)}
+            onClick={() =>
+              location.pathname.startsWith("/message")
+                ? navigate(`/my/${user && user.uid}/messageList`, {
+                    state: { messages },
+                  })
+                : navigate(`/my/${user && user.uid}`)
+            }
           />
         )}
         <h1

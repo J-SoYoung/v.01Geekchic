@@ -1,8 +1,10 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
-import { MessagesType, UserDataType } from "../types/usedType";
-import { makeArr } from "../types/utils";
+
+import { MessagesType } from "../types/usedType";
 import Layout from "../components/myPage/_Layout";
+import { IsSeller } from "../components/common/IsSeller";
+
 
 interface Props {
   messages: MessagesType[];
@@ -11,7 +13,6 @@ interface Props {
 const UsedMessageList = () => {
   const location = useLocation();
   const { messages }: Props = location.state || [];
-  console.log(messages);
 
   return (
     <Layout title="쪽지보내기">
@@ -45,8 +46,9 @@ const UsedMessageList = () => {
                   <div className="flex w-[90%] justify-between items-start">
                     <div className="flex flex-col flex-1">
                       <div className="text-xl font-semibold">{m.itemName}</div>
-                      <div className="text-m text-gray-500">
-                        {m.seller.nickname}
+                      <div className="text-m text-gray-500 flex items-center">
+                        <span className="mr-1">{m.seller.nickname}</span>
+                        <IsSeller sellerId={m?.seller.sellerId}/>
                       </div>
                     </div>
                     <p className="text-s text-gray-400">

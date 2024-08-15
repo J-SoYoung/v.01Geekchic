@@ -11,7 +11,7 @@ interface StateProps {
 const MySalelist = () => {
   const location = useLocation();
   const { user }: StateProps = location.state || {};
-  const sales = makeArr(user.sales || []);
+  const sales = makeArr(user.sales);
   console.log(sales);
   // ⭕ 중고 메인과 컴포넌트 공통으로 사용할 수 있게 해야함
   return (
