@@ -25,6 +25,7 @@ const UsedHome = () => {
   }, [user.userId, setUser]);
 
   // GET 중고 데이터 & Update recoil State
+  // ⭕데이터 가져오는 query 함수 만들기 -> 공용으로 사용하기! 조은데??
   const {
     data: usedItems,
     isLoading: usedItemLoading,

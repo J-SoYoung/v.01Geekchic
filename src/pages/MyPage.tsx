@@ -20,10 +20,10 @@ const MyPage = () => {
     fetchData();
   }, [user.userId, setUser]);
 
-  const sales = makeArr(user.sales || []);
-  const orders = makeArr(user.orders || []);
-  const messages = makeArr(user.messages || []);
-  const carts = makeArr(user.carts || []);
+  const sales = makeArr(user.sales);
+  const orders = makeArr(user.orders);
+  const messages = makeArr(user.messages);
+  const carts = makeArr(user.carts);
 
   if (user == null) {
     return (

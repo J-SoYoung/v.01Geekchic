@@ -21,7 +21,7 @@ const UsedDetail = () => {
   // ⭕내용정리 (some, find, filter 차이! )
   // 현재 제품에 대한 쪽지 여부 및 데이터 확인, messageData 사용안하는 부분 지우기.
   // const isMessage = makeArr(messages || []).some((m) => m.itemId === itemId);
-  const curMessageData = makeArr(messages || []).find(
+  const curMessageData = makeArr(messages).find(
     (m) => m.itemId === itemId
   );
 
