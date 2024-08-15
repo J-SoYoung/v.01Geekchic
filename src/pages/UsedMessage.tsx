@@ -11,13 +11,11 @@ const UsedMessage = () => {
   const location = useLocation();
   const { messageId, userId } = location.state || {};
   const loginUser = useRecoilValue(geekChickUser);
-
   const [newMessage, setNewMessage] = useState("");
   const [messages, setMessages] = useState<MessagesType>();
 
   useEffect(() => {
     const fetchData = async () => {
-      console.log(messageId, userId);
       try {
         const data = await loadUsedMessage({ userId, messageId });
         setMessages(data);
@@ -28,7 +26,6 @@ const UsedMessage = () => {
     fetchData();
   }, [messageId, userId]);
 
-  console.log(messages);
   const onClickSendMessage = async () => {
     try {
       const newMessageObj = {
@@ -63,7 +60,7 @@ const UsedMessage = () => {
   }
 
   return (
-    <Layout title={"쪽지 보내기"}>
+    <Layout title={"쪽지 보내기"} data={loginUser.messages}>
       <div className="w-[596px] min-h-screen p-8 flex flex-col bg-gray-100 relative">
         {/* 판매자정보 */}
         <div className="p-4 border-b bg-white flex mb-8">
@@ -79,7 +76,11 @@ const UsedMessage = () => {
               {messages.price.toLocaleString()}원
             </div>
           </div>
-          <button className="ml-auto font-bold text-[#8F5BBD]">결제하기</button>
+          {messages?.seller.sellerId !== loginUser.userId && (
+            <button className="ml-auto font-bold text-[#8F5BBD]">
+              결제하기
+            </button>
+          )}
         </div>
 
         {/* 대화창 */}
@@ -88,7 +89,7 @@ const UsedMessage = () => {
           <br />
           {messages.seller.nickname}입니다
         </div>
-        {makeArr(messages.messageList || []).map((m) => {
+        {makeArr(messages.messageList).map((m) => {
           return (
             <div
               key={m.id}
