@@ -10,6 +10,7 @@ import UsedItemList from "../components/usedHome/UsedItemList";
 import UsedSearchBar from "../components/usedHome/UsedSearchBar";
 import { useRecoilState } from "recoil";
 import { geekChickUser } from "../atoms/userAtom";
+import UsedHomeSkeletonGrid from "../components/skeleton/UsedHomeSkeletonGrid";
 
 const UsedHome = () => {
   const [isSearching, setIsSearching] = useState(false);
@@ -24,8 +25,6 @@ const UsedHome = () => {
     fetchData();
   }, [user.userId, setUser]);
 
-  // GET 중고 데이터 & Update recoil State
-  // ⭕데이터 가져오는 query 함수 만들기 -> 공용으로 사용하기! 조은데??
   const {
     data: usedItems,
     isLoading: usedItemLoading,
@@ -41,7 +40,7 @@ const UsedHome = () => {
   >({
     queryKey: ["searchUsedItems", searchQuery],
     queryFn: () => usedItemSearch(searchQuery),
-    enabled: !!searchQuery, // query가 빈 문자열일 때는 쿼리를 실행하지 않습니다
+    enabled: !!searchQuery, // query가 빈 문자열일 때는 쿼리를 실행하지 않음
   });
 
   const onClickSearch = (query: string) => {
@@ -64,6 +63,7 @@ const UsedHome = () => {
 
   return (
     <div className="min-h-screen w-[600px]">
+
       <header className="p-11 pb-4 text-right">
         <h1 className="text-3xl font-bold text-left mb-5 ">
           <Link to="/usedHome">중고거래</Link>
@@ -71,13 +71,11 @@ const UsedHome = () => {
         <button className="bg-black text-white px-4 py-2 mb-5 rounded-md text-right">
           <Link to="/usedPostUpload">등록하기</Link>
         </button>
-
-        {/* 검색바 */}
         <UsedSearchBar onSearch={onClickSearch} />
       </header>
 
       <div>
-        {usedItemLoading && <div className="min-h-screen">로딩중입니다</div>}
+        {usedItemLoading && <UsedHomeSkeletonGrid />}
         {isSearching ? (
           <SearchList
             searchData={searchResultData || []}
@@ -85,7 +83,6 @@ const UsedHome = () => {
             searchLoading={searchLoading}
           />
         ) : (
-          // ⭕본인이 판매하는 제품 아이콘 표시하기 
           usedItems && <UsedItemList usedItems={usedItems} />
         )}
       </div>
