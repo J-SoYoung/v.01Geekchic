@@ -430,13 +430,13 @@ export function usedItemLists(): Promise<UsedItemType[]> {
 // 중고 상세페이지 데이터 받아오기
 export async function usedDetailItem(
   itemId: string,
-  setItem: SetterOrUpdater<UsedItemType>
+  setUsedDetailItem: SetterOrUpdater<UsedItemType>
 ) {
   try {
     const itemRef = ref(database, `usedItems/${itemId}`);
     const snapshot = await get(itemRef);
     if (snapshot.exists()) {
-      setItem(snapshot.val());
+      setUsedDetailItem(snapshot.val());
       return snapshot.val();
     } else {
       return null;
