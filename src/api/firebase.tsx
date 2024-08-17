@@ -27,6 +27,7 @@ import {
   UsedCommentType,
   UsedSaleItem,
   MessagesType,
+  MessageListType,
 } from "../types/usedType";
 import { SetterOrUpdater } from "recoil";
 interface AdminUser extends User {
@@ -511,7 +512,6 @@ export async function editUsedComment(
 }
 
 // 중고 데이터 쿼리 검색
-// firebase검색어 쿼리로는 검색하기에 한계가 있음. 따로 filter함수를 사용해서 검색
 export async function usedItemSearch(
   queryString: string
 ): Promise<UsedItemType[]> {
@@ -583,7 +583,7 @@ export async function editUserData(
   }
 }
 
-// 쪽지 보내기 페이지 생성
+// 쪽지 페이지 생성
 export async function addUsedMessagePage(messageData: MessagesType) {
   const { seller, userId, messageId } = messageData;
   try {
@@ -597,11 +597,11 @@ export async function addUsedMessagePage(messageData: MessagesType) {
   }
 }
 
+// 쪽지 페이지 불러오기
 interface loadUsedMessagePropsType {
   userId: string;
   messageId: string;
 }
-// 쪽지 페이지 불러오기
 export async function loadUsedMessage({
   userId,
   messageId,
@@ -621,13 +621,13 @@ export async function loadUsedMessage({
   }
 }
 
+// 쪽지 보내기 ( messageList에 쪽지 저장 )
 interface sendUsedMessagePropsType {
-  messages: MessagesType;
+  messages: MessageListType;
   userId: string;
   messageId: string;
   sellerId: string;
 }
-// 쪽지 보내기 ( messageList저장 )
 export async function sendUsedMessage({
   messages,
   userId,
@@ -635,7 +635,6 @@ export async function sendUsedMessage({
   sellerId,
 }: sendUsedMessagePropsType) {
   try {
-    // 랜덤키 생성
     const generateRandomKey = () => {
       const tempRef = push(ref(database));
       return tempRef.key ?? new Date().toISOString();
@@ -649,27 +648,6 @@ export async function sendUsedMessage({
         messages,
     };
     await update(ref(database), updates);
-  } catch (err) {
-    console.error(err);
-  }
-}
-
-// 쪽지 데이터 불러오기
-export async function getUsedMessage(userId, messageId, setMessages) {
-  try {
-    const usedMessageListRef = query(
-      ref(database, `userData/${userId}/messages/${messageId}/messageList`),
-      orderByChild("createdAt")
-    );
-    onValue(usedMessageListRef, (snapshot) => {
-      if (snapshot.exists()) {
-        const messageArray = [];
-        snapshot.forEach((childSnapshot) => {
-          messageArray.push(childSnapshot.val());
-        });
-        setMessages(messageArray);
-      }
-    });
   } catch (err) {
     console.error(err);
   }
