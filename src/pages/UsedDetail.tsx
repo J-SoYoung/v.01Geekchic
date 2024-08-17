@@ -20,7 +20,7 @@ const UsedDetail = () => {
   const { userId, messages } = useRecoilValue(geekChickUser);
 
   // ⭕함수명 변경 -> 중고 상세페이지 데이터 로드 (주석 지울 수 있게)
-  const { data, isLoading, isError } = useQuery({
+  const { data, isPending, isError } = useQuery({
     queryKey: ["usedDetailItem"],
     queryFn: () => usedDetailItem(itemId as string, setUsedDetailItem),
   });
@@ -61,7 +61,7 @@ const UsedDetail = () => {
 
   return (
     <>
-      {isLoading ? (
+      {isPending ? (
         <div className="w-[600px] min-h-screen mb-20 text-left">
           <UsedDetailSkeleton />
         </div>
