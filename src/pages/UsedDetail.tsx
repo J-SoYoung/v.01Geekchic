@@ -1,79 +1,70 @@
-import React, { useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
+import { useQuery } from "@tanstack/react-query";
 import { v4 as uuidv4 } from "uuid";
 
 import { geekChickUser } from "../atoms/userAtom";
 import { usedItemDetailState } from "../atoms/usedItemAtom";
-import Chevron_left from "../assets/icons/chevron_left.svg";
-import { addUsedMessagePage, usedDetailItem } from "../api/firebase";
 import { calculateDaysAgo, makeArr } from "../types/utils";
+import { addUsedMessagePage, usedDetailItem } from "../api/firebase";
 
+import Chevron_left from "../assets/icons/chevron_left.svg";
 import UsedCommentList from "../components/usedDetail/UsedCommentList";
 import UsedInputComment from "../components/usedDetail/UsedInputComment";
+import UsedDetailSkeleton from "../components/skeleton/UsedDetailSkeleton";
 
 const UsedDetail = () => {
   const navigate = useNavigate();
   const { itemId } = useParams();
-  const [item, setItem] = useRecoilState(usedItemDetailState);
+  const setUsedDetailItem = useSetRecoilState(usedItemDetailState);
   const { userId, messages } = useRecoilValue(geekChickUser);
 
-  // ⭕내용정리 (some, find, filter 차이! )
-  // 현재 제품에 대한 쪽지 여부 및 데이터 확인, messageData 사용안하는 부분 지우기.
-  // const isMessage = makeArr(messages || []).some((m) => m.itemId === itemId);
-  const curMessageData = makeArr(messages).find(
-    (m) => m.itemId === itemId
-  );
+  // ⭕함수명 변경 -> 중고 상세페이지 데이터 로드 (주석 지울 수 있게)
+  const { data, isPending, isError } = useQuery({
+    queryKey: ["usedDetailItem"],
+    queryFn: () => usedDetailItem(itemId as string, setUsedDetailItem),
+  });
+  const currentMessage = makeArr(messages).find((m) => m.itemId === itemId);
 
   const onClickAddMessagePage = async () => {
-    if (!curMessageData) {
-      const messageId = uuidv4();
+    const messageId = uuidv4();
+    if (!currentMessage) {
       const messageData = {
         createdAt: new Date().toISOString(),
         itemId,
-        itemImage: item.imageArr[0],
-        itemName: item.itemName,
+        itemImage: data.imageArr[0],
+        itemName: data.itemName,
         messageList: "",
         messageId: messageId,
-        price: item.price,
-        seller: item.seller,
+        price: data.price,
+        seller: data.seller,
         userId,
       };
-      // ⭕ navigation 조건부로 나눠서 보내기 -> 중복제거하기 
       console.log("쪽지보내기 방 생성", messageData);
-      await addUsedMessagePage(messageData);
-      navigate(`/message/${itemId}/${userId}`, {
-        state: { userId, messageId },
-      });
-    } else {
-      navigate(`/message/${itemId}/${userId}`, {
-        state: { userId, messageId: curMessageData.messageId },
-      });
+      await addUsedMessagePage(messageData); //⭕타입정리
     }
-    // navigate(`/message/${itemId}/${userId}`);
+    navigate(`/message/${itemId}/${userId}`, {
+      state: {
+        userId,
+        messageId: !currentMessage ? messageId : currentMessage.messageId,
+      },
+    });
   };
 
-  useEffect(() => {
-    const fetchItem = async () => {
-      if (itemId) {
-        try {
-          await usedDetailItem(itemId, setItem);
-        } catch (err) {
-          console.error("상세페이지 불러오기 ERror-", err);
-        }
-      }
-    };
-    fetchItem();
-  }, [itemId, setItem]);
+  if (isError)
+    return (
+      <>
+        <div> 데이터가 없습니다. </div>
+        <Link to="/usedHome">중고 메인페이지로 돌아가기</Link>
+      </>
+    );
 
-  //⭕ detail 로딩중 표시 - 로딩중과 에러 페이지 분리
   return (
     <>
-      {!item ? (
-        <>
-          <div> 데이터가 없습니다. </div>
-          <Link to="/usedHome">중고 메인페이지로 돌아가기</Link>
-        </>
+      {isPending ? (
+        <div className="w-[600px] min-h-screen mb-20 text-left">
+          <UsedDetailSkeleton />
+        </div>
       ) : (
         <div className="w-[600px] min-h-screen mb-20 text-left">
           <div>
@@ -86,13 +77,13 @@ const UsedDetail = () => {
             <div className="w-[598px] h-[100%]">
               <div className="mb-6 bg-gray-200 border-red-400">
                 <img
-                  src={item.imageArr[0]}
-                  alt={item.itemName}
+                  src={data.imageArr[0]}
+                  alt={data.itemName}
                   className="w-[100%] h-96 object-cover"
                 />
               </div>
               <div className="flex space-x-4 pl-8">
-                {item.imageArr.map((i, idx) => (
+                {data.imageArr.map((i: string, idx: number) => (
                   <div
                     key={idx}
                     className="w-24 h-24 flex items-center justify-center"
@@ -108,38 +99,38 @@ const UsedDetail = () => {
             <div className="flex justify-between items-center border-b">
               <div className="flex pb-6">
                 <div className="w-12 h-12 bg-gray-200 rounded-full">
-                  <img src={item.seller.userAvatar ?? ""} alt="유저" />
+                  <img src={data.seller.userAvatar ?? ""} alt="유저" />
                 </div>
                 <div className="ml-4 ">
                   <div className="text-lg font-semibold">
-                    {item.seller.nickname}
+                    {data.seller.nickname}
                   </div>
                   <div className="text-sm text-gray-500">
-                    {item.seller.address}
+                    {data.seller.address}
                   </div>
                 </div>
               </div>
-              {userId !== item.seller.sellerId && (
+              {userId !== data.seller.sellerId && (
                 <button
                   className="w-40 inline-block text-center py-3 mb-4 bg-[#8F5BBD] text-white rounded-md "
                   onClick={onClickAddMessagePage}
                 >
-                  {curMessageData ? "쪽지 이어하기" : "쪽지보내기"}
+                  {currentMessage ? "쪽지 이어하기" : "쪽지보내기"}
                 </button>
               )}
             </div>
 
             <div className="my-8 border-b pb-8">
-              <div className="text-xl font-bold">{item.itemName}</div>
+              <div className="text-xl font-bold">{data.itemName}</div>
               <div className="text-sm text-gray-500">
-                {calculateDaysAgo(item.createdAt)}
+                {calculateDaysAgo(data.createdAt)}
               </div>
               <div className="text-xl font-bold mt-2">
-                {item.price.toLocaleString()}원
+                {data.price.toLocaleString()}원
               </div>
 
               <div className="flex space-x-2 mt-2">
-                {item.options.map((i, idx) => (
+                {data.options.map((i: string, idx: number) => (
                   <span
                     key={idx}
                     className="px-2 py-1 bg-gray-200 rounded-full text-sm"
@@ -151,10 +142,10 @@ const UsedDetail = () => {
             </div>
 
             <div className="mb-10">
-              <p className="text-gray-700">{item.description}</p>
+              <p className="text-gray-700">{data.description}</p>
             </div>
 
-            {item.comments && <UsedCommentList comments={item.comments} />}
+            {data.comments && <UsedCommentList comments={data.comments} />}
             <UsedInputComment />
           </div>
         </div>

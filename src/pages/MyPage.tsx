@@ -9,7 +9,7 @@ import { useEffect } from "react";
 import { loadUserData } from "../api/firebase";
 
 const MyPage = () => {
-  // ⭕ user useEffect로 업데이트하는데, recoil쓸 필요있나? 생각해보기
+  // recoil로 유저 데이터 상시 업데이트 => 전역에서 사용할 수 있게
   const [user, setUser] = useRecoilState(geekChickUser);
 
   useEffect(() => {

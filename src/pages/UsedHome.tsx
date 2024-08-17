@@ -1,21 +1,23 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { useRecoilState } from "recoil";
 import { useQuery } from "@tanstack/react-query";
 
-import { UsedItemType } from "../types/usedType";
 import { loadUserData, usedItemLists, usedItemSearch } from "../api/firebase";
+import { geekChickUser } from "../atoms/userAtom";
+import { UsedItemType } from "../types/usedType";
 
 import SearchList from "../components/usedHome/SearchList";
 import UsedItemList from "../components/usedHome/UsedItemList";
 import UsedSearchBar from "../components/usedHome/UsedSearchBar";
-import { useRecoilState } from "recoil";
-import { geekChickUser } from "../atoms/userAtom";
+import UsedHomeSkeletonGrid from "../components/skeleton/UsedHomeSkeletonGrid";
 
 const UsedHome = () => {
   const [isSearching, setIsSearching] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [user, setUser] = useRecoilState(geekChickUser);
 
+  // 데이터 업로드 후에 중고메인으로 이동 -> recoil에 user-salelist 업데이트 시켜주기 위함.
   useEffect(() => {
     const fetchData = async () => {
       const data = await loadUserData(user.userId);
@@ -24,24 +26,24 @@ const UsedHome = () => {
     fetchData();
   }, [user.userId, setUser]);
 
-  // GET 중고 데이터 & Update recoil State
-  // ⭕데이터 가져오는 query 함수 만들기 -> 공용으로 사용하기! 조은데??
   const {
     data: usedItems,
-    isLoading: usedItemLoading,
+    isPending: usedItemLoading,
     isError: usedItemError,
   } = useQuery<UsedItemType[], Error>({
     queryKey: ["usedItems"],
     queryFn: () => usedItemLists(),
+    retry: 3, // 쿼리옵션-> 요청 3번 재시도
+    retryDelay: 1000, // 쿼리옵션-> 재시도 사이의 지연 시간
   });
 
-  const { data: searchResultData, isLoading: searchLoading } = useQuery<
+  const { data: searchResultData, isPending: searchLoading } = useQuery<
     UsedItemType[],
     Error
   >({
     queryKey: ["searchUsedItems", searchQuery],
     queryFn: () => usedItemSearch(searchQuery),
-    enabled: !!searchQuery, // query가 빈 문자열일 때는 쿼리를 실행하지 않습니다
+    enabled: !!searchQuery, // query가 빈 문자열일 때는 쿼리를 실행하지 않음
   });
 
   const onClickSearch = (query: string) => {
@@ -49,16 +51,19 @@ const UsedHome = () => {
     setIsSearching(!!query);
   };
 
-  const handleBackToMain = () => {
+  const onClickBackToUsedHome = () => {
     setSearchQuery("");
     setIsSearching(false);
   };
 
+  //
   if (usedItemError)
     return (
       <div>
         <p>데이터를 가져오는 동안 문제가 발생했습니다</p>
-        <Link to={"/"}>메인으로 이동하기</Link>
+        <p className="cursor-pointer" onClick={() => window.location.reload()}>
+          geekchic 중고 메인 페이지 새로고침
+        </p>
       </div>
     );
 
@@ -71,21 +76,18 @@ const UsedHome = () => {
         <button className="bg-black text-white px-4 py-2 mb-5 rounded-md text-right">
           <Link to="/usedPostUpload">등록하기</Link>
         </button>
-
-        {/* 검색바 */}
         <UsedSearchBar onSearch={onClickSearch} />
       </header>
 
       <div>
-        {usedItemLoading && <div className="min-h-screen">로딩중입니다</div>}
+        {usedItemLoading && <UsedHomeSkeletonGrid />}
         {isSearching ? (
           <SearchList
             searchData={searchResultData || []}
-            onClickfunc={handleBackToMain}
+            onClickfunc={onClickBackToUsedHome}
             searchLoading={searchLoading}
           />
         ) : (
-          // ⭕본인이 판매하는 제품 아이콘 표시하기 
           usedItems && <UsedItemList usedItems={usedItems} />
         )}
       </div>
