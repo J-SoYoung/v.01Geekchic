@@ -43,7 +43,6 @@ export default function MyCart() {
       (prev, current) => prev + parseInt(current.price) * current.quantity,
       0
     ) || 0;
-
   return (
     <div className="container w-[600px]">
       <div className="flex justify-center mt-[80px] mb-[10px]">
@@ -57,7 +56,7 @@ export default function MyCart() {
       <ul className="px-11 py-2 pb-4">
         {carts &&
           carts.map((product) => (
-            <CartItem key={product.id} carts={product} /* uid={uid} */ />
+            <CartItem key={product.id} carts={product} userId={userId} />
           ))}
       </ul>
       <p className="border border-[#D9D9D9] w-[520px] m-auto mt-[30px] mb-[45px]"></p>
