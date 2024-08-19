@@ -36,14 +36,14 @@ export default function CartItem({
       console.error("User ID is missing");
       return;
     }
-    addOrUpdateToCart(userId as string, { ...carts, quantity: quantity + 1 });
+    addOrUpdateToCart(userId, { ...carts, quantity: quantity + 1 });
   };
   const hadleDelete = () => {
     if (!userId) {
       console.error("User ID is missing");
       return;
     }
-    removeFromCart(userId as string, id);
+    removeFromCart(userId, id);
   };
 
   return (
