@@ -7,6 +7,7 @@ import CartItem from "./CartItem";
 import PriceCard from "./PriceCard";
 import TotalPlusIcon from "../../assets/icons/totalPlus.svg";
 import EqualsIcon from "../../assets/icons/totalEquals.svg";
+import { useNavigate } from "react-router-dom";
 
 export interface CartProducts {
   id: string;
@@ -21,6 +22,7 @@ export interface CartProducts {
 
 export default function MyCart() {
   // const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const user = useRecoilValue(userState);
   const userId = user?.uid;
   const { isLoading, data: carts } = useQuery<CartProducts[], Error>({
@@ -37,13 +39,19 @@ export default function MyCart() {
     isLoading && <p>Loading..</p>;
   }
 
+  const handleClickPayment = async () => {
+    // const selectedProduct = { ...carts };
+    navigate(`/payment/${userId}`, {
+      state: { payProduct: carts, user },
+    });
+  };
+
   const SHIPPING = 3000;
   const totalPrice: number =
     carts?.reduce(
       (prev, current) => prev + parseInt(current.price) * current.quantity,
       0
     ) || 0;
-
   return (
     <div className="container w-[600px]">
       <div className="flex justify-center mt-[80px] mb-[10px]">
@@ -57,7 +65,7 @@ export default function MyCart() {
       <ul className="px-11 py-2 pb-4">
         {carts &&
           carts.map((product) => (
-            <CartItem key={product.id} carts={product} /* uid={uid} */ />
+            <CartItem key={product.id} carts={product} userId={userId} />
           ))}
       </ul>
       <p className="border border-[#D9D9D9] w-[520px] m-auto mt-[30px] mb-[45px]"></p>
@@ -68,7 +76,10 @@ export default function MyCart() {
         <img src={EqualsIcon} alt="EqualsIcon" />
         <PriceCard text="총가격" price={totalPrice + SHIPPING} />
       </div>
-      <button className="w-[520px] mb-[100px] mt-[10px] py-3 bg-[#8F5BBD] text-[#fff] border border-[#8F5BBD] rounded-md hover:bg-[#fff] hover:text-[#8F5BBD] duration-200">
+      <button
+        className="w-[520px] mb-[100px] mt-[10px] py-3 bg-[#8F5BBD] text-[#fff] border border-[#8F5BBD] rounded-md hover:bg-[#fff] hover:text-[#8F5BBD] duration-200"
+        onClick={handleClickPayment}
+      >
         주문하기
       </button>
     </div>
