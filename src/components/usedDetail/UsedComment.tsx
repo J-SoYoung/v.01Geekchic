@@ -1,11 +1,10 @@
 import { useState } from "react";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilValue } from "recoil";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 
 import { geekChickUser } from "../../atoms/userAtom";
-import { usedItemDetailState } from "../../atoms/usedItemAtom";
 import { editUsedComment, removeUsedComment } from "../../api/firebase";
-import { UsedItemType } from "../../types/usedType";
 
 interface CommentObjProps {
   commentObj: {
@@ -21,53 +20,54 @@ interface CommentObjProps {
 const UsedComment = ({ commentObj }: CommentObjProps) => {
   const { itemId } = useParams();
   const loginUser = useRecoilValue(geekChickUser);
-  const [item, setItem] = useRecoilState<UsedItemType>(usedItemDetailState);
   const [isCommentEdit, setIsCommentEdit] = useState(false);
   const [editComment, setEditComment] = useState(commentObj.comment);
-  
-//  ⭕comment 업데이트 노트쓰기 
-  const updatedComments2 = Object.entries(item.comments)
-  // console.log(updatedComments2)
-  // const updatedComments3 = Object.entries(item.comments).map(
-  //   ([key, comment]) => {
-  //     console.log(key, comment);
-  //   }
-  // const updatedComments4 = Object.entries(item.comments).map(([key, comment]) =>
-  //   comment.commentId === commentObj.commentId
-  //     ? console.log([key, { ...comment, comment: editComment }])
-  //     : console.log([key, comment])
-  // );
-  // const updatedComments = Object.fromEntries(updatedCommentsArray);
 
+  const queryClient = useQueryClient();
+
+  const commentRemoveMutation = useMutation({
+    mutationFn: async (commentId) => {
+      await removeUsedComment(itemId as string, commentId, commentObj.userId);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(
+        {
+          queryKey: ["usedDetailItem"],
+          refetchType: "active",
+          exact: true,
+        },
+        { throwOnError: true, cancelRefetch: true }
+      );
+    },
+  });
   const onClickRemoveUsedComment = (commentId: string) => {
-    if (loginUser.userId === commentObj.userId && itemId && item) {
-      removeUsedComment(itemId, commentId, commentObj.userId);
-
-      const updatedComments = { ...item.comments };
-      delete updatedComments[commentId];
-      const updatedItem = {
-        ...item,
-        comments: updatedComments,
-      };
-      setItem(updatedItem);
+    if (loginUser.userId === commentObj.userId && itemId) {
+      commentRemoveMutation.mutate(commentId);
     }
   };
+
+  const commentEditMutation = useMutation({
+    mutationFn: async (editCommentData) => {
+      await editUsedComment(itemId, commentObj.commentId, editCommentData);
+      setIsCommentEdit(false);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(
+        {
+          queryKey: ["usedDetailItem"],
+          refetchType: "active",
+          exact: true,
+        },
+        { throwOnError: true, cancelRefetch: true }
+      );
+    },
+  });
   const onClickEditUsedComment = async () => {
     const editCommentData = {
       ...commentObj,
       comment: editComment,
     };
-    await editUsedComment(itemId, commentObj.commentId, editCommentData);
-    
-    setIsCommentEdit(false);
-    const updatedCommentsArray = Object.entries(item.comments).map(
-      ([key, comment]) =>
-        comment.commentId === commentObj.commentId
-          ? [key, { ...comment, comment: editComment }]
-          : [key, comment]
-    );
-    const updatedComments = Object.fromEntries(updatedCommentsArray);
-    setItem({...item, comments: updatedComments})
+    commentEditMutation.mutate(editCommentData);
   };
 
   return (
@@ -91,6 +91,7 @@ const UsedComment = ({ commentObj }: CommentObjProps) => {
                   >
                     저장
                   </button>
+
                   <button
                     onClick={() => setIsCommentEdit(false)}
                     className="w-[60px] ml-2 px-2 py-1 bg-gray-200 rounded-md"
@@ -106,6 +107,7 @@ const UsedComment = ({ commentObj }: CommentObjProps) => {
                   >
                     수정
                   </button>
+
                   <button
                     onClick={() =>
                       onClickRemoveUsedComment(commentObj.commentId)
