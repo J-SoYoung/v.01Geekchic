@@ -7,6 +7,7 @@ import CartItem from "./CartItem";
 import PriceCard from "./PriceCard";
 import TotalPlusIcon from "../../assets/icons/totalPlus.svg";
 import EqualsIcon from "../../assets/icons/totalEquals.svg";
+import { useNavigate } from "react-router-dom";
 
 export interface CartProducts {
   id: string;
@@ -21,6 +22,7 @@ export interface CartProducts {
 
 export default function MyCart() {
   // const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const user = useRecoilValue(userState);
   const userId = user?.uid;
   const { isLoading, data: carts } = useQuery<CartProducts[], Error>({
@@ -36,6 +38,13 @@ export default function MyCart() {
   {
     isLoading && <p>Loading..</p>;
   }
+
+  const handleClickPayment = async () => {
+    // const selectedProduct = { ...carts };
+    navigate(`/payment/${userId}`, {
+      state: { payProduct: carts, user },
+    });
+  };
 
   const SHIPPING = 3000;
   const totalPrice: number =
@@ -67,7 +76,10 @@ export default function MyCart() {
         <img src={EqualsIcon} alt="EqualsIcon" />
         <PriceCard text="총가격" price={totalPrice + SHIPPING} />
       </div>
-      <button className="w-[520px] mb-[100px] mt-[10px] py-3 bg-[#8F5BBD] text-[#fff] border border-[#8F5BBD] rounded-md hover:bg-[#fff] hover:text-[#8F5BBD] duration-200">
+      <button
+        className="w-[520px] mb-[100px] mt-[10px] py-3 bg-[#8F5BBD] text-[#fff] border border-[#8F5BBD] rounded-md hover:bg-[#fff] hover:text-[#8F5BBD] duration-200"
+        onClick={handleClickPayment}
+      >
         주문하기
       </button>
     </div>
