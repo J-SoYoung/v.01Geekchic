@@ -33,7 +33,7 @@ const MySalelist = () => {
             sales.map((sale, idx) => (
               <Link
                 key={idx}
-                to={`/usedHome/detail/${sale.itemId}`}
+                to={`/usedHome/detail/${sale.id}`}
                 className=" p-3 rounded-md cursor-pointer"
               >
                 <img

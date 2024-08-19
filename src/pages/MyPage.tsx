@@ -9,7 +9,8 @@ import { useEffect } from "react";
 import { loadUserData } from "../api/firebase";
 
 const MyPage = () => {
-  // recoil로 유저 데이터 상시 업데이트 => 전역에서 사용할 수 있게
+  // ⭕recoil로 유저 데이터 상시 업데이트 => 전역에서 사용할 수 있게 
+  // react-query로 업데이트하자 
   const [user, setUser] = useRecoilState(geekChickUser);
 
   useEffect(() => {
