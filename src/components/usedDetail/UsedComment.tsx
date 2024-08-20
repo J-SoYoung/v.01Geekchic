@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { useRecoilValue } from "recoil";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 
 import { geekChickUser } from "../../atoms/userAtom";
-import { editUsedComment, removeUsedComment } from "../../api/firebase";
+import {
+  useEditComment,
+  useRemoveComment,
+} from "../../hook/useCommentMutation";
 
 interface CommentObjProps {
   commentObj: {
@@ -23,51 +25,21 @@ const UsedComment = ({ commentObj }: CommentObjProps) => {
   const [isCommentEdit, setIsCommentEdit] = useState(false);
   const [editComment, setEditComment] = useState(commentObj.comment);
 
-  const queryClient = useQueryClient();
-
-  const commentRemoveMutation = useMutation({
-    mutationFn: async (commentId) => {
-      await removeUsedComment(itemId as string, commentId, commentObj.userId);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries(
-        {
-          queryKey: ["usedDetailItem"],
-          refetchType: "active",
-          exact: true,
-        },
-        { throwOnError: true, cancelRefetch: true }
-      );
-    },
-  });
+  const removeCommentMutation = useRemoveComment(itemId as string);
   const onClickRemoveUsedComment = (commentId: string) => {
     if (loginUser.userId === commentObj.userId && itemId) {
-      commentRemoveMutation.mutate(commentId);
+      removeCommentMutation.mutate(commentId);
     }
   };
 
-  const commentEditMutation = useMutation({
-    mutationFn: async (editCommentData) => {
-      await editUsedComment(itemId, commentObj.commentId, editCommentData);
-      setIsCommentEdit(false);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries(
-        {
-          queryKey: ["usedDetailItem"],
-          refetchType: "active",
-          exact: true,
-        },
-        { throwOnError: true, cancelRefetch: true }
-      );
-    },
-  });
+  const editCommentMutation = useEditComment(itemId as string);
   const onClickEditUsedComment = async () => {
     const editCommentData = {
       ...commentObj,
       comment: editComment,
     };
-    commentEditMutation.mutate(editCommentData);
+    editCommentMutation.mutate(editCommentData);
+    setIsCommentEdit(false);
   };
 
   return (

@@ -490,9 +490,8 @@ export async function addUsedComment(
 export async function removeUsedComment(
   itemId: string,
   commentId: string,
-  userId: string
 ): Promise<void> {
-  console.log(itemId, commentId, userId);
+  console.log(itemId, commentId);
   const itemRef = ref(database, `usedItems/${itemId}/comments/${commentId}`);
   await remove(itemRef);
 }
@@ -500,10 +499,9 @@ export async function removeUsedComment(
 // 댓글 수정
 export async function editUsedComment(
   itemId: string | undefined,
-  commentId: string,
   data: UsedCommentType
 ) {
-  const itemRef = ref(database, `usedItems/${itemId}/comments/${commentId}`);
+  const itemRef = ref(database, `usedItems/${itemId}/comments/${data.commentId}`);
   try {
     await update(itemRef, data);
   } catch (err) {

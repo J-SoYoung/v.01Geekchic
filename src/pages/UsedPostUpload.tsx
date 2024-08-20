@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { uploadCloudImage } from "../api/uploader";
 import { useRecoilState } from "recoil";
 import { geekChickUser } from "../atoms/userAtom";
-import {  UsedItemType} from "../types/usedType";
+import { UsedItemType } from "../types/usedType";
 
 // ⭕ 유효성 검사 check
 const UsedPostUpload = () => {
@@ -44,7 +44,7 @@ const UsedPostUpload = () => {
       id: "",
       description,
       imageArr: uploadImages,
-      isSales: false,
+      isSales: true,
       itemName,
       options: [
         shippingIncluded ? "배송비 포함" : "배송비 비포함",
