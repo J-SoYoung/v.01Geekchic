@@ -27,3 +27,5 @@ Vite + React + TypeScript
 - Eslint
 - Tailwind
 - Firebase
+
+..

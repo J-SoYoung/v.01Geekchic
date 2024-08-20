@@ -61,95 +61,103 @@ const UsedDetail = () => {
 
   return (
     <>
-      {isPending ? (
-        <div className="w-[600px] min-h-screen mb-20 text-left">
+      <div className="w-[600px] min-h-screen mb-20 text-left">
+        {isPending ? (
           <UsedDetailSkeleton />
-        </div>
-      ) : (
-        <div className="w-[600px] min-h-screen mb-20 text-left">
-          <div>
-            <button
-              className="w-10 h-10 top-2 cursor-pointer fixed"
-              onClick={() => navigate(-1)}
-            >
-              <img src={Chevron_left} alt="이전 페이지로" className="w-full" />
-            </button>
-            <div className="w-[598px] h-[100%]">
-              <div className="mb-6 bg-gray-200 border-red-400">
+        ) : (
+          <>
+            {/* image View */}
+            <div>
+              <button
+                className="w-10 h-10 top-2 cursor-pointer fixed"
+                onClick={() => navigate(-1)}
+              >
                 <img
-                  src={data.imageArr[0]}
-                  alt={data.itemName}
-                  className="w-[100%] h-96 object-cover"
+                  src={Chevron_left}
+                  alt="이전 페이지로"
+                  className="w-full"
                 />
-              </div>
-              <div className="flex space-x-4 pl-8">
-                {data.imageArr.map((i: string, idx: number) => (
-                  <div
-                    key={idx}
-                    className="w-24 h-24 flex items-center justify-center"
-                  >
-                    <img src={i} className="w-full h-full object-cover" />
-                  </div>
-                ))}
+              </button>
+              <div className="w-[598px] h-[100%]">
+                <div className="mb-6 bg-gray-200 border-red-400">
+                  <img
+                    src={data.imageArr[0]}
+                    alt={data.itemName}
+                    className="w-[100%] h-96 object-cover"
+                  />
+                </div>
+                <div className="flex space-x-4 pl-8">
+                  {data.imageArr.map((i: string, idx: number) => (
+                    <div
+                      key={idx}
+                      className="w-24 h-24 flex items-center justify-center"
+                    >
+                      <img src={i} className="w-full h-full object-cover" />
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
-          </div>
 
-          <div className="p-8 relative">
-            <div className="flex justify-between items-center border-b">
-              <div className="flex pb-6">
-                <div className="w-12 h-12 bg-gray-200 rounded-full">
-                  <img src={data.seller.userAvatar ?? ""} alt="유저" />
-                </div>
-                <div className="ml-4 ">
-                  <div className="text-lg font-semibold">
-                    {data.seller.nickname}
+            <div className="p-8 relative">
+              {/* seller view */}
+              <div className="flex justify-between items-center border-b">
+                <div className="flex pb-6">
+                  <div className="w-12 h-12 bg-gray-200 rounded-full">
+                    <img src={data.seller.userAvatar ?? ""} alt="유저" />
                   </div>
+                  <div className="ml-4 ">
+                    <div className="text-lg font-semibold">
+                      {data.seller.nickname}
+                    </div>
+                    <div className="text-sm text-gray-500">
+                      {data.seller.address}
+                    </div>
+                  </div>
+                </div>
+                {userId !== data.seller.sellerId && (
+                  <button
+                    className="w-40 inline-block text-center py-3 mb-4 bg-[#8F5BBD] text-white rounded-md "
+                    onClick={onClickAddMessagePage}
+                  >
+                    {currentMessage ? "쪽지 이어하기" : "쪽지보내기"}
+                  </button>
+                )}
+              </div>
+
+              {/* item-info view */}
+              <>
+                <div className="my-8 border-b pb-8">
+                  <div className="text-xl font-bold">{data.itemName}</div>
                   <div className="text-sm text-gray-500">
-                    {data.seller.address}
+                    {calculateDaysAgo(data.createdAt)}
+                  </div>
+                  <div className="text-xl font-bold mt-2">
+                    {data.price.toLocaleString()}원
+                  </div>
+                  <div className="flex space-x-2 mt-2">
+                    {data.options.map((i: string, idx: number) => (
+                      <span
+                        key={idx}
+                        className="px-2 py-1 bg-gray-200 rounded-full text-sm"
+                      >
+                        {i}
+                      </span>
+                    ))}
                   </div>
                 </div>
-              </div>
-              {userId !== data.seller.sellerId && (
-                <button
-                  className="w-40 inline-block text-center py-3 mb-4 bg-[#8F5BBD] text-white rounded-md "
-                  onClick={onClickAddMessagePage}
-                >
-                  {currentMessage ? "쪽지 이어하기" : "쪽지보내기"}
-                </button>
-              )}
+                <div className="mb-10">
+                  <p className="text-gray-700">{data.description}</p>
+                </div>
+              </>
+
+              {/* comment view */}
+              {data.comments && <UsedCommentList comments={data.comments} />}
+              <UsedInputComment />
             </div>
-
-            <div className="my-8 border-b pb-8">
-              <div className="text-xl font-bold">{data.itemName}</div>
-              <div className="text-sm text-gray-500">
-                {calculateDaysAgo(data.createdAt)}
-              </div>
-              <div className="text-xl font-bold mt-2">
-                {data.price.toLocaleString()}원
-              </div>
-
-              <div className="flex space-x-2 mt-2">
-                {data.options.map((i: string, idx: number) => (
-                  <span
-                    key={idx}
-                    className="px-2 py-1 bg-gray-200 rounded-full text-sm"
-                  >
-                    {i}
-                  </span>
-                ))}
-              </div>
-            </div>
-
-            <div className="mb-10">
-              <p className="text-gray-700">{data.description}</p>
-            </div>
-
-            {data.comments && <UsedCommentList comments={data.comments} />}
-            <UsedInputComment />
-          </div>
-        </div>
-      )}
+          </>
+        )}
+      </div>
     </>
   );
 };

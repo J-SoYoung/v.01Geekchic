@@ -1,6 +1,7 @@
 import React, { useState, ChangeEvent, FormEvent } from "react";
 import { useLocation, useParams } from "react-router-dom";
 import { addOrderList } from "../api/firebase";
+import PaymentCard from "../components/payment/PaymentCard";
 
 interface Product {
   id: string;
@@ -25,7 +26,7 @@ interface OrderDetails {
 export default function Payment() {
   const { id } = useParams<string>();
   const location = useLocation();
-  const state = location.state as { payProduct?: Product };
+  const state = location.state as { payProduct?: Product[] };
   const payProduct = state?.payProduct;
 
   const [orderDetails, setOrderDetails] = useState<OrderDetails>({
@@ -38,9 +39,13 @@ export default function Payment() {
   if (!payProduct) {
     return <div>데이터가 없습니다.</div>;
   }
-  const { description, image, price, options, title, quantity } = payProduct;
-  const numPrice = Number(price);
-  const totalPrice = `${numPrice + 3000}`;
+
+  const totalPrice =
+    payProduct &&
+    payProduct.reduce(
+      (prev, current) => prev + parseInt(current.price) * current.quantity,
+      0
+    );
 
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -68,46 +73,32 @@ export default function Payment() {
       alert("주문 실패");
     }
   };
-
   return (
     <div className="container w-[600px]">
       <div className="flex justify-center mt-[80px] mb-[10px]">
         <h1 className="text-3xl font-bold text-left mb-[20px]">주문 상세</h1>
       </div>
-      <div className="mb-[40px]">
-        <div className="flex mb-4 ml-[40px] w-[550px]">
-          <img
-            src={image}
-            alt={title}
-            className="w-[150px] h-[150px] rounded-[5px]"
-          />
-          <div className="text-left px-4 w-[380px]">
-            <p className="text-lg font-bold mb-[5px]">{title}</p>
-            <p>{description}</p>
-            <p className="text-[#959595]">
-              {options} | {quantity}개
-            </p>
-            <p className="mt-[40px] text-right text-lg text-nowrap">
-              {price}원
-            </p>
-          </div>
-        </div>
+      <ul className="mb-[40px]">
+        {payProduct &&
+          payProduct.map((product) => (
+            <PaymentCard key={product.id} product={product} />
+          ))}
         <p className="border border-[#D9D9D9] w-[520px] m-auto mt-[40px]"></p>
-      </div>
+      </ul>
       <div className="text-left ml-[40px]">
         <h2 className="text-xl font-bold">총금액</h2>
       </div>
       <div>
         <div className="flex justify-end mr-[40px] gap-2">
           <p className="text-[#959595]">상품 합</p>
-          <p>{price}원</p>
+          <p>{totalPrice}원</p>
         </div>
         <div className="flex justify-end mr-[40px] gap-2">
           <p className="text-[#959595]">배송 비용</p>
           <p>3000원</p>
         </div>
         <div className="text-right mr-[40px] text-xl font-bold mt-[10px]">
-          <p>{totalPrice}원</p>
+          <p>{totalPrice + 3000}원</p>
         </div>
       </div>
       <p className="border border-[#D9D9D9] w-[520px] m-auto mt-[40px]"></p>
