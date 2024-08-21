@@ -1,10 +1,9 @@
 import { useParams, useNavigate, Link } from "react-router-dom";
-import { useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilValue } from "recoil";
 import { useQuery } from "@tanstack/react-query";
 import { v4 as uuidv4 } from "uuid";
 
 import { geekChickUser } from "../atoms/userAtom";
-import { usedItemDetailState } from "../atoms/usedItemAtom";
 import { calculateDaysAgo, makeArr } from "../types/utils";
 import { addUsedMessagePage, usedDetailItem } from "../api/firebase";
 
@@ -16,15 +15,15 @@ import UsedDetailSkeleton from "../components/skeleton/UsedDetailSkeleton";
 const UsedDetail = () => {
   const navigate = useNavigate();
   const { itemId } = useParams();
-  const setUsedDetailItem = useSetRecoilState(usedItemDetailState);
   const { userId, messages } = useRecoilValue(geekChickUser);
 
   // ⭕함수명 변경 -> 중고 상세페이지 데이터 로드 (주석 지울 수 있게)
   const { data, isPending, isError } = useQuery({
     queryKey: ["usedDetailItem"],
-    queryFn: () => usedDetailItem(itemId as string, setUsedDetailItem),
+    queryFn: () => usedDetailItem(itemId as string),
   });
   const currentMessage = makeArr(messages).find((m) => m.itemId === itemId);
+  console.log(data);
 
   const onClickAddMessagePage = async () => {
     const messageId = uuidv4();
@@ -38,6 +37,7 @@ const UsedDetail = () => {
         messageId: messageId,
         price: data.price,
         seller: data.seller,
+        quantity: data.quantity,
         userId,
       };
       console.log("쪽지보내기 방 생성", messageData);
