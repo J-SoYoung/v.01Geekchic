@@ -293,22 +293,23 @@ export async function getCommentItems(productId: string): Promise<Comment[]> {
 
 export async function addOrderList(
   userId: string,
-  product: PayProduct,
+  product: PayProduct[],
   orderDetails: OrderDetails
 ): Promise<void> {
   const ordersId = uuidv4();
   const orderRef = ref(database, `userData/${userId}/orders/${ordersId}`);
   // const newOrderRef = push(orderRef);
+  const items = product.map((product) => ({
+    description: product.description,
+    image: product.image,
+    price: product.price,
+    options: product.options,
+    title: product.title,
+    quantity: product.quantity,
+  }));
 
   const orderData = {
-    items: {
-      description: product.description,
-      image: product.image,
-      price: product.price,
-      options: product.options,
-      title: product.title,
-      quantity: product.quantity,
-    },
+    items,
     ordersId,
     name: orderDetails.name,
     phone: orderDetails.phone,
