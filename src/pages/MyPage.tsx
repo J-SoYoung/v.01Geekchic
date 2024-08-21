@@ -1,16 +1,17 @@
 import Layout from "../components/myPage/_Layout";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 // ⭕default Image 클라우디너리에 업로드해서 사용하기
 import { geekChickUser } from "../atoms/userAtom";
 import { useRecoilState } from "recoil";
 import { defaultImage, makeArr } from "../types/utils";
 import { useEffect } from "react";
-import { loadUserData } from "../api/firebase";
+import { loadUserData, logout } from "../api/firebase";
 
 const MyPage = () => {
-  // ⭕recoil로 유저 데이터 상시 업데이트 => 전역에서 사용할 수 있게 
-  // react-query로 업데이트하자 
+  // ⭕recoil로 유저 데이터 상시 업데이트 => 전역에서 사용할 수 있게
+  // react-query로 업데이트하자
+  const navigate = useNavigate();
   const [user, setUser] = useRecoilState(geekChickUser);
 
   useEffect(() => {
@@ -25,6 +26,13 @@ const MyPage = () => {
   const orders = makeArr(user.orders);
   const messages = makeArr(user.messages);
   const carts = makeArr(user.carts);
+
+  const onClickLogout = async () => {
+    if (confirm("로그아웃 하시겠습니까? ")) {
+      await logout();
+      navigate("/api/login");
+    }
+  };
 
   if (user == null) {
     return (
@@ -61,8 +69,14 @@ const MyPage = () => {
             </div>
           </div>
 
-          <button className="w-full h-[45px] py-2 mb-16 bg-black text-white rounded-md">
+          <button className="w-full h-[45px] py-2 mb-2 bg-[#8F5BBD] text-white rounded-md">
             <Link to="profile">프로필 관리</Link>
+          </button>
+          <button
+            onClick={onClickLogout}
+            className="w-full h-[45px] py-2 mb-16 bg-gray-400 text-white rounded-md"
+          >
+            로그아웃
           </button>
         </div>
 
