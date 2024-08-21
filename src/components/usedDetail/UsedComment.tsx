@@ -6,7 +6,7 @@ import { geekChickUser } from "../../atoms/userAtom";
 import {
   useEditComment,
   useRemoveComment,
-} from "../../hook/useCommentMutation";
+} from "../../hook/useUsedCommentMutation";
 
 interface CommentObjProps {
   commentObj: {
