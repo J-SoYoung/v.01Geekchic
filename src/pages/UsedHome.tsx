@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useRecoilState } from "recoil";
-import { useQuery } from "@tanstack/react-query";
 
-import { loadUserData, usedItemLists, usedItemSearch } from "../api/firebase";
+import { loadUserData } from "../api/firebase";
 import { geekChickUser } from "../atoms/userAtom";
-import { UsedItemType } from "../types/usedType";
+import { useLoadUsedItem, useSearchUsedItem } from "../hook/useUsedHome";
 
 import SearchList from "../components/usedHome/SearchList";
 import UsedItemList from "../components/usedHome/UsedItemList";
@@ -17,7 +16,7 @@ const UsedHome = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [user, setUser] = useRecoilState(geekChickUser);
 
-  // 데이터 업로드 후에 중고메인으로 이동 -> recoil에 user-salelist 업데이트 시켜주기 위함.
+  // ⭕유저데이터도 reqct-query로 업데이트
   useEffect(() => {
     const fetchData = async () => {
       const data = await loadUserData(user.userId);
@@ -30,21 +29,10 @@ const UsedHome = () => {
     data: usedItems,
     isPending: usedItemLoading,
     isError: usedItemError,
-  } = useQuery<UsedItemType[], Error>({
-    queryKey: ["usedItems"],
-    queryFn: () => usedItemLists(),
-    retry: 3, // 쿼리옵션-> 요청 3번 재시도
-    retryDelay: 1000, // 쿼리옵션-> 재시도 사이의 지연 시간
-  });
+  } = useLoadUsedItem();
 
-  const { data: searchResultData, isPending: searchLoading } = useQuery<
-    UsedItemType[],
-    Error
-  >({
-    queryKey: ["searchUsedItems", searchQuery],
-    queryFn: () => usedItemSearch(searchQuery),
-    enabled: !!searchQuery, // query가 빈 문자열일 때는 쿼리를 실행하지 않음
-  });
+  const { data: searchResultData, isPending: searchLoading } =
+    useSearchUsedItem(searchQuery);
 
   const onClickSearch = (query: string) => {
     setSearchQuery(query);
@@ -56,7 +44,6 @@ const UsedHome = () => {
     setIsSearching(false);
   };
 
-  //
   if (usedItemError)
     return (
       <div>

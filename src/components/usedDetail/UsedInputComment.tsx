@@ -1,10 +1,8 @@
-import React, { useState } from "react";
-import { useRecoilState, useRecoilValue } from "recoil";
-import { usedItemDetailState } from "../../atoms/usedItemAtom";
+import { useState } from "react";
+import { useRecoilValue } from "recoil";
 import { geekChickUser } from "../../atoms/userAtom";
 import { addUsedComment } from "../../api/firebase";
 import { useParams } from "react-router-dom";
-import { UsedItemType } from "../../types/usedType";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 const UsedInputComment = () => {
@@ -12,11 +10,10 @@ const UsedInputComment = () => {
   const queryClient = useQueryClient();
   const { itemId } = useParams<{ itemId: string }>();
   const [newUsedComment, setNewUsedComment] = useState("");
-  const [item, setItem] = useRecoilState<UsedItemType>(usedItemDetailState);
 
   const mutation = useMutation({
     mutationFn: async (comments) => {
-      await addUsedComment(itemId as string, comments, setItem, item);
+      await addUsedComment(itemId as string, comments);
     },
     onSuccess: () => {
       queryClient.invalidateQueries(
@@ -31,7 +28,7 @@ const UsedInputComment = () => {
   });
 
   const handleAddUsedItemComment = async () => {
-    if (user && item && itemId) {
+    if (user && itemId) {
       const comments = {
         comment: newUsedComment,
         userId: user.userId,
