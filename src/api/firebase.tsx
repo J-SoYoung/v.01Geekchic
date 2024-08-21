@@ -30,6 +30,7 @@ import {
   MessageListType,
 } from "../types/usedType";
 import { SetterOrUpdater } from "recoil";
+import { UsedItemsOrdersInfoType } from "../pages/UsedMessage";
 interface AdminUser extends User {
   isAdmin: boolean;
 }
@@ -429,15 +430,11 @@ export function usedItemLists(): Promise<UsedItemType[]> {
 }
 
 // 중고 상세페이지 데이터 받아오기
-export async function usedDetailItem(
-  itemId: string,
-  setUsedDetailItem: SetterOrUpdater<UsedItemType>
-) {
+export async function usedDetailItem(itemId: string) {
   try {
     const itemRef = ref(database, `usedItems/${itemId}`);
     const snapshot = await get(itemRef);
     if (snapshot.exists()) {
-      setUsedDetailItem(snapshot.val());
       return snapshot.val();
     } else {
       return null;
@@ -455,12 +452,7 @@ interface DataType {
   nickname: string | null;
   userAvatar: string | null;
 }
-export async function addUsedComment(
-  itemId: string,
-  comments: DataType,
-  setItem: SetterOrUpdater<never[]>,
-  item: UsedItemType
-) {
+export async function addUsedComment(itemId: string, comments: DataType) {
   try {
     const itemRef = ref(database, `usedItems/${itemId}/comments`);
     const commentKeyRef = push(itemRef);
@@ -474,13 +466,6 @@ export async function addUsedComment(
       userAvatar: comments.userAvatar ?? "",
     };
     await set(commentKeyRef, commentData);
-
-    const updatedComments = {
-      [commentData.commentId]: commentData,
-      ...item.comments,
-    };
-
-    setItem({ ...item, comments: updatedComments });
   } catch (err) {
     console.error("댓글 작성 에러", err);
   }
@@ -489,9 +474,8 @@ export async function addUsedComment(
 // 댓글 삭제
 export async function removeUsedComment(
   itemId: string,
-  commentId: string,
+  commentId: string
 ): Promise<void> {
-  console.log(itemId, commentId);
   const itemRef = ref(database, `usedItems/${itemId}/comments/${commentId}`);
   await remove(itemRef);
 }
@@ -501,7 +485,10 @@ export async function editUsedComment(
   itemId: string | undefined,
   data: UsedCommentType
 ) {
-  const itemRef = ref(database, `usedItems/${itemId}/comments/${data.commentId}`);
+  const itemRef = ref(
+    database,
+    `usedItems/${itemId}/comments/${data.commentId}`
+  );
   try {
     await update(itemRef, data);
   } catch (err) {
@@ -646,6 +633,23 @@ export async function sendUsedMessage({
         messages,
     };
     await update(ref(database), updates);
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+export async function addUsedItemsOrderList({
+  data,
+}: {
+  data: UsedItemsOrdersInfoType;
+}) {
+  try {
+    const usedOrderRef = ref(
+      database,
+      `userData/${data.userId}/orders_used/${data.id}`
+    );
+    console.log(usedOrderRef);
+    // await update(usedOrderRef, data);
   } catch (err) {
     console.error(err);
   }
