@@ -1,19 +1,39 @@
-import Layout from "../components/myPage/_Layout";
-import { useLocation } from "react-router-dom";
 import { useState } from "react";
-import { loadUsedMessage, sendUsedMessage } from "../api/firebase";
-import { MessageListType } from "../types/usedType";
-import { makeArr } from "../types/utils";
-import { useRecoilValue } from "recoil";
-import { geekChickUser } from "../atoms/userAtom";
-import MessageSkeleton from "../components/skeleton/MessageSkeleton";
+import { useLocation } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useRecoilValue } from "recoil";
+import { v4 as uuidv4 } from "uuid";
+
+import Layout from "../components/myPage/_Layout";
+import MessageSkeleton from "../components/skeleton/MessageSkeleton";
+import {
+  addUsedItemsOrderList,
+  loadUsedMessage,
+  updateUsedItemQuantity,
+} from "../api/firebase";
+import { MessageListType, SellerType } from "../types/usedType";
+import { makeArr } from "../types/utils";
+import { geekChickUser } from "../atoms/userAtom";
+import { useSendMessage } from "../hook/useUsedMessageMutation";
+
+export interface UsedItemsOrdersInfoType {
+  id: string;
+  seller: SellerType;
+  itemId: string;
+  itemName: string;
+  itemImage: string;
+  price: string;
+  userId: string;
+  quantity: number;
+  createdAt: string;
+}
 
 const UsedMessage = () => {
   const location = useLocation();
   const { messageId, userId } = location.state || {};
   const loginUser = useRecoilValue(geekChickUser);
   const [newMessage, setNewMessage] = useState("");
+  const [quantity, setQuantity] = useState(1);
 
   const queryClient = useQueryClient();
 
@@ -22,27 +42,11 @@ const UsedMessage = () => {
     queryFn: () => loadUsedMessage({ userId, messageId }),
   });
 
-  const mutation = useMutation({
-    mutationFn: async (newMessageObj: MessageListType) => {
-      await sendUsedMessage({
-        messages: newMessageObj,
-        userId,
-        messageId,
-        sellerId: data?.seller.sellerId,
-      });
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries(
-        {
-          queryKey: ["usedMessage"],
-          refetchType: "active",
-          exact: true,
-        },
-        { throwOnError: true, cancelRefetch: true }
-      );
-    },
+  const sendMessageMutation = useSendMessage({
+    userId,
+    messageId,
+    sellerId: data?.seller.sellerId,
   });
-
   const onClickSendMessage = () => {
     if (!newMessage) return;
     const newMessageObj: MessageListType = {
@@ -51,8 +55,58 @@ const UsedMessage = () => {
       sender: data.seller.sellerId == loginUser.userId ? "seller" : "buyer",
       createdAt: new Date().toISOString(),
     };
-    mutation.mutate(newMessageObj);
+    sendMessageMutation.mutate(newMessageObj);
     setNewMessage("");
+  };
+
+  const mutateUpdateUsedItemQuantity = useMutation({
+    mutationFn: async ({
+      itemId,
+      quantity,
+    }: {
+      itemId: string;
+      quantity: number;
+    }) => {
+      await updateUsedItemQuantity({ itemId, quantity });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(
+        {
+          queryKey: ["usedItems"],
+          refetchType: "active",
+          exact: true,
+        },
+        { throwOnError: true, cancelRefetch: true }
+      );
+    },
+  });
+
+  const onClickUsedPurchase = async () => {
+    const usedOrderId = uuidv4();
+    const usedItemsOrdersInfo: UsedItemsOrdersInfoType = {
+      id: usedOrderId,
+      seller: data.seller,
+      itemId: data.itemId,
+      itemName: data.itemName,
+      itemImage: data.itemImage,
+      price: data.price,
+      userId: data.userId,
+      quantity: quantity,
+      createdAt: new Date().toISOString(),
+    };
+    // 판매자에게 구매요청 버튼 생성
+
+    
+    // 구매정보 firebase에 저장
+    addUsedItemsOrderList({ data: usedItemsOrdersInfo });
+
+    // 제품 수량 업데이트
+    mutateUpdateUsedItemQuantity.mutate({
+      itemId: data.itemId,
+      quantity: data.quantity - quantity,
+    });
+
+    // userData -> 해당 제품 seller의 수량 빼기 -> isSale 여부 확인 후 문구추가
   };
 
   if (isError) {
@@ -83,9 +137,38 @@ const UsedMessage = () => {
                 </div>
               </div>
               {data?.seller.sellerId !== loginUser.userId && (
-                <button className="ml-auto font-bold text-[#8F5BBD]">
-                  결제하기
-                </button>
+                <>
+                  <div className="h-12 flex border items-center">
+                    <button
+                      onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                      className="px-3 py-1 bg-gray-200 rounded-l"
+                    >
+                      -
+                    </button>
+                    <input
+                      type="number"
+                      value={quantity}
+                      onChange={(e) => setQuantity(Number(e.target.value))}
+                      className="text-center "
+                      min={1}
+                      max={data.quantity}
+                    />
+                    <button
+                      onClick={() =>
+                        setQuantity(Math.min(data.quantity, quantity + 1))
+                      }
+                      className="px-3 py-1 bg-gray-200 rounded-r"
+                    >
+                      +
+                    </button>
+                  </div>
+                  <button
+                    className="ml-auto font-bold text-[#8F5BBD]"
+                    onClick={onClickUsedPurchase}
+                  >
+                    결제하기
+                  </button>
+                </>
               )}
             </div>
 
