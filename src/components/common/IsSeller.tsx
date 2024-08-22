@@ -6,5 +6,5 @@ import icon_King from "../../assets/icons/king.svg";
 export const IsSeller = ({ sellerId }: { sellerId: string | null }) => {
   const loginUser = useRecoilValue(geekChickUser);
   if (sellerId && sellerId == loginUser.userId)
-    return <img src={icon_King} className="w-4" alt="유저가 판매자" />;
+    return <img src={icon_King} className="w-4 m-2 absolute" alt="유저가 판매자" />;
 };
