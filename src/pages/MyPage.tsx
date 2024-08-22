@@ -1,31 +1,25 @@
-import Layout from "../components/myPage/_Layout";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 
-// ⭕default Image 클라우디너리에 업로드해서 사용하기
-import { geekChickUser } from "../atoms/userAtom";
-import { useRecoilState } from "recoil";
 import { defaultImage, makeArr } from "../types/utils";
-import { useEffect } from "react";
 import { loadUserData, logout } from "../api/firebase";
+import Layout from "../components/myPage/_Layout";
+import MyPageSkeleton from "../components/skeleton/MyPageSkeleton";
 
 const MyPage = () => {
-  // ⭕recoil로 유저 데이터 상시 업데이트 => 전역에서 사용할 수 있게
-  // react-query로 업데이트하자
+  const { userId } = useParams();
   const navigate = useNavigate();
-  const [user, setUser] = useRecoilState(geekChickUser);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const data = await loadUserData(user.userId);
-      data && setUser(data);
-    };
-    fetchData();
-  }, [user.userId, setUser]);
-
-  const sales = makeArr(user.sales);
-  const orders = makeArr(user.orders);
-  const messages = makeArr(user.messages);
-  const carts = makeArr(user.carts);
+  const {
+    data: user,
+    isPending,
+    isError,
+  } = useQuery({
+    queryKey: ["userData"],
+    queryFn: () => loadUserData(userId as string),
+    retry: 3,
+    retryDelay: 1000,
+  });
 
   const onClickLogout = async () => {
     if (confirm("로그아웃 하시겠습니까? ")) {
@@ -34,7 +28,9 @@ const MyPage = () => {
     }
   };
 
-  if (user == null) {
+  console.log(user);
+
+  if (isError) {
     return (
       <div>
         <p>로그인이 필요합니다.</p>
@@ -46,6 +42,19 @@ const MyPage = () => {
         </p>
       </div>
     );
+  }
+  if (isPending) {
+    return (
+      <Layout title="마이페이지">
+        <div className="m-16 p-4">
+          <MyPageSkeleton />
+        </div>
+      </Layout>
+    );
+  }
+
+  if (!user) {
+    return <div>유저 정보를 불러올 수 없습니다.</div>;
   }
 
   return (
@@ -88,7 +97,9 @@ const MyPage = () => {
             className="flex justify-between items-center p-4 bg-gray-100 rounded-md cursor-pointer"
           >
             <span className="text-lg">주문내역</span>
-            <span className="text-lg font-semibold">{orders.length}</span>
+            <span className="text-lg font-semibold">
+              {makeArr(user.orders).length}
+            </span>
           </Link>
           <Link
             to="salelist"
@@ -96,7 +107,9 @@ const MyPage = () => {
             className="flex justify-between items-center p-4 bg-gray-100 rounded-md cursor-pointer"
           >
             <span className="text-lg">판매목록</span>
-            <span className="text-lg font-semibold">{sales.length}</span>
+            <span className="text-lg font-semibold">
+              {makeArr(user.sales).length}
+            </span>
           </Link>
           <Link
             to="carts"
@@ -104,15 +117,19 @@ const MyPage = () => {
             className="flex justify-between items-center p-4 bg-gray-100 rounded-md cursor-pointer"
           >
             <span className="text-lg">장바구니</span>
-            <span className="text-lg font-semibold">{carts.length}</span>
+            <span className="text-lg font-semibold">
+              {makeArr(user.carts).length}
+            </span>
           </Link>
           <Link
             to="messageList"
-            state={{ messages }}
+            state={{ messages: makeArr(user.messages) }}
             className="flex justify-between items-center p-4 bg-gray-100 rounded-md cursor-pointer"
           >
             <span className="text-lg">내 쪽지함</span>
-            <span className="text-lg font-semibold">{messages.length}</span>
+            <span className="text-lg font-semibold">
+              {makeArr(user.messages).length}
+            </span>
           </Link>
         </div>
       </div>

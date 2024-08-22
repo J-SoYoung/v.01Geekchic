@@ -2,7 +2,7 @@ import React from "react";
 import Layout from "../components/myPage/_Layout";
 import { UserDataType } from "../types/usedType";
 import { Link, useLocation } from "react-router-dom";
-import { makeArr } from "../types/utils";
+import { calculateDaysAgo, makeArr } from "../types/utils";
 
 interface StateProps {
   user: UserDataType;
@@ -20,7 +20,7 @@ const MySalelist = () => {
         <div className=" text-m text-gray-600 m-8 mb-4 pb-4 border-b">
           <span className="font-bold">전체 {sales.length}</span>
         </div>
-        {/* ⭕ my의 데이터가 없는 경우 렌더링 하는 문구 컴포넌트만들기 */}
+        {/* ⭕ my의 데이터가 없는 경우 렌더링 하는 문구 : 공용컴포넌트 만들기 */}
         <div className="p-8 pt-4 grid grid-cols-2 gap-4 mb-24">
           {sales.length === 0 ? (
             <div>
@@ -41,8 +41,16 @@ const MySalelist = () => {
                   alt={sale.itemName}
                   className="w-full h-48 object-cover rounded-md mb-2"
                 />
-                <h2 className="text-lg font-bold pl-2">{sale.itemName}</h2>
-                <p className="text-gray-500 pl-2">{sale.price}원</p>
+                <h2 className="text-lg font-bold">{sale.itemName}</h2>
+                <div className="flex items-center justify-between">
+                  <p className="text-gray-500 ">
+                    재고 수량 : {sale.quantity}개
+                  </p>
+                  <p className="text-gray-500 px-1 text-right">
+                    {calculateDaysAgo(sale.createdAt)}
+                  </p>
+                </div>
+                <p className="text-gray-500 ">{sale.price}원</p>
               </Link>
             ))
           )}
