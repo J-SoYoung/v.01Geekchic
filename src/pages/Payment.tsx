@@ -1,5 +1,5 @@
 import React, { useState, ChangeEvent, FormEvent } from "react";
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation, useParams, useNavigate } from "react-router-dom";
 import { addOrderList } from "../api/firebase";
 import PaymentCard from "../components/payment/PaymentCard";
 
@@ -28,6 +28,7 @@ export default function Payment() {
   const location = useLocation();
   const state = location.state as { payProduct?: Product[] };
   const payProduct = state?.payProduct;
+  const navigate = useNavigate();
 
   const [orderDetails, setOrderDetails] = useState<OrderDetails>({
     name: "",
@@ -69,6 +70,7 @@ export default function Payment() {
     try {
       await addOrderList(userId, payProduct, orderDetails);
       alert("주문이 성공적으로 완료되었습니다.");
+      navigate(`/my/${userId}`);
     } catch (error) {
       alert("주문 실패");
     }
