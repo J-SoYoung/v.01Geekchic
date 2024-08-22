@@ -79,6 +79,7 @@ export interface MessagesType {
   price: string;
   seller: SellerType;
   userId: string;
+  quantity: number;
 }
 
 export interface UserDataType {
