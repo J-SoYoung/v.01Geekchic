@@ -639,6 +639,7 @@ export async function sendUsedMessage({
   }
 }
 
+// 중고제품 구매하기 = 중고제품 구매리스트 생성
 export async function addUsedItemsOrderList({
   data,
 }: {
@@ -649,8 +650,32 @@ export async function addUsedItemsOrderList({
       database,
       `userData/${data.userId}/orders_used/${data.id}`
     );
-    console.log(usedOrderRef);
-    // await update(usedOrderRef, data);
+    await update(usedOrderRef, data);
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+// 제품 수량 업데이트 
+export async function updateUsedItemQuantity({
+  itemId,
+  quantity,
+}: {
+  itemId: string;
+  quantity: number;
+}) {
+  try {
+    const itemRef = ref(database, `usedItems/${itemId}`);
+
+    if (quantity <= 0) {
+      await update(itemRef, {
+        quantity: 0,
+        isSales: false,
+      });
+    } else {
+      // 수량 업데이트
+      await update(itemRef, { quantity });
+    }
   } catch (err) {
     console.error(err);
   }
