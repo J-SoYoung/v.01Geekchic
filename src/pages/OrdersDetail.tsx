@@ -1,5 +1,6 @@
 import React from "react";
 import { useLocation } from "react-router-dom";
+import OrdersItem from "../components/myPage/OrdersItem";
 
 interface getOrderDetails {
   ordersId?: string;
@@ -8,7 +9,7 @@ interface getOrderDetails {
   address: string;
   paymentMethod: string;
   createdAt?: string;
-  items: testProduct;
+  items: testProduct[];
 }
 interface testProduct {
   title: string;
@@ -23,7 +24,11 @@ export default function OrdersDetail() {
   const location = useLocation();
   const { orders } = location.state as { orders: getOrderDetails };
   const items = orders.items;
-  const totalPrice = Number(items.price) + 3000;
+  const totalPrice: number =
+    items?.reduce(
+      (prev, current) => prev + parseInt(current.price) * current.quantity,
+      0
+    ) || 0;
 
   if (orders.paymentMethod === "creditcard") {
     orders.paymentMethod = "카드결제";
@@ -40,40 +45,28 @@ export default function OrdersDetail() {
           주문 내역 상세
         </h1>
       </div>
-      <div className="mb-[40px]">
-        <div className="flex mb-4 ml-[40px] w-[550px]">
-          <img
-            src={items.image}
-            alt={items.title}
-            className="w-[150px] h-[150px] rounded-[5px]"
-          />
-          <div className="text-left px-4 w-[380px]">
-            <p className="text-lg font-bold mb-[5px]">{items.title}</p>
-            <p>{items.description}</p>
-            <p className="text-[#959595]">
-              {items.options} | {items.quantity}개
-            </p>
-            <p className="mt-[40px] text-right text-lg text-nowrap">
-              {items.price}원
-            </p>
-          </div>
-        </div>
+      <ul className="mb-[40px]">
+        {items &&
+          items.map((product) => (
+            <OrdersItem key={orders.ordersId} product={product} />
+          ))}
+
         <p className="border border-[#D9D9D9] w-[520px] m-auto mt-[40px]"></p>
-      </div>
+      </ul>
       <div className="text-left ml-[40px]">
         <h2 className="text-xl font-bold">총금액</h2>
       </div>
       <div>
         <div className="flex justify-end mr-[40px] gap-2">
           <p className="text-[#959595]">상품 합</p>
-          <p>{items.price}원</p>
+          <p>{totalPrice}원</p>
         </div>
         <div className="flex justify-end mr-[40px] gap-2">
           <p className="text-[#959595]">배송 비용</p>
           <p>3000원</p>
         </div>
         <div className="text-right mr-[40px] text-xl font-bold mt-[10px]">
-          <p>{totalPrice}원</p>
+          <p>{totalPrice + 3000}원</p>
         </div>
       </div>
       <p className="border border-[#D9D9D9] w-[520px] m-auto mt-[40px]"></p>
