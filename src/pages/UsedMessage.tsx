@@ -1,15 +1,14 @@
 import { useState } from "react";
 import { useLocation } from "react-router-dom";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useRecoilValue } from "recoil";
 import { v4 as uuidv4 } from "uuid";
 
 import Layout from "../components/myPage/_Layout";
 import MessageSkeleton from "../components/skeleton/MessageSkeleton";
 import {
-  addUsedItemsOrderList,
+  addNotificationToSeller,
   loadUsedMessage,
-  updateUsedItemQuantity,
 } from "../api/firebase";
 import { MessageListType, SellerType } from "../types/usedType";
 import { makeArr } from "../types/utils";
@@ -35,8 +34,6 @@ const UsedMessage = () => {
   const [newMessage, setNewMessage] = useState("");
   const [quantity, setQuantity] = useState(1);
 
-  const queryClient = useQueryClient();
-
   const { data, isPending, isError, error } = useQuery({
     queryKey: ["usedMessage"],
     queryFn: () => loadUsedMessage({ userId, messageId }),
@@ -47,6 +44,7 @@ const UsedMessage = () => {
     messageId,
     sellerId: data?.seller.sellerId,
   });
+
   const onClickSendMessage = () => {
     if (!newMessage) return;
     const newMessageObj: MessageListType = {
@@ -59,54 +57,26 @@ const UsedMessage = () => {
     setNewMessage("");
   };
 
-  const mutateUpdateUsedItemQuantity = useMutation({
-    mutationFn: async ({
-      itemId,
-      quantity,
-    }: {
-      itemId: string;
-      quantity: number;
-    }) => {
-      await updateUsedItemQuantity({ itemId, quantity });
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries(
-        {
-          queryKey: ["usedItems"],
-          refetchType: "active",
-          exact: true,
-        },
-        { throwOnError: true, cancelRefetch: true }
-      );
-    },
-  });
-
   const onClickUsedPurchase = async () => {
-    const usedOrderId = uuidv4();
-    const usedItemsOrdersInfo: UsedItemsOrdersInfoType = {
-      id: usedOrderId,
-      seller: data.seller,
+    alert("제품이 마음에 드셨나요? 판매자의 판매 확정을 기다려주세요");
+    // 판매자에게 구매요청 버튼 생성
+    const notificationId = uuidv4();
+    const notificationData = {
+      id: notificationId,
+      buyerId: data.userId,
       itemId: data.itemId,
       itemName: data.itemName,
-      itemImage: data.itemImage,
-      price: data.price,
-      userId: data.userId,
       quantity: quantity,
+      status: "pending", // 알림 상태 (판매자가 아직 응답하지 않음)
       createdAt: new Date().toISOString(),
     };
-    // 판매자에게 구매요청 버튼 생성
-
     
-    // 구매정보 firebase에 저장
-    addUsedItemsOrderList({ data: usedItemsOrdersInfo });
-
-    // 제품 수량 업데이트
-    mutateUpdateUsedItemQuantity.mutate({
-      itemId: data.itemId,
-      quantity: data.quantity - quantity,
+    // 판매 구매자 모두에게 알림db생성 -> message랑 똒같이..... 
+    await addNotificationToSeller({
+      buyerId: data.userId,
+      sellerId: data.seller.sellerId,
+      notificationData,
     });
-
-    // userData -> 해당 제품 seller의 수량 빼기 -> isSale 여부 확인 후 문구추가
   };
 
   if (isError) {
