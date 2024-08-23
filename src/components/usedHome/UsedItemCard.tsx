@@ -1,4 +1,3 @@
-import React from "react";
 import { Link } from "react-router-dom";
 import { UsedItemType } from "../../types/usedType";
 import { IsSeller } from "../common/IsSeller";
@@ -8,11 +7,16 @@ interface UsedItemCardProps {
 }
 
 const UsedItemCard = ({ item }: UsedItemCardProps) => {
+  const isSoldout = item.quantity < 1;
+
   return (
     <Link
       to={`/usedHome/detail/${item.id}`}
-      className=" p-3 rounded-md  cursor-pointer"
+      className={`p-3 rounded-md cursor-pointer relative ${
+        isSoldout && "opacity-50"
+      }`}
     >
+      <IsSeller sellerId={item?.seller.sellerId} />
       {item.imageArr ? (
         <img
           src={item.imageArr[0]}
@@ -25,13 +29,14 @@ const UsedItemCard = ({ item }: UsedItemCardProps) => {
           className="w-full h-48 object-cover rounded-md mb-2 border"
         />
       )}
-
-      <h2 className="text-lg font-bold pl-2">{item.itemName}</h2>
+      <div className="flex">
+        <h2 className="text-lg font-bold mr-1 ">{item.itemName}</h2>
+      </div>
       <div className="flex items-center justify-center">
-        <p className="text-gray-500 pl-2 mr-1">
-          {item.price.toLocaleString()}원
-        </p>
-        <IsSeller sellerId={item?.seller.sellerId} />
+        <div className="w-full flex text-gray-500">
+          <p>{item.price.toLocaleString()}원</p>
+          <p>{isSoldout? '( 품절 )' : `( ${item.quantity}개 남음 )`}</p>
+        </div>
       </div>
     </Link>
   );
