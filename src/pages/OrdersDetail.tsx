@@ -1,6 +1,8 @@
 import React from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, Link } from "react-router-dom";
 import OrdersItem from "../components/myPage/OrdersItem";
+import { useRecoilValue } from "recoil";
+import { userState } from "../atoms/userAtom";
 
 interface getOrderDetails {
   ordersId?: string;
@@ -22,6 +24,9 @@ interface testProduct {
 
 export default function OrdersDetail() {
   const location = useLocation();
+  const user = useRecoilValue(userState);
+  const userId = user?.uid;
+
   const { orders } = location.state as { orders: getOrderDetails };
   const items = orders.items;
   const totalPrice: number =
@@ -90,9 +95,11 @@ export default function OrdersDetail() {
         </div>
         <p className="text-left ml-[40px] mt-[10px]">{orders.paymentMethod}</p>
         <p className="border border-[#D9D9D9] w-[520px] m-auto mb-[50px]"></p>
-        <button className="w-[550px] py-3 bg-[#8F5BBD] text-[#fff] border border-[#8F5BBD] rounded-md hover:bg-[#fff] hover:text-[#8F5BBD] duration-200">
-          주문 내역으로 가기
-        </button>
+        <Link to={`/my/${userId}`}>
+          <button className="w-[550px] py-3 bg-[#8F5BBD] text-[#fff] border border-[#8F5BBD] rounded-md hover:bg-[#fff] hover:text-[#8F5BBD] duration-200">
+            마이페이지로 가기
+          </button>
+        </Link>
       </div>
     </div>
   );

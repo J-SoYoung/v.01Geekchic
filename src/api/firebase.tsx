@@ -639,7 +639,91 @@ export async function sendUsedMessage({
   }
 }
 
-// 중고제품 구매하기 = 중고제품 구매리스트 생성
+// 중고제품 구매 요청
+// ⭕ status type 설정 'pendig | .. ' 구체적인 단어로
+export interface NotificationDataType {
+  id: string;
+  buyerId: string;
+  itemId: string;
+  itemName: string;
+  quantity: number;
+  status: string; // 'pending'
+  createdAt: string;
+}
+export async function addNotificationToSeller({
+  buyerId,
+  sellerId,
+  notificationData,
+}: {
+  buyerId: string;
+  sellerId: string;
+  notificationData: NotificationDataType;
+}) {
+  try {
+    const updates = {
+      [`userData/${sellerId}/notifications/${notificationData.id}`]:
+        notificationData,
+      [`userData/${buyerId}/notifications/${notificationData.id}`]:
+        notificationData,
+    };
+    await update(ref(database), updates);
+  } catch (error) {
+    console.error("중고 구매 요청 에러", error);
+  }
+}
+
+// 중고제품 구매 알림 보기
+export async function getNotificationsForUser(userId: string) {
+  const notificationRef = ref(database, `userData/${userId}/notifications`);
+  const snapshot = await get(notificationRef);
+  return snapshot.exists() ? Object.values(snapshot.val()) : [];
+}
+
+// 구매 요청 승인 ( = state업데이트 ) 
+export async function updateOrderStatus({
+  notification,
+  sellerId,
+}: {
+  notification: NotificationDataType;
+  sellerId: string;
+}) {
+  try {
+    // 구매 상태 업데이트
+    const updates = {
+      [`userData/${sellerId}/notifications/${notification.id}`]: {
+        ...notification,
+        status: "approved",
+      },
+      [`userData/${notification.buyerId}/notifications/${notification.id}`]: {
+        ...notification,
+        status: "approved",
+      },
+    };
+    await update(ref(database), updates);
+
+    // 구매정보 firebase에 저장
+    const usedOrderId = uuidv4();
+    const usedOrderRef = ref(
+      database,
+      `userData/${notification.buyerId}/orders_used/${usedOrderId}`
+    );
+    const usedItemsOrdersInfo = {
+      itemId: notification.itemId,
+      quantity: notification.quantity,
+      createdAt: notification.createdAt,
+    }
+    await update(usedOrderRef, usedItemsOrdersInfo);
+
+    // 판매자의 sales 수량 업데이트
+
+    // 중고제품 수량 업데이트
+    
+  } catch (error) {
+    console.error("구매상태 알림 변경 에러", error);
+  }
+}
+
+// 중고제품 구매리스트 생성
 export async function addUsedItemsOrderList({
   data,
 }: {
@@ -656,7 +740,7 @@ export async function addUsedItemsOrderList({
   }
 }
 
-// 제품 수량 업데이트 
+// 제품 수량 업데이트
 export async function updateUsedItemQuantity({
   itemId,
   quantity,
