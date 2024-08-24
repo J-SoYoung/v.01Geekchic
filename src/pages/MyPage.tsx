@@ -8,7 +8,7 @@ import {
   loadUserData,
   logout,
   NotificationDataType,
-  updateOrderStatus,
+  updateOrderUsedStatus,
 } from "../api/firebase";
 import Layout from "../components/myPage/_Layout";
 import MyPageSkeleton from "../components/skeleton/MyPageSkeleton";
@@ -38,11 +38,11 @@ const MyPage = () => {
 
   const { data: notifications }: { data: NotificationDataType[] } = useQuery({
     queryKey: ["notifications"],
-    queryFn: () => getNotificationsForUser(userId as string),
+    queryFn: () => getNotificationsForUser({userId}),
     retry: 3,
     retryDelay: 1000,
   });
-  console.log(notifications);
+
   const orderStateMutation = useMutation({
     mutationFn: async ({
       notification,
@@ -51,7 +51,7 @@ const MyPage = () => {
       notification: NotificationDataType;
       sellerId: string;
     }) => {
-      await updateOrderStatus({
+      await updateOrderUsedStatus({
         notification,
         sellerId,
       });
@@ -68,26 +68,6 @@ const MyPage = () => {
     },
   });
   
-  // const mutateUpdateUsedItemQuantity = useMutation({
-  //   mutationFn: async ({
-  //     itemId,
-  //     quantity,
-  //   }: {
-  //     itemId: string;
-  //     quantity: number;
-  //   }) => {
-  //     await updateUsedItemQuantity({ itemId, quantity });
-  //   },
-  //   onSuccess: () => {
-  //     queryClient.invalidateQueries(
-  //       {
-  //         queryKey: ["usedItems"],
-  //         refetchType: "active",
-  //         exact: true,
-  //       },
-  //       { throwOnError: true, cancelRefetch: true }
-  //     );
-  //   },
   // });
   
   const onClickPurchaseApprove = (notification: NotificationDataType) => {
@@ -96,29 +76,6 @@ const MyPage = () => {
       notification,
       sellerId: userId as string,
     });
-
-    // // 구매정보 firebase에 저장
-    // const usedOrderId = uuidv4();
-    // const usedItemsOrdersInfo: UsedItemsOrdersInfoType = {
-    //   id: usedOrderId,
-    //   seller: data.seller,
-    //   itemId: data.itemId,
-    //   itemName: data.itemName,
-    //   itemImage: data.itemImage,
-    //   price: data.price,
-    //   userId: data.userId,
-    //   quantity: quantity,
-    //   createdAt: new Date().toISOString(),
-    // };
-    // addUsedItemsOrderList({ data: usedItemsOrdersInfo });
-
-    // // 제품 수량 업데이트
-    // mutateUpdateUsedItemQuantity.mutate({
-    //   itemId: data.itemId,
-    //   quantity: data.quantity - quantity,
-    // });
-
-    // // userData -> 해당 제품 seller의 수량 빼기 -> isSale 여부 확인 후 문구추가
   };
 
   if (isError) {

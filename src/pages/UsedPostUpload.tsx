@@ -1,8 +1,10 @@
 import React, { useRef, useState } from "react";
-import { usedItemUpload } from "../api/firebase";
 import { useNavigate } from "react-router-dom";
-import { uploadCloudImage } from "../api/uploader";
+import { v4 as uuidv4 } from "uuid";
 import { useRecoilState } from "recoil";
+
+import { usedItemUpload } from "../api/firebase";
+import { uploadCloudImage } from "../api/uploader";
 import { geekChickUser } from "../atoms/userAtom";
 import { UsedItemType } from "../types/usedType";
 
@@ -40,8 +42,10 @@ const UsedPostUpload = () => {
   };
 
   const onClickUsedItemUpload = async () => {
+    const id = uuidv4();
+
     const itemData: UsedItemType = {
-      id: "",
+      id,
       description,
       imageArr: uploadImages,
       isSales: true,
