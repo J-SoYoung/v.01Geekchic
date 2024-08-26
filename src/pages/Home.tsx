@@ -32,7 +32,7 @@ export default function Home() {
     error,
     data: products,
   } = useQuery<Product[], Error>({
-    queryKey: ["products", searchKeyword],
+    queryKey: searchKeyword ? ["products", searchKeyword] : ["products"],
     queryFn: () => search(searchKeyword),
   });
   {

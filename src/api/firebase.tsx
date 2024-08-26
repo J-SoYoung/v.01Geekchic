@@ -217,7 +217,7 @@ export async function addNewProduct(
   const id = uuidv4();
   const definedId = id.replace(/[.#$[\]]/g, "_");
 
-  set(ref(database, `products/${definedId}`), {
+  await set(ref(database, `products/${definedId}`), {
     ...product,
     id,
     price: product.price,
@@ -225,6 +225,7 @@ export async function addNewProduct(
     // options: product.options,
     options: product.options.split(","),
   });
+  // return;
 }
 
 export async function addWishlistItem(
@@ -357,7 +358,6 @@ export async function usedItemUpload(
   setUser: SetterOrUpdater<UserDataType>,
   user: UserDataType
 ) {
-
   const {
     createdAt,
     id,
@@ -756,7 +756,6 @@ export async function updateOrderUsedStatus({
       },
     };
     await update(ref(database), quantityUpdates);
-
   } catch (error) {
     console.error("구매상태 알림 변경 에러", error);
   }
