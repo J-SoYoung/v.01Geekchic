@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { getCommentItems } from "../../api/firebase";
 import { useParams } from "react-router-dom";
-import EmptyStart from "../../assets/icons/EmptyStar.svg";
-import FilledStart from "../../assets/icons/FilledStar.svg";
+import EmptyStar from "../../assets/icons/EmptyStar.svg";
+import FilledStar from "../../assets/icons/FilledStar.svg";
 
 interface Comment {
   id: string;
@@ -50,7 +50,7 @@ export default function CommentCard() {
                 {Array.from({ length: 5 }).map((_, index) => (
                   <img
                     key={index}
-                    src={index < comment.rank ? FilledStart : EmptyStart}
+                    src={index < comment.rank ? FilledStar : EmptyStar}
                     alt={index < comment.rank ? "Filled Star" : "Empty Star"}
                     className="w-[20px] h-[20px]"
                   />
