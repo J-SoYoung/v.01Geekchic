@@ -2,6 +2,8 @@ import React, { useState, ChangeEvent, FormEvent } from "react";
 import { newComment } from "../../api/firebase";
 import { useRecoilValue } from "recoil";
 import { userState } from "../../atoms/userAtom";
+import EmptyStar from "../../assets/icons/EmptyStar.svg";
+import FilledStar from "../../assets/icons/FilledStar.svg";
 
 interface Product {
   id: string;
@@ -40,6 +42,10 @@ export default function Comment({ product }: { product: Product }) {
     setComments((comment) => ({ ...comment, [name]: value }));
   };
 
+  const handleStarClick = (rank: number) => {
+    setComments((comment) => ({ ...comment, rank }));
+  };
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!user) {
@@ -71,15 +77,18 @@ export default function Comment({ product }: { product: Product }) {
         className="flex flex-col px-12 gap-1 mt-[25px]"
         onSubmit={handleSubmit}
       >
-        <input
-          className="border-b-2 border-0 w-[200px] ml-[300px] mb-[20px] h-[30px]"
-          type="number"
-          placeholder="평점"
-          name="rank"
-          value={comments.rank ?? 0}
-          required
-          onChange={handleChange}
-        />
+        <div className="flex w-[30px] ml-[350px] mb-[20px] h-[30px]">
+          {Array.from({ length: 5 }).map((_, index) => (
+            <img
+              key={index}
+              src={index < comments.rank ? FilledStar : EmptyStar}
+              alt={index < comments.rank ? "Filled Star" : "Empty Star"}
+              className="w-[30px] h-[30px] cursor-pointer"
+              onClick={() => handleStarClick(index + 1)}
+            />
+          ))}
+        </div>
+
         <button
           className="w-[70px] h-[40px] ml-[430px] -mb-[30px] z-0 bg-[#000] text-[#fff] border border-[#000] rounded-full hover:bg-[#fff] hover:text-[#000] duration-200"
           disabled={isUploading}
