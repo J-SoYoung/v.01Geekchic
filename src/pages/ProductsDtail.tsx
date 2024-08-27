@@ -1,8 +1,12 @@
 import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useRecoilValue, useSetRecoilState } from "recoil";
+
 import HeartIcon from "../assets/icons/heart.svg";
 import HeartFullIcon from "../assets/icons/heart_full.svg";
-import { useRecoilValue, useSetRecoilState } from "recoil";
+import Comment from "../components/main/Comment";
+import CommentCard from "../components/main/CommentCard";
+
 import { userState, wishlistState } from "../atoms/userAtom";
 import {
   addWishlistItem,
@@ -10,8 +14,6 @@ import {
   setWishlistItems,
   addOrUpdateToCart,
 } from "../api/firebase";
-import Comment from "../components/main/Comment";
-import CommentCard from "../components/main/CommentCard";
 
 interface Product {
   id: string;
@@ -26,13 +28,14 @@ interface Product {
 export default function ProductsDtail() {
   const location = useLocation();
   const navigate = useNavigate();
+
   const { product } = location.state as { product: Product };
   const { description, image, price, options } = product;
-  const [selected, setSelected] = useState<string>(options && options[0]);
-  // const [payProduct, setPayProduct] = useState<Product | undefined>(undefined);
   const user = useRecoilValue(userState);
   const setWishlist = useSetRecoilState(wishlistState);
   const wishlist = useRecoilValue(wishlistState);
+
+  const [selected, setSelected] = useState<string>(options && options[0]);
   const isInWishlist = wishlist.some((item) => item.id === product.id);
   const id = user?.uid;
 
@@ -84,7 +87,7 @@ export default function ProductsDtail() {
           />
         </div>
       </div>
-      <p className="text-2xl font-bold text-left ml-[30px]">{`${price} 원`}</p>
+      <p className="text-2xl font-bold text-left ml-[30px]">{`${price}원`}</p>
       <h1 className="text-lg text-left ml-[30px] mt-[15px]">{description}</h1>
       <div className="w-full flex flex-col">
         <select
