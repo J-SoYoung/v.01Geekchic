@@ -23,7 +23,6 @@ const UsedDetail = () => {
     queryFn: () => usedDetailItem(itemId as string),
   });
   const currentMessage = makeArr(messages).find((m) => m.itemId === itemId);
-  console.log(data);
 
   const onClickAddMessagePage = async () => {
     const messageId = uuidv4();

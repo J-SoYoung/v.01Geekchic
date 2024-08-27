@@ -611,12 +611,6 @@ export async function sendUsedMessage({
   sellerId,
 }: sendUsedMessagePropsType) {
   try {
-    const generateRandomKey = () => {
-      const tempRef = push(ref(database));
-      return tempRef.key ?? new Date().toISOString();
-    };
-    messages.id = generateRandomKey();
-
     const updates = {
       [`/userData/${sellerId}/messages/${messageId}/messageList/${messages.id}`]:
         messages,

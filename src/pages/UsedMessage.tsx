@@ -49,7 +49,7 @@ const UsedMessage = () => {
     retry: 3,
     retryDelay: 1000,
   });
-  console.log(notifications);
+
 
   const sendMessageMutation = useSendMessage({
     userId,
@@ -59,8 +59,9 @@ const UsedMessage = () => {
 
   const onClickSendMessage = () => {
     if (!newMessage) return;
+    const messageId = uuidv4();
     const newMessageObj: MessageListType = {
-      id: "",
+      id: messageId,
       message: newMessage,
       sender: data.seller.sellerId == loginUser.userId ? "seller" : "buyer",
       createdAt: new Date().toISOString(),
