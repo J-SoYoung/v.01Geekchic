@@ -1,6 +1,9 @@
-import React, { useEffect, useState } from "react";
-import { getCommentItems } from "../../api/firebase";
+import React from "react";
 import { useParams } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+
+import { getCommentItems } from "../../api/firebase";
+
 import EmptyStar from "../../assets/icons/EmptyStar.svg";
 import FilledStar from "../../assets/icons/FilledStar.svg";
 
@@ -16,14 +19,21 @@ interface Comment {
 
 export default function CommentCard() {
   const { id } = useParams<{ id: string }>();
-  const [comments, setComments] = useState<Comment[]>([]);
 
-  useEffect(() => {
-    if (id) {
-      getCommentItems(id).then(setComments);
-    }
-  }, [id]);
-
+  const {
+    isLoading,
+    error,
+    data: comments,
+  } = useQuery<Comment[], Error>({
+    queryKey: ["comments"],
+    queryFn: () => getCommentItems(id as string),
+  });
+  {
+    isLoading && <p>Loading..</p>;
+  }
+  {
+    error && <p>Something is wrong</p>;
+  }
   function formatDate(dateString: string): string {
     const date = new Date(dateString);
     return date.toISOString().split("T")[0];
@@ -31,16 +41,16 @@ export default function CommentCard() {
 
   return (
     <div className="text-[14px] mt-[50px]">
-      {comments.length > 0 ? (
-        comments.map((comment) => (
+      {comments && comments.length > 0 ? (
+        comments?.map((comment) => (
           <div key={comment.id} className="mt-[40px]">
             <div className="flex ml-[40px]">
               <img
                 src={comment.userPhoto}
                 alt={comment.displayName}
-                className="rounded-full w-[70px]"
+                className="w-[60px] h-[60px] object-cover rounded-full border"
               />
-              <div className="mt-[20px] ml-[15px]">
+              <div className="mt-[5px] ml-[15px]">
                 <h3 className="text-left text-lg font-bold">
                   {comment.displayName}
                 </h3>
