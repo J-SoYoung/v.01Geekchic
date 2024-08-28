@@ -30,7 +30,6 @@ import {
   MessageListType,
 } from "../types/usedType";
 import { SetterOrUpdater } from "recoil";
-import { UsedItemsOrdersInfoType } from "../pages/UsedMessage";
 interface AdminUser extends User {
   isAdmin: boolean;
 }
@@ -380,6 +379,7 @@ export async function usedItemUpload(
     price,
     quantity,
     size,
+    salesQuantity: 0,
   };
 
   // UsedItems, UserData/sales 둘다 업로드
@@ -753,7 +753,6 @@ export async function updateOrderUsedStatus({
     if (!usedItemData) {
       throw new Error(`No data found at usedItems/${notification.itemId}`);
     }
-
     if (!sellerItemData) {
       throw new Error(
         `No data found at userData/${sellerId}/sales/${notification.itemId}`
@@ -766,12 +765,28 @@ export async function updateOrderUsedStatus({
       [`userData/${sellerId}/sales/${notification.itemId}`]: {
         ...sellerItemData,
         quantity,
+        salesQuantity: sellerItemData.salesQuantity + quantity,
       },
     };
     await update(ref(database), quantityUpdates);
   } catch (error) {
     console.error("구매상태 알림 변경 에러", error);
   }
+}
+
+// 알림 삭제
+export async function removeNotification({
+  notificationId,
+  userId,
+}: {
+  notificationId: string;
+  userId: string;
+}): Promise<void> {
+  const notificationRef = ref(
+    database,
+    `userData/${userId}/notifications/${notificationId}`
+  );
+  await remove(notificationRef);
 }
 
 // 중고제품 구매리스트 생성

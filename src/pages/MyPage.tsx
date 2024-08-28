@@ -1,8 +1,9 @@
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
 
+import { useQuery } from "@tanstack/react-query";
 import { defaultImage, makeArr } from "../types/utils";
 import { loadUserData, logout } from "../api/firebase";
+
 import Layout from "../components/myPage/_Layout";
 import MyPageSkeleton from "../components/skeleton/MyPageSkeleton";
 import Notification from "../components/myPage/Notification";
@@ -28,7 +29,6 @@ const MyPage = () => {
       navigate("/api/login");
     }
   };
-
   if (isError) {
     return (
       <div>
@@ -131,6 +131,7 @@ const MyPage = () => {
           </div>
 
           <Notification userId={userId} />
+
         </div>
       </div>
     </Layout>
