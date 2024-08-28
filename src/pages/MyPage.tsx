@@ -1,22 +1,16 @@
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
+import { useQuery } from "@tanstack/react-query";
 import { defaultImage, makeArr } from "../types/utils";
-import {
-  getNotificationsForUser,
-  loadUserData,
-  logout,
-  NotificationDataType,
-  removeNotification,
-  updateOrderUsedStatus,
-} from "../api/firebase";
+import { loadUserData, logout } from "../api/firebase";
+
 import Layout from "../components/myPage/_Layout";
 import MyPageSkeleton from "../components/skeleton/MyPageSkeleton";
+import Notification from "../components/myPage/Notification";
 
 const MyPage = () => {
   const { userId } = useParams<{ userId: string }>();
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
 
   const {
     data: user,
@@ -35,69 +29,6 @@ const MyPage = () => {
       navigate("/api/login");
     }
   };
-
-  const { data: notifications } = useQuery<NotificationDataType[], Error>({
-    queryKey: ["notifications"],
-    queryFn: () => getNotificationsForUser({ userId }),
-    retry: 3,
-    retryDelay: 1000,
-  });
-
-  const orderStateMutation = useMutation({
-    mutationFn: async ({
-      notification,
-      sellerId,
-    }: {
-      notification: NotificationDataType;
-      sellerId: string;
-    }) => {
-      await updateOrderUsedStatus({
-        notification,
-        sellerId,
-      });
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries(
-        {
-          queryKey: ["notifications"],
-          refetchType: "active",
-          exact: true,
-        },
-        { throwOnError: true, cancelRefetch: true }
-      );
-    },
-  });
-
-  const onClickPurchaseApprove = (notification: NotificationDataType) => {
-    // ⭕ 구매 요청 승인 ( 상태 업데이트)은 했는데 유저 데이터 업데이트는 안됨 이건 따로 mutation해야하나?
-    orderStateMutation.mutate({
-      notification,
-      sellerId: userId as string,
-    });
-  };
-
-  const removeNotificationMutation = useMutation({
-    mutationFn: async (id: string) => {
-      if (userId) {
-        await removeNotification({ notificationId: id, userId });
-      }
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries(
-        {
-          queryKey: ["notifications"],
-          refetchType: "active",
-          exact: true,
-        },
-        { throwOnError: true, cancelRefetch: true }
-      );
-    },
-  });
-
-  const onClickRemoveNotification = (id: string) => {
-    removeNotificationMutation.mutate(id);
-  };
-
   if (isError) {
     return (
       <div>
@@ -123,7 +54,6 @@ const MyPage = () => {
   if (!user) {
     return <div>유저 정보를 불러올 수 없습니다.</div>;
   }
-
   return (
     <Layout title="마이페이지">
       <div className="m-16 p-4">
@@ -181,7 +111,6 @@ const MyPage = () => {
             </Link>
             <Link
               to="carts"
-              // state={{ user }}
               className="flex justify-between items-center p-4 bg-gray-100 rounded-md cursor-pointer"
             >
               <span className="text-lg">장바구니</span>
@@ -201,57 +130,8 @@ const MyPage = () => {
             </Link>
           </div>
 
-          {/* 중고제품 알림 관리 */}
-          <div className="my-4">
-            <h3 className=" text-left mb-2 text-xl bold">Notification</h3>
-            {notifications?.map((notification) => {
-              const isSalsesPending = notification.status === "pending";
-              const isApproved = notification.status === "approved";
-              return (
-                <div
-                  key={notification.id}
-                  className={`p-4 mb-2 flex justify-between text-left text-white rounded-md ${
-                    isSalsesPending ? "bg-[#8F5BBD]" : "bg-gray-400"
-                  }`}
-                >
-                  {user.userId == notification.buyerId ? (
-                    // 구매자인 경우
-                    <p className="text-white">
-                      [ {notification.itemName} ]
-                      {isSalsesPending
-                        ? " 판매 수락을 기다리고 있습니다."
-                        : " 구매되었습니다."}
-                    </p>
-                  ) : (
-                    // 판매자인 경우
-                    <div className="w-full text-white flex justify-between items-center">
-                      <p>
-                        [ {notification.itemName} ]
-                        {isSalsesPending
-                          ? " 구매 요청이 있습니다."
-                          : " 판매 완료 되었습니다."}
-                      </p>
-                      {isSalsesPending && (
-                        <button
-                          className="px-4 py-2 bg-white text-[#8F5BBD] rounded"
-                          onClick={() => onClickPurchaseApprove(notification)}
-                        >
-                          OK
-                        </button>
-                      )}
-                    </div>
-                  )}
-                  {isApproved && (
-                    <button
-                      onClick={() => onClickRemoveNotification(notification.id)}
-                    >
-                      X
-                    </button>
-                  )}
-                </div>
-              );
-            })}
-          </div>
+          <Notification userId={userId} />
+
         </div>
       </div>
     </Layout>
