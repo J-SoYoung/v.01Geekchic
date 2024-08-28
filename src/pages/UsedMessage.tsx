@@ -8,9 +8,8 @@ import Layout from "../components/myPage/_Layout";
 import MessageSkeleton from "../components/skeleton/MessageSkeleton";
 import {
   addNotificationToSeller,
-  getNotificationsForUser,
+  loadNotification,
   loadUsedMessage,
-  NotificationDataType,
 } from "../api/firebase";
 import { MessageListType, SellerType } from "../types/usedType";
 import { makeArr } from "../types/utils";
@@ -31,30 +30,41 @@ export interface UsedItemsOrdersInfoType {
 
 const UsedMessage = () => {
   const location = useLocation();
-  const { userId, itemId } = useParams<string>();
+  const { userId } = useParams<string>();
   const { messageId } = location.state || {};
   const loginUser = useRecoilValue(geekChickUser);
   const [newMessage, setNewMessage] = useState("");
   const [quantity, setQuantity] = useState(1);
 
-  const { data, isPending, isError, error } = useQuery({
+  const {
+    data: usedMessage,
+    isPending,
+    isError,
+    error,
+  } = useQuery({
     queryKey: ["usedMessage"],
-    queryFn: () => loadUsedMessage({ userId, messageId }),
+    queryFn: () => {
+      if (userId) return loadUsedMessage({ userId, messageId });
+    },
   });
 
-  // ⭕결제하기 상태에 따라 결제하기 버튼 -> 판매대기중 뭐 이런거
-  const { data: notifications } = useQuery({
-    queryKey: ["notifications"],
-    queryFn: () => getNotificationsForUser({ userId, itemId }),
+  const { data: notification, isPending: notificationPending } = useQuery({
+    queryKey: ["notification"],
+    queryFn: () => {
+      if (userId)
+        return loadNotification({
+          userId,
+          notificationId: usedMessage.notificationId,
+        });
+    },
     retry: 3,
     retryDelay: 1000,
   });
 
-
   const sendMessageMutation = useSendMessage({
     userId,
     messageId,
-    sellerId: data?.seller.sellerId,
+    sellerId: usedMessage?.seller.sellerId,
   });
 
   const onClickSendMessage = () => {
@@ -63,7 +73,8 @@ const UsedMessage = () => {
     const newMessageObj: MessageListType = {
       id: messageId,
       message: newMessage,
-      sender: data.seller.sellerId == loginUser.userId ? "seller" : "buyer",
+      sender:
+        usedMessage.seller.sellerId == loginUser.userId ? "seller" : "buyer",
       createdAt: new Date().toISOString(),
     };
     sendMessageMutation.mutate(newMessageObj);
@@ -77,19 +88,19 @@ const UsedMessage = () => {
     const notificationId = uuidv4();
     const notificationData = {
       id: notificationId,
-      buyerId: data.userId,
-      itemId: data.itemId,
-      itemName: data.itemName,
-      itemQuantity: data.quantity,
+      buyerId: usedMessage.userId,
+      itemId: usedMessage.itemId,
+      itemName: usedMessage.itemName,
+      itemQuantity: usedMessage.quantity,
       quantity: quantity,
-      status: "pending", // 알림 상태 (판매자가 아직 응답하지 않음)
+      status: "pending",
       createdAt: new Date().toISOString(),
     };
 
     // 판매 구매자 모두에게 알림db생성
     await addNotificationToSeller({
-      buyerId: data.userId,
-      sellerId: data.seller.sellerId,
+      buyerId: usedMessage.userId,
+      sellerId: usedMessage.seller.sellerId,
       notificationData,
     });
   };
@@ -99,6 +110,7 @@ const UsedMessage = () => {
     return <div>데이터를 로드하지 못했습니다.</div>;
   }
 
+  const isSalesCompleted = notification && notification?.status === "approved";
   return (
     <Layout title={"쪽지 보내기"} data={loginUser.messages}>
       <div className="w-[596px] p-8 flex min-h-screen flex-col bg-gray-100 relative">
@@ -106,22 +118,24 @@ const UsedMessage = () => {
         {isPending ? (
           <MessageSkeleton />
         ) : (
-          <>
+          <div>
             {/* 판매자정보 */}
             <div className="p-4 border-b bg-white flex mb-8">
               <img
-                src={data.itemImage}
+                src={usedMessage.itemImage}
                 alt="Product"
                 className="w-20 h-20 rounded-md object-cover"
               />
               <div className="ml-2 text-left">
-                <div className="text-lg font-bold">{data.seller.nickname}</div>
-                <div className="text-gray-500">{data.itemName}</div>
+                <div className="text-lg font-bold">
+                  {usedMessage.seller.nickname}
+                </div>
+                <div className="text-gray-500">{usedMessage.itemName}</div>
                 <div className="text-lg font-semibold text-[#8F5BBD]">
-                  {data.price.toLocaleString()}원
+                  {usedMessage.price.toLocaleString()}원
                 </div>
               </div>
-              {data?.seller.sellerId !== loginUser.userId && (
+              {usedMessage?.seller.sellerId !== loginUser.userId && (
                 <>
                   <div className="h-12 flex border items-center">
                     <button
@@ -136,58 +150,72 @@ const UsedMessage = () => {
                       onChange={(e) => setQuantity(Number(e.target.value))}
                       className="text-center "
                       min={1}
-                      max={data.quantity}
+                      max={usedMessage.quantity}
                     />
                     <button
                       onClick={() =>
-                        setQuantity(Math.min(data.quantity, quantity + 1))
+                        setQuantity(
+                          Math.min(usedMessage.quantity, quantity + 1)
+                        )
                       }
                       className="px-3 py-1 bg-gray-200 rounded-r"
                     >
                       +
                     </button>
                   </div>
-                  {notifications?.length == 0 ? (
+                  {notificationPending ? (
+                    <p>로딩중...</p>
+                  ) : notification === null ? (
                     <button
                       className="ml-auto font-bold text-[#8F5BBD]"
                       onClick={onClickUsedPurchase}
                     >
                       결제하기
                     </button>
-                  ) : (
+                  ) : notification && notification.status === "pending" ? (
                     <p>판매 수락 대기중</p>
+                  ) : (
+                    <p>판매완료</p>
                   )}
                 </>
               )}
             </div>
 
             {/* 대화창 */}
-            <div className=" max-w-xs p-3 rounded-lg mb-4 bg-gray-200 text-black">
-              "{data.itemName}" 판매자
-              <br />
-              {data.seller.nickname}입니다
-            </div>
-            {makeArr(data.messageList).map((m) => {
-              return (
-                <div
-                  key={m.id}
-                  className={`flex mb-4 ${
-                    m.sender === "buyer" ? "justify-end" : "justify-start"
-                  }`}
-                >
+            <div className={isSalesCompleted && "opacity-50"}>
+              <div className="max-w-xs p-3 rounded-lg mb-4 bg-gray-200 text-black">
+                "{usedMessage.itemName}" 판매자
+                <br />
+                {usedMessage.seller.nickname}입니다
+              </div>
+              {makeArr(usedMessage.messageList).map((m) => {
+                return (
                   <div
-                    className={`max-w-xs p-3 rounded-lg ${
-                      m.sender === "buyer"
-                        ? "bg-[#8F5BBD] text-white"
-                        : "bg-gray-200 text-black"
+                    key={m.id}
+                    className={`flex mb-4 ${
+                      m.sender === "buyer" ? "justify-end" : "justify-start"
                     }`}
                   >
-                    {m.message}
+                    <div
+                      className={`max-w-xs p-3 rounded-lg ${
+                        m.sender === "buyer"
+                          ? "bg-[#8F5BBD] text-white"
+                          : "bg-gray-200 text-black"
+                      }`}
+                    >
+                      {m.message}
+                    </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
 
+            {isSalesCompleted && (
+              <div className="py-8">
+                -------------------------- 판매 완료 되었습니다
+                --------------------------
+              </div>
+            )}
             {/* 대화 입력창 */}
             <div className="w-[532px] flex items-center fixed bottom-24">
               <textarea
@@ -195,15 +223,17 @@ const UsedMessage = () => {
                 value={newMessage}
                 onChange={(e) => setNewMessage(e.target.value)}
                 placeholder="메시지를 입력하세요"
+                disabled={isSalesCompleted ? true : false}
               />
               <button
-                className="bg-[#8F5BBD] text-white px-4 py-2 rounded"
+                className={`text-white px-4 py-2 rounded ${isSalesCompleted? 'bg-gray-400':'bg-[#8F5BBD]'}`}
                 onClick={onClickSendMessage}
+                disabled
               >
                 전송
               </button>
             </div>
-          </>
+          </div>
         )}
       </div>
     </Layout>
