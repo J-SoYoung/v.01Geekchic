@@ -3,19 +3,10 @@ import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 
 import { getCommentItems } from "../../api/firebase";
+import { Comment } from "../../types/mainType";
 
 import EmptyStar from "../../assets/icons/EmptyStar.svg";
 import FilledStar from "../../assets/icons/FilledStar.svg";
-
-interface Comment {
-  id: string;
-  text: string;
-  rank: number;
-  createdAt: string;
-  uid: string;
-  userPhoto: string;
-  displayName: string;
-}
 
 export default function CommentCard() {
   const { id } = useParams<{ id: string }>();

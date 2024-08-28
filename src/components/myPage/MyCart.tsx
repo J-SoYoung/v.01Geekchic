@@ -5,25 +5,14 @@ import { useRecoilValue } from "recoil";
 
 import { getCart } from "../../api/firebase";
 import { userState } from "../../atoms/userAtom";
-
+import { CartProducts } from "../../types/mainType";
 import CartItem from "./CartItem";
 import PriceCard from "./PriceCard";
+
 import TotalPlusIcon from "../../assets/icons/totalPlus.svg";
 import EqualsIcon from "../../assets/icons/totalEquals.svg";
 
-export interface CartProducts {
-  id: string;
-  title: string;
-  category: string;
-  description: string;
-  price: string;
-  image: string;
-  options: string;
-  quantity: number;
-}
-
 export default function MyCart() {
-  // const queryClient = useQueryClient();
   const navigate = useNavigate();
   const user = useRecoilValue(userState);
   const userId = user?.uid;

@@ -3,23 +3,14 @@ import { useParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 
+import Header from "../components/common/Header";
 import useProducts, { loadUserData, uploadUserData } from "../api/firebase";
 import { userState, geekChickUser } from "../atoms/userAtom";
-
-import Header from "../components/common/Header";
 import SearchHeader from "../components/common/SearchHeader";
 import ProductCard from "../components/main/ProductCard";
-import { UserDataType } from "../types/usedType";
 
-interface Product {
-  id: string;
-  title: string;
-  category: string;
-  description: string;
-  price: string;
-  image: string;
-  options: string[];
-}
+import { UserDataType } from "../types/usedType";
+import { Product } from "../types/mainType";
 
 export default function Home() {
   const { keyword } = useParams<{ keyword: string }>();

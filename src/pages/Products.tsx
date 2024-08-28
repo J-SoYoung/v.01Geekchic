@@ -1,43 +1,30 @@
 import React, { useState } from "react";
 import { useParams } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+
 import Header from "../components/common/Header";
 import SearchHeader from "../components/common/SearchHeader";
-import { useQuery } from "@tanstack/react-query";
 import ProductCard from "../components/main/ProductCard";
 import { getProducts } from "../api/firebase";
-// import useProducts from "../api/firebase";
-// import { useRecoilValue } from "recoil";
-// import { Link } from "react-router-dom";
-// import { userState } from "../atoms/userAtom";
 
-interface Product {
-  id: string;
-  title: string;
-  category: string;
-  description: string;
-  price: string;
-  image: string;
-  options: string[];
-}
+import { Product } from "../types/mainType";
 
 interface Filter {
   text: string;
   name: string;
 }
 
-const filters: Filter[] = [
-  { text: "전체", name: "all" },
-  { text: "아우터", name: "outer" },
-  { text: "상의", name: "top" },
-  { text: "하의", name: "bottom" },
-  { text: "신발", name: "shose" },
-  { text: "모자", name: "cap" },
-];
 export default function Products() {
   const { keyword } = useParams<{ keyword: string }>();
-  // const user = useRecoilValue(userState);
   const searchKeyword = keyword || "";
-  // const product = useProducts();
+  const filters: Filter[] = [
+    { text: "전체", name: "all" },
+    { text: "아우터", name: "outer" },
+    { text: "상의", name: "top" },
+    { text: "하의", name: "bottom" },
+    { text: "신발", name: "shose" },
+    { text: "모자", name: "cap" },
+  ];
   const [filter, setFilter] = useState<Filter>(filters[0]);
   const {
     isLoading,

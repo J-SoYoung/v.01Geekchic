@@ -4,29 +4,11 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { newComment } from "../../api/firebase";
 import { userState } from "../../atoms/userAtom";
+import { Product } from "../../types/mainType";
+import type { Comment } from "../../types/mainType";
 
 import EmptyStar from "../../assets/icons/EmptyStar.svg";
 import FilledStar from "../../assets/icons/FilledStar.svg";
-
-interface Product {
-  id: string;
-  title: string;
-  category: string;
-  description: string;
-  price: string;
-  image: string;
-  options: string[];
-}
-
-interface Comment {
-  id: string;
-  text: string;
-  rank: number;
-  createdAt: string;
-  uid: string;
-  userPhoto: string;
-  displayName: string;
-}
 
 interface AddCommentVariables {
   productId: string;

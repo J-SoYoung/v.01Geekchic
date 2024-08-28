@@ -1,5 +1,5 @@
 import { User } from "firebase/auth";
-import { Product } from "../api/firebase";
+import { Product } from "../types/mainType";
 
 export interface UsedItemType extends UsedSaleItem {
   // 중고 데이터 타입 ( 중고 판매 타입 확장 )

@@ -1,33 +1,17 @@
 import React, { useState, ChangeEvent, FormEvent } from "react";
-import { uploadImage } from "../api/uploader";
-import { addNewProduct } from "../api/firebase";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-// interface addnewProduct {
-//   id: string;
-//   title: string;
-//   price: number;
-//   category: string;
-//   description: string;
-//   options: string;
-// }
+import { uploadImage } from "../api/uploader";
+import { addNewProduct } from "../api/firebase";
+import { AddProduct } from "../types/mainType";
 
-interface addProduct {
-  id: string;
-  title: string;
-  category: string;
-  description: string;
-  price: string;
-  image: string;
-  options: string;
-}
 interface AddProductVariables {
-  product: addProduct;
+  product: AddProduct;
   url: string;
 }
 
 export default function NewProduct() {
-  const [product, setProduct] = useState<Partial<addProduct>>({});
+  const [product, setProduct] = useState<Partial<AddProduct>>({});
   const [file, setFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [success, setSuccess] = useState<string | null>(null);
@@ -48,6 +32,7 @@ export default function NewProduct() {
     }
     setProduct((product) => ({ ...product, [name]: value }));
   };
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsUploading(true);
@@ -55,7 +40,7 @@ export default function NewProduct() {
     if (file) {
       const url = await uploadImage(file);
       addProduct.mutate(
-        { product: product as addProduct, url },
+        { product: product as AddProduct, url },
         {
           onSuccess: () => {
             setSuccess("성공적으로 제품이 추가되었습니다.");
@@ -68,6 +53,7 @@ export default function NewProduct() {
       setIsUploading(false);
     }
   };
+
   return (
     <section className="w-[600px] container text-center">
       <h2 className="text-2xl font-bold my-4">새로운 제품 등록</h2>
