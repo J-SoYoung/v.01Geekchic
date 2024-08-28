@@ -1,6 +1,5 @@
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { v4 as uuidv4 } from "uuid";
 
 import { defaultImage, makeArr } from "../types/utils";
 import {
@@ -8,13 +7,14 @@ import {
   loadUserData,
   logout,
   NotificationDataType,
+  removeNotification,
   updateOrderUsedStatus,
 } from "../api/firebase";
 import Layout from "../components/myPage/_Layout";
 import MyPageSkeleton from "../components/skeleton/MyPageSkeleton";
 
 const MyPage = () => {
-  const { userId } = useParams();
+  const { userId } = useParams<{ userId: string }>();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
@@ -36,9 +36,9 @@ const MyPage = () => {
     }
   };
 
-  const { data: notifications }: { data: NotificationDataType[] } = useQuery({
+  const { data: notifications } = useQuery<NotificationDataType[], Error>({
     queryKey: ["notifications"],
-    queryFn: () => getNotificationsForUser({userId}),
+    queryFn: () => getNotificationsForUser({ userId }),
     retry: 3,
     retryDelay: 1000,
   });
@@ -67,15 +67,35 @@ const MyPage = () => {
       );
     },
   });
-  
-  // });
-  
+
   const onClickPurchaseApprove = (notification: NotificationDataType) => {
-    // 구매 요청 승인 ( 상태 업데이트 )
+    // ⭕ 구매 요청 승인 ( 상태 업데이트)은 했는데 유저 데이터 업데이트는 안됨 이건 따로 mutation해야하나?
     orderStateMutation.mutate({
       notification,
       sellerId: userId as string,
     });
+  };
+
+  const removeNotificationMutation = useMutation({
+    mutationFn: async (id: string) => {
+      if (userId) {
+        await removeNotification({ notificationId: id, userId });
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(
+        {
+          queryKey: ["notifications"],
+          refetchType: "active",
+          exact: true,
+        },
+        { throwOnError: true, cancelRefetch: true }
+      );
+    },
+  });
+
+  const onClickRemoveNotification = (id: string) => {
+    removeNotificationMutation.mutate(id);
   };
 
   if (isError) {
@@ -221,7 +241,13 @@ const MyPage = () => {
                       )}
                     </div>
                   )}
-                  {isApproved && <button>X</button>}
+                  {isApproved && (
+                    <button
+                      onClick={() => onClickRemoveNotification(notification.id)}
+                    >
+                      X
+                    </button>
+                  )}
                 </div>
               );
             })}

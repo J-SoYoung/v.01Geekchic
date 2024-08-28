@@ -1,13 +1,15 @@
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
-import { getCart } from "../../api/firebase";
+import { useNavigate } from "react-router-dom";
 import { useRecoilValue } from "recoil";
+
+import { getCart } from "../../api/firebase";
 import { userState } from "../../atoms/userAtom";
+
 import CartItem from "./CartItem";
 import PriceCard from "./PriceCard";
 import TotalPlusIcon from "../../assets/icons/totalPlus.svg";
 import EqualsIcon from "../../assets/icons/totalEquals.svg";
-import { useNavigate } from "react-router-dom";
 
 export interface CartProducts {
   id: string;

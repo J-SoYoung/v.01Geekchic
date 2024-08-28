@@ -30,7 +30,6 @@ import {
   MessageListType,
 } from "../types/usedType";
 import { SetterOrUpdater } from "recoil";
-import { UsedItemsOrdersInfoType } from "../pages/UsedMessage";
 interface AdminUser extends User {
   isAdmin: boolean;
 }
@@ -380,6 +379,7 @@ export async function usedItemUpload(
     price,
     quantity,
     size,
+    salesQuantity: 0,
   };
 
   // UsedItems, UserData/sales 둘다 업로드
@@ -611,12 +611,6 @@ export async function sendUsedMessage({
   sellerId,
 }: sendUsedMessagePropsType) {
   try {
-    const generateRandomKey = () => {
-      const tempRef = push(ref(database));
-      return tempRef.key ?? new Date().toISOString();
-    };
-    messages.id = generateRandomKey();
-
     const updates = {
       [`/userData/${sellerId}/messages/${messageId}/messageList/${messages.id}`]:
         messages,
@@ -665,8 +659,8 @@ export async function addNotificationToSeller({
   }
 }
 
-// 중고제품 구매 알림 보기
-export async function getNotificationsForUser({
+// 중고제품 구매 알림 모두 보기
+export async function loadAllNotification({
   userId,
   itemId = null,
 }: {
@@ -685,6 +679,25 @@ export async function getNotificationsForUser({
     );
   }
   return notifications;
+}
+
+// 해당 중고제품 구매 알림 보기
+export async function loadNotification({
+  userId,
+  notificationId,
+}: {
+  userId: string;
+  notificationId: string;
+}) {
+  const notificationRef = ref(
+    database,
+    `userData/${userId}/notifications/${notificationId}`
+  );
+  const snapshot = await get(notificationRef);
+  if (!snapshot.exists()) {
+    return null;
+  }
+  return snapshot.val();
 }
 
 // 구매 요청 승인 ( = state업데이트 )
@@ -740,7 +753,6 @@ export async function updateOrderUsedStatus({
     if (!usedItemData) {
       throw new Error(`No data found at usedItems/${notification.itemId}`);
     }
-
     if (!sellerItemData) {
       throw new Error(
         `No data found at userData/${sellerId}/sales/${notification.itemId}`
@@ -753,12 +765,28 @@ export async function updateOrderUsedStatus({
       [`userData/${sellerId}/sales/${notification.itemId}`]: {
         ...sellerItemData,
         quantity,
+        salesQuantity: sellerItemData.salesQuantity + quantity,
       },
     };
     await update(ref(database), quantityUpdates);
   } catch (error) {
     console.error("구매상태 알림 변경 에러", error);
   }
+}
+
+// 알림 삭제
+export async function removeNotification({
+  notificationId,
+  userId,
+}: {
+  notificationId: string;
+  userId: string;
+}): Promise<void> {
+  const notificationRef = ref(
+    database,
+    `userData/${userId}/notifications/${notificationId}`
+  );
+  await remove(notificationRef);
 }
 
 // 중고제품 구매리스트 생성
