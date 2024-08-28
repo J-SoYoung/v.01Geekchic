@@ -2,10 +2,11 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   loadAllNotification,
   NotificationDataType,
+  removeNotification,
   updateOrderUsedStatus,
 } from "../../api/firebase";
 
-const Notification = ({ userId }: { userId: string | undefined}) => {
+const Notification = ({ userId }: { userId: string | undefined }) => {
   const queryClient = useQueryClient();
 
   const { data: notifications } = useQuery({
@@ -42,14 +43,36 @@ const Notification = ({ userId }: { userId: string | undefined}) => {
     },
   });
 
+  // 구매 요청 승인 ( 상태 업데이트 )
   const onClickPurchaseApprove = (notification: NotificationDataType) => {
-    // 구매 요청 승인 ( 상태 업데이트 )
     orderStateMutation.mutate({
       notification,
       sellerId: userId as string,
     });
   };
 
+  const removeNotificationMutation = useMutation({
+    mutationFn: async (id: string) => {
+      if (userId) {
+        await removeNotification({ notificationId: id, userId });
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(
+        {
+          queryKey: ["notifications"],
+          refetchType: "active",
+          exact: true,
+        },
+        { throwOnError: true, cancelRefetch: true }
+      );
+    },
+  });
+
+  const onClickRemoveNotification = (id: string) => {
+    removeNotificationMutation.mutate(id);
+  };
+  
   return (
     <div className="my-4">
       <h3 className=" text-left mb-2 text-xl bold">Notification</h3>
@@ -90,7 +113,13 @@ const Notification = ({ userId }: { userId: string | undefined}) => {
                 )}
               </div>
             )}
-            {isApproved && <button>X</button>}
+            {isApproved && (
+              <button
+                onClick={() => onClickRemoveNotification(notification.id)}
+              >
+                X
+              </button>
+            )}
           </div>
         );
       })}
