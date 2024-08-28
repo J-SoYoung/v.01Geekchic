@@ -1,27 +1,14 @@
 import React, { useState, ChangeEvent, FormEvent } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-
 import { uploadImage } from "../api/uploader";
-import { addNewProduct } from "../api/firebase";
+import useProduct from "../hook/useProduct";
 import { AddProduct } from "../types/mainType";
-
-interface AddProductVariables {
-  product: AddProduct;
-  url: string;
-}
 
 export default function NewProduct() {
   const [product, setProduct] = useState<Partial<AddProduct>>({});
   const [file, setFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [success, setSuccess] = useState<string | null>(null);
-
-  const queryClient = useQueryClient();
-  const addProduct = useMutation<void, Error, AddProductVariables>({
-    mutationFn: ({ product, url }) => addNewProduct(product, url),
-    onSuccess: async () =>
-      await queryClient.invalidateQueries({ queryKey: ["products"] }),
-  });
+  const { addProduct } = useProduct("");
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value, files } = e.target;

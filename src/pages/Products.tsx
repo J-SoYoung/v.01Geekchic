@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 
 import Header from "../components/common/Header";
@@ -15,8 +14,6 @@ interface Filter {
 }
 
 export default function Products() {
-  const { keyword } = useParams<{ keyword: string }>();
-  const searchKeyword = keyword || "";
   const filters: Filter[] = [
     { text: "전체", name: "all" },
     { text: "아우터", name: "outer" },
@@ -31,9 +28,8 @@ export default function Products() {
     error,
     data: products,
   } = useQuery<Product[], Error>({
-    queryKey: ["products", searchKeyword],
+    queryKey: ["products"],
     queryFn: getProducts,
-    // queryFn: () => product.search(searchKeyword),
   });
   const filtered: Product[] = getFilteredItems(products || [], filter.name);
 

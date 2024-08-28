@@ -125,7 +125,7 @@ const searchProducts = async (keyword: string): Promise<Product[]> => {
   return filteredItems;
 };
 
-export default function useProducts() {
+export function useProducts() {
   const search = async (keyword: string): Promise<Product[]> => {
     return keyword ? searchProducts(keyword) : getProducts();
   };
