@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { useRecoilValue } from "recoil";
 import { v4 as uuidv4 } from "uuid";
@@ -8,7 +8,9 @@ import Layout from "../components/myPage/_Layout";
 import MessageSkeleton from "../components/skeleton/MessageSkeleton";
 import {
   addNotificationToSeller,
+  getNotificationsForUser,
   loadUsedMessage,
+  NotificationDataType,
 } from "../api/firebase";
 import { MessageListType, SellerType } from "../types/usedType";
 import { makeArr } from "../types/utils";
@@ -29,7 +31,8 @@ export interface UsedItemsOrdersInfoType {
 
 const UsedMessage = () => {
   const location = useLocation();
-  const { messageId, userId } = location.state || {};
+  const { userId, itemId } = useParams<string>();
+  const { messageId } = location.state || {};
   const loginUser = useRecoilValue(geekChickUser);
   const [newMessage, setNewMessage] = useState("");
   const [quantity, setQuantity] = useState(1);
@@ -38,6 +41,15 @@ const UsedMessage = () => {
     queryKey: ["usedMessage"],
     queryFn: () => loadUsedMessage({ userId, messageId }),
   });
+
+  // ⭕결제하기 상태에 따라 결제하기 버튼 -> 판매대기중 뭐 이런거
+  const { data: notifications } = useQuery({
+    queryKey: ["notifications"],
+    queryFn: () => getNotificationsForUser({ userId, itemId }),
+    retry: 3,
+    retryDelay: 1000,
+  });
+  console.log(notifications);
 
   const sendMessageMutation = useSendMessage({
     userId,
@@ -57,6 +69,7 @@ const UsedMessage = () => {
     setNewMessage("");
   };
 
+  // ⭕ mutation으로 결제하기 해야되는거아닌감.여튼
   const onClickUsedPurchase = async () => {
     alert("제품이 마음에 드셨나요? 판매자의 판매 확정을 기다려주세요");
     // 판매자에게 구매요청 버튼 생성
@@ -66,12 +79,13 @@ const UsedMessage = () => {
       buyerId: data.userId,
       itemId: data.itemId,
       itemName: data.itemName,
+      itemQuantity: data.quantity,
       quantity: quantity,
       status: "pending", // 알림 상태 (판매자가 아직 응답하지 않음)
       createdAt: new Date().toISOString(),
     };
-    
-    // 판매 구매자 모두에게 알림db생성 -> message랑 똒같이..... 
+
+    // 판매 구매자 모두에게 알림db생성
     await addNotificationToSeller({
       buyerId: data.userId,
       sellerId: data.seller.sellerId,
@@ -132,12 +146,16 @@ const UsedMessage = () => {
                       +
                     </button>
                   </div>
-                  <button
-                    className="ml-auto font-bold text-[#8F5BBD]"
-                    onClick={onClickUsedPurchase}
-                  >
-                    결제하기
-                  </button>
+                  {notifications?.length == 0 ? (
+                    <button
+                      className="ml-auto font-bold text-[#8F5BBD]"
+                      onClick={onClickUsedPurchase}
+                    >
+                      결제하기
+                    </button>
+                  ) : (
+                    <p>판매 수락 대기중</p>
+                  )}
                 </>
               )}
             </div>
