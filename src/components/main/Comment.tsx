@@ -1,7 +1,10 @@
 import React, { useState, ChangeEvent, FormEvent } from "react";
-import { newComment } from "../../api/firebase";
 import { useRecoilValue } from "recoil";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+
+import { newComment } from "../../api/firebase";
 import { userState } from "../../atoms/userAtom";
+
 import EmptyStar from "../../assets/icons/EmptyStar.svg";
 import FilledStar from "../../assets/icons/FilledStar.svg";
 
@@ -25,26 +28,45 @@ interface Comment {
   displayName: string;
 }
 
+interface AddCommentVariables {
+  productId: string;
+  comments: Omit<Comment, "id" | "createdAt">;
+}
+
 export default function Comment({ product }: { product: Product }) {
+  const user = useRecoilValue(userState);
+  const queryClient = useQueryClient();
+  const productId = product.id;
+
   const [isUploading, setIsUploading] = useState(false);
   const [success, setSuccess] = useState<string | null>(null);
-  const [comments, setComments] = useState<Omit<Comment, "id" | "createdAt">>({
+  const [comment, setComment] = useState<Omit<Comment, "id" | "createdAt">>({
     text: "",
     rank: 0,
     uid: "",
     userPhoto: "",
     displayName: "",
   });
-  const user = useRecoilValue(userState);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setComments((comment) => ({ ...comment, [name]: value }));
+    setComment((comment) => ({ ...comment, [name]: value }));
   };
 
   const handleStarClick = (rank: number) => {
-    setComments((comment) => ({ ...comment, rank }));
+    setComment((comment) => ({ ...comment, rank }));
   };
+
+  const addcomment = useMutation<void, Error, AddCommentVariables>({
+    mutationFn: async ({ productId, comments }) =>
+      await newComment(productId, comments),
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["comments"],
+      });
+    },
+  });
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -52,18 +74,36 @@ export default function Comment({ product }: { product: Product }) {
       console.error("User is not authenticated");
       return;
     }
-    setIsUploading(true);
-    await newComment(product.id, {
-      text: comments.text ?? "",
-      rank: comments.rank ?? 0,
+
+    const comments = {
+      text: comment.text ?? "",
+      rank: comment.rank ?? 0,
       uid: user.uid,
       userPhoto: user.photoURL || "",
       displayName: user.displayName || "",
+    };
+
+    setIsUploading(true);
+
+    await addcomment.mutate({
+      productId: productId,
+      comments: comments,
     });
+
     setSuccess("리뷰 추가 완료!");
+
+    setComment({
+      text: "",
+      rank: 0,
+      uid: "",
+      userPhoto: "",
+      displayName: "",
+    });
+
     setTimeout(() => {
       setSuccess(null);
     }, 4000);
+
     setIsUploading(false);
   };
 
@@ -81,8 +121,8 @@ export default function Comment({ product }: { product: Product }) {
           {Array.from({ length: 5 }).map((_, index) => (
             <img
               key={index}
-              src={index < comments.rank ? FilledStar : EmptyStar}
-              alt={index < comments.rank ? "Filled Star" : "Empty Star"}
+              src={index < comment.rank ? FilledStar : EmptyStar}
+              alt={index < comment.rank ? "Filled Star" : "Empty Star"}
               className="w-[30px] h-[30px] cursor-pointer"
               onClick={() => handleStarClick(index + 1)}
             />
@@ -100,7 +140,7 @@ export default function Comment({ product }: { product: Product }) {
           type="text"
           placeholder="리뷰를 작성해주세요."
           name="text"
-          value={comments.text ?? ""}
+          value={comment.text ?? ""}
           required
           onChange={handleChange}
         />

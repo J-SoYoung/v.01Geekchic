@@ -36,7 +36,7 @@ export default function NewProduct() {
   const addProduct = useMutation<void, Error, AddProductVariables>({
     mutationFn: ({ product, url }) => addNewProduct(product, url),
     onSuccess: async () =>
-      queryClient.invalidateQueries({ queryKey: ["products"] }),
+      await queryClient.invalidateQueries({ queryKey: ["products"] }),
   });
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -63,11 +63,6 @@ export default function NewProduct() {
           },
         }
       );
-      // addNewProduct(product as addProduct, url);
-      // setSuccess("성공적으로 제품이 추가되었습니다.");
-      // setTimeout(() => {
-      //   setSuccess(null);
-      // }, 4000);
       setIsUploading(false);
     } else {
       setIsUploading(false);
