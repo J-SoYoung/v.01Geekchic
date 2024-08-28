@@ -1,13 +1,11 @@
 import React from "react";
-import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { useRecoilValue } from "recoil";
 
-import { getCart } from "../../api/firebase";
 import { userState } from "../../atoms/userAtom";
-import { CartProducts } from "../../types/mainType";
 import CartItem from "./CartItem";
 import PriceCard from "./PriceCard";
+import useCart from "../../hook/useCart";
 
 import TotalPlusIcon from "../../assets/icons/totalPlus.svg";
 import EqualsIcon from "../../assets/icons/totalEquals.svg";
@@ -16,33 +14,26 @@ export default function MyCart() {
   const navigate = useNavigate();
   const user = useRecoilValue(userState);
   const userId = user?.uid;
-  const { isLoading, data: carts } = useQuery<CartProducts[], Error>({
-    queryKey: ["carts", userId || ""],
-    queryFn: () => {
-      if (userId) {
-        return getCart(userId);
-      }
-      return Promise.reject(new Error("User ID is undefined"));
-    },
-    enabled: !!userId,
-  });
-  {
-    isLoading && <p>Loading..</p>;
-  }
-
-  const handleClickPayment = async () => {
-    // const selectedProduct = { ...carts };
-    navigate(`/payment/${userId}`, {
-      state: { payProduct: carts, user },
-    });
-  };
-
   const SHIPPING = 3000;
+
+  const {
+    cartQuery: { isLoading, data: carts },
+  } = useCart(userId as string);
+
   const totalPrice: number =
     carts?.reduce(
       (prev, current) => prev + parseInt(current.price) * current.quantity,
       0
     ) || 0;
+
+  const handleClickPayment = async () => {
+    navigate(`/payment/${userId}`, {
+      state: { payProduct: carts, user },
+    });
+  };
+  {
+    isLoading && <p>Loading..</p>;
+  }
   return (
     <div className="container w-[600px]">
       <div className="flex justify-center mt-[80px] mb-[10px]">

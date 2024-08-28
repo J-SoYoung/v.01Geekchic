@@ -1,35 +1,23 @@
 import React from "react";
 import { useParams } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
-
-import { getCommentItems } from "../../api/firebase";
-import { Comment } from "../../types/mainType";
+import useComment from "../../hook/useComment";
 
 import EmptyStar from "../../assets/icons/EmptyStar.svg";
 import FilledStar from "../../assets/icons/FilledStar.svg";
 
 export default function CommentCard() {
   const { id } = useParams<{ id: string }>();
-
   const {
-    isLoading,
-    error,
-    data: comments,
-  } = useQuery<Comment[], Error>({
-    queryKey: ["comments"],
-    queryFn: () => getCommentItems(id as string),
-  });
-  {
-    isLoading && <p>Loading..</p>;
-  }
-  {
-    error && <p>Something is wrong</p>;
-  }
+    commentQuery: { isLoading, data: comments },
+  } = useComment(id as string);
+
   function formatDate(dateString: string): string {
     const date = new Date(dateString);
     return date.toISOString().split("T")[0];
   }
-
+  {
+    isLoading && <p>Loading..</p>;
+  }
   return (
     <div className="text-[14px] mt-[50px]">
       {comments && comments.length > 0 ? (

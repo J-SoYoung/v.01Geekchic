@@ -1,24 +1,17 @@
 import React, { useState, ChangeEvent, FormEvent } from "react";
 import { useRecoilValue } from "recoil";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import { newComment } from "../../api/firebase";
 import { userState } from "../../atoms/userAtom";
 import { Product } from "../../types/mainType";
 import type { Comment } from "../../types/mainType";
+import useComment from "../../hook/useComment";
 
 import EmptyStar from "../../assets/icons/EmptyStar.svg";
 import FilledStar from "../../assets/icons/FilledStar.svg";
 
-interface AddCommentVariables {
-  productId: string;
-  comments: Omit<Comment, "id" | "createdAt">;
-}
-
 export default function Comment({ product }: { product: Product }) {
   const user = useRecoilValue(userState);
-  const queryClient = useQueryClient();
-  const productId = product.id;
+  const id = product.id;
 
   const [isUploading, setIsUploading] = useState(false);
   const [success, setSuccess] = useState<string | null>(null);
@@ -30,26 +23,7 @@ export default function Comment({ product }: { product: Product }) {
     displayName: "",
   });
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setComment((comment) => ({ ...comment, [name]: value }));
-  };
-
-  const handleStarClick = (rank: number) => {
-    setComment((comment) => ({ ...comment, rank }));
-  };
-
-  const addcomment = useMutation<void, Error, AddCommentVariables>({
-    mutationFn: async ({ productId, comments }) =>
-      await newComment(productId, comments),
-
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["comments"],
-      });
-    },
-  });
-
+  const { addComment } = useComment(id);
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!user) {
@@ -64,16 +38,14 @@ export default function Comment({ product }: { product: Product }) {
       userPhoto: user.photoURL || "",
       displayName: user.displayName || "",
     };
-
     setIsUploading(true);
 
-    await addcomment.mutate({
-      productId: productId,
+    await addComment.mutate({
+      id: id,
       comments: comments,
     });
 
     setSuccess("리뷰 추가 완료!");
-
     setComment({
       text: "",
       rank: 0,
@@ -85,8 +57,16 @@ export default function Comment({ product }: { product: Product }) {
     setTimeout(() => {
       setSuccess(null);
     }, 4000);
-
     setIsUploading(false);
+  };
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setComment((comment) => ({ ...comment, [name]: value }));
+  };
+
+  const handleStarClick = (rank: number) => {
+    setComment((comment) => ({ ...comment, rank }));
   };
 
   return (

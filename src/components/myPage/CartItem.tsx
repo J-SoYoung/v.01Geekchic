@@ -14,7 +14,8 @@ export default function CartItem({
   userId?: string;
 }) {
   const { id, title, description, price, image, options, quantity } = carts;
-  const { addOrUpdateItem, removeItem } = useCart();
+  const { addOrUpdateItem, removeItem } = useCart(userId as string);
+
   const hadleMinus = () => {
     if (quantity < 2) return;
     addOrUpdateItem.mutate({ carts: { ...carts, quantity: quantity - 1 } });
