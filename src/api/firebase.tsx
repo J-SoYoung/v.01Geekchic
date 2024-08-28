@@ -659,8 +659,8 @@ export async function addNotificationToSeller({
   }
 }
 
-// 중고제품 구매 알림 보기
-export async function getNotificationsForUser({
+// 중고제품 구매 알림 모두 보기
+export async function loadAllNotification({
   userId,
   itemId = null,
 }: {
@@ -679,6 +679,25 @@ export async function getNotificationsForUser({
     );
   }
   return notifications;
+}
+
+// 해당 중고제품 구매 알림 보기
+export async function loadNotification({
+  userId,
+  notificationId,
+}: {
+  userId: string;
+  notificationId: string;
+}) {
+  const notificationRef = ref(
+    database,
+    `userData/${userId}/notifications/${notificationId}`
+  );
+  const snapshot = await get(notificationRef);
+  if (!snapshot.exists()) {
+    return null;
+  }
+  return snapshot.val();
 }
 
 // 구매 요청 승인 ( = state업데이트 )
