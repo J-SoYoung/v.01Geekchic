@@ -48,6 +48,7 @@ export interface UsedSaleItem {
   imageArr: string[];
   isSales: boolean;
   options: string[];
+  salesQuantity: number;
 }
 
 export interface OrderItemsType {
