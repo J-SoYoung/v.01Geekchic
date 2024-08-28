@@ -1,9 +1,10 @@
 import React from "react";
+
+import useCart from "../../hook/useCart";
+
 import MinusIcon from "../../assets/icons/square_minus.svg";
 import PlusIcon from "../../assets/icons/square_plus.svg";
 import TrashIcon from "../../assets/icons/trash.svg";
-import { addOrUpdateToCart } from "../../api/firebase";
-import { removeFromCart } from "../../api/firebase";
 
 export interface CartProducts {
   id: string;
@@ -23,28 +24,41 @@ export default function CartItem({
   userId?: string;
 }) {
   const { id, title, description, price, image, options, quantity } = carts;
+  const { addOrUpdateItem, removeItem } = useCart();
   const hadleMinus = () => {
     if (quantity < 2) return;
-    if (!userId) {
-      console.error("User ID is missing");
-      return;
-    }
-    addOrUpdateToCart(userId, { ...carts, quantity: quantity - 1 });
+    addOrUpdateItem.mutate({ carts: { ...carts, quantity: quantity - 1 } });
   };
   const handlePlus = () => {
-    if (!userId) {
-      console.error("User ID is missing");
-      return;
-    }
-    addOrUpdateToCart(userId, { ...carts, quantity: quantity + 1 });
+    addOrUpdateItem.mutate({ carts: { ...carts, quantity: quantity + 1 } });
   };
   const hadleDelete = () => {
-    if (!userId) {
-      console.error("User ID is missing");
-      return;
+    if (userId && id) {
+      removeItem.mutate({ userId, id });
     }
-    removeFromCart(userId, id);
   };
+  // const hadleMinus = () => {
+  //   if (quantity < 2) return;
+  //   if (!userId) {
+  //     console.error("User ID is missing");
+  //     return;
+  //   }
+  //   addOrUpdateToCart(userId, { ...carts, quantity: quantity - 1 });
+  // };
+  // const handlePlus = () => {
+  //   if (!userId) {
+  //     console.error("User ID is missing");
+  //     return;
+  //   }
+  //   addOrUpdateToCart(userId, { ...carts, quantity: quantity + 1 });
+  // };
+  // const hadleDelete = () => {
+  //   if (!userId) {
+  //     console.error("User ID is missing");
+  //     return;
+  //   }
+  //   removeFromCart(userId, id);
+  // };
 
   return (
     <>
