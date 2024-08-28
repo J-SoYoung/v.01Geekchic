@@ -1,8 +1,7 @@
-import React from "react";
 import Layout from "../components/myPage/_Layout";
 import { UserDataType } from "../types/usedType";
 import { Link, useLocation } from "react-router-dom";
-import { calculateDaysAgo, makeArr } from "../types/utils";
+import { makeArr } from "../types/utils";
 
 interface StateProps {
   user: UserDataType;
@@ -13,6 +12,7 @@ const MySalelist = () => {
   const { user }: StateProps = location.state || {};
   const sales = makeArr(user.sales);
   console.log(sales);
+
   // ⭕ 중고 메인과 컴포넌트 공통으로 사용할 수 있게 해야함
   return (
     <Layout title="판매목록">
@@ -30,29 +30,44 @@ const MySalelist = () => {
               </p>
             </div>
           ) : (
-            sales.map((sale, idx) => (
-              <Link
-                key={idx}
-                to={`/usedHome/detail/${sale.id}`}
-                className=" p-3 rounded-md cursor-pointer"
-              >
-                <img
-                  src={sale.imageArr[0]}
-                  alt={sale.itemName}
-                  className="w-full h-48 object-cover rounded-md mb-2"
-                />
-                <h2 className="text-lg font-bold">{sale.itemName}</h2>
-                <div className="flex items-center justify-between">
-                  <p className="text-gray-500 ">
-                    재고 수량 : {sale.quantity}개
-                  </p>
-                  <p className="text-gray-500 px-1 text-right">
-                    {calculateDaysAgo(sale.createdAt)}
-                  </p>
+            sales.map((sale, idx) => {
+              const isSoldout = sale.quantity < 1;
+              return (
+                <div className="relative">
+                  {isSoldout && (
+                    <p className="text-red-500 text-xl font-bold absolute top-0 left-0">
+                      품절
+                    </p>
+                  )}
+                  <Link
+                    key={idx}
+                    to={`/usedHome/detail/${sale.id}`}
+                    className={`p-3 z-1 rounded-md cursor-pointer ${
+                      isSoldout && "opacity-50"
+                    } `}
+                  >
+                    <img
+                      src={sale.imageArr[0]}
+                      alt={sale.itemName}
+                      className="w-full h-48 object-cover rounded-md mb-2"
+                    />
+                    <h2 className="text-lg font-bold">{sale.itemName}</h2>
+                    <div className="flex items-center justify-between">
+                      <p className="text-gray-500 ">
+                        재고 수량 : {sale.quantity}개
+                      </p>
+                      <p className="text-gray-500 ">
+                        판매 수량 : {sale.salesQuantity}개
+                      </p>
+                    </div>
+                    {/* <p className="text-gray-500 px-1 text-right">
+                  {calculateDaysAgo(sale.createdAt)}
+                </p> */}
+                    <p className="text-gray-500 ">{sale.price}원</p>
+                  </Link>
                 </div>
-                <p className="text-gray-500 ">{sale.price}원</p>
-              </Link>
-            ))
+              );
+            })
           )}
         </div>
       </div>
