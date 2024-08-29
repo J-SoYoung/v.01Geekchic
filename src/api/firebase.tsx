@@ -223,16 +223,16 @@ export async function removeComment(
   await remove(itemRef);
 }
 
-export async function editComment(
-  itemId: string | undefined,
-  data: UsedCommentType
-) {
+export async function editComments(
+  productId: string,
+  comments: Comment
+): Promise<void> {
   const itemRef = ref(
     database,
-    `usedItems/${itemId}/comments/${data.commentId}`
+    `products/${productId}/comments/${comments.id}`
   );
   try {
-    await update(itemRef, data);
+    await update(itemRef, comments);
   } catch (err) {
     console.error("댓글 수정 에러", err);
   }
