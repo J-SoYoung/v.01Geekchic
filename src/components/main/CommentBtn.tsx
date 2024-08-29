@@ -1,31 +1,24 @@
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { removeComment } from "../../api/firebase";
-import { useRecoilValue } from "recoil";
-import { userState } from "../../atoms/userAtom";
 import { useParams } from "react-router-dom";
+import { Comment } from "../../types/mainType";
 
-export interface Comment {
-  id: string;
-  text: string;
-  rank: number;
-  createdAt: string;
-  uid: string;
-  userPhoto: string;
-  displayName: string;
+interface CommentBtnProps {
+  comments: Comment; // Comment 타입으로 정의
 }
 
-export default function CommentBtn(comments: Comment) {
-  const productId = useParams<{ productId: string }>();
-  const [isCommentEdit, setIsCommentEdit] = useState(false);
-  const loginUser = useRecoilValue(userState);
-  const uid = loginUser?.uid;
-  console.log(comments);
-  console.log(productId);
+interface CommentObj {
+  id: string;
+  commentId: string;
+}
 
+export default function CommentBtn({ comments }: CommentBtnProps) {
+  const { id } = useParams<{ id?: string }>();
+  const [isCommentEdit, setIsCommentEdit] = useState(false);
   const queryClient = useQueryClient();
-  const removeCommentItem = useMutation<void, Error, Comment>({
-    mutationFn: async ({ uid, id }) => await removeComment(uid, id),
+  const removeCommentItem = useMutation<void, Error, CommentObj>({
+    mutationFn: async ({ id, commentId }) => await removeComment(id, commentId),
 
     onSuccess: () => {
       queryClient.invalidateQueries({
@@ -34,9 +27,9 @@ export default function CommentBtn(comments: Comment) {
     },
   });
 
-  const onClickRemoveComment = (id: string) => {
-    if (productId && id) {
-      removeCommentItem.mutate({ productId, id });
+  const onClickRemoveComment = (commentId: string) => {
+    if (id && commentId) {
+      removeCommentItem.mutate({ id, commentId });
     }
   };
 
