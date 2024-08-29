@@ -62,14 +62,15 @@ export interface OrderItemsType {
   phone: string;
 }
 
-// ⭕ type 상세설정 : sender, buyer 둘중하나임
+// ⭕ type 상세설정
 export interface MessageListType {
   id?: string;
   message: string;
-  sender: string;
+  sender: string; //sender, buyer
   createdAt: string;
 }
 
+// ⭕ type 상세설정
 export interface MessagesType {
   createdAt: string;
   itemId: string;
@@ -78,13 +79,14 @@ export interface MessagesType {
   messageId: string;
   messageList: MessageListType;
   price: string;
+  salesStatus: string; //initialization, pending, completion, rejection
   seller: SellerType;
   userId: string;
   quantity: number;
 }
 
+//유저 타입
 export interface UserDataType {
-  //유저 타입
   userId: string;
   userEmail: string | null;
   userName: string | null;
@@ -97,4 +99,17 @@ export interface UserDataType {
   carts?: Product[];
   wishlists?: Product[];
   messages?: MessagesType;
+}
+
+// ⭕ type 상세설정
+export interface NotificationDataType {
+  notificationId: string;
+  messageId: string;
+  buyerId: string;
+  itemId: string;
+  itemName: string;
+  itemQuantity: number;
+  quantity: number;
+  salesStatus: string; // pending, completion, rejection
+  createdAt: string;
 }

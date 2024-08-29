@@ -33,14 +33,13 @@ const MySalelist = () => {
             sales.map((sale, idx) => {
               const isSoldout = sale.quantity < 1;
               return (
-                <div className="relative">
+                <div className="relative" key={idx}>
                   {isSoldout && (
                     <p className="text-red-500 text-xl font-bold absolute top-0 left-0">
                       품절
                     </p>
                   )}
                   <Link
-                    key={idx}
                     to={`/usedHome/detail/${sale.id}`}
                     className={`p-3 z-1 rounded-md cursor-pointer ${
                       isSoldout && "opacity-50"
