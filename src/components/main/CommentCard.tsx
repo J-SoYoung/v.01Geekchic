@@ -47,9 +47,6 @@ export default function CommentCard() {
                 ))}
               </div>
             </div>
-            <p className="border-b-2 border-0 h-[40px] w-[500px] m-auto text-left mt-[25px] text-lg">
-              {comment.text}
-            </p>
             <CommentBtn key={comment.id} comments={comment} />
           </div>
         ))
