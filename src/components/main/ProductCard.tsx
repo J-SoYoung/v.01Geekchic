@@ -1,15 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-
-interface Product {
-  id: string;
-  title: string;
-  category: string;
-  description: string;
-  price: string;
-  image: string;
-  options: string[];
-}
+import { Product } from "../../types/mainType";
 
 export default function ProductCard({ product }: { product: Product }) {
   const { image, id } = product;

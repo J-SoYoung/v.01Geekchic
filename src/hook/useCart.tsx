@@ -1,18 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { addOrUpdateToCart, getCart, removeFromCart } from "../api/firebase";
-import { useRecoilValue } from "recoil";
-import { userState } from "../atoms/userAtom";
+import { CartProducts } from "../types/mainType";
 
-export interface CartProducts {
-  id: string;
-  title: string;
-  category: string;
-  description: string;
-  price: string;
-  image: string;
-  options: string;
-  quantity: number;
-}
 interface CartUpdateVariables {
   carts: CartProducts;
 }
@@ -21,19 +10,16 @@ interface CartRemoveVariables {
   id: string;
 }
 
-export default function useCart() {
+export default function useCart(userId: string) {
   const queryClient = useQueryClient();
-  const user = useRecoilValue(userState);
-  const userId = user?.uid;
-
   const cartQuery = useQuery<CartProducts[]>({
     queryKey: ["carts", userId || ""],
-    queryFn: () => getCart(userId as string),
+    queryFn: () => getCart(userId),
     enabled: !!userId,
   });
 
   const addOrUpdateItem = useMutation<void, Error, CartUpdateVariables>({
-    mutationFn: ({ carts }) => addOrUpdateToCart(userId as string, carts),
+    mutationFn: ({ carts }) => addOrUpdateToCart(userId, carts),
 
     onSuccess: () => {
       queryClient.invalidateQueries({
@@ -42,7 +28,7 @@ export default function useCart() {
     },
   });
   const removeItem = useMutation<void, Error, CartRemoveVariables>({
-    mutationFn: ({ id }) => removeFromCart(userId as string, id),
+    mutationFn: ({ id }) => removeFromCart(userId, id),
 
     onSuccess: () => {
       queryClient.invalidateQueries({

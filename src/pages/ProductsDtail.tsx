@@ -1,13 +1,6 @@
 import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useRecoilValue, useSetRecoilState } from "recoil";
-
-import HeartIcon from "../assets/icons/heart.svg";
-import HeartFullIcon from "../assets/icons/heart_full.svg";
-import Comment from "../components/main/Comment";
-import CommentCard from "../components/main/CommentCard";
-
-import { userState, wishlistState } from "../atoms/userAtom";
 import {
   addWishlistItem,
   getWishlistItems,
@@ -15,25 +8,23 @@ import {
   addOrUpdateToCart,
 } from "../api/firebase";
 
-interface Product {
-  id: string;
-  title: string;
-  category: string;
-  description: string;
-  price: string;
-  image: string;
-  options: string[];
-}
+import Comment from "../components/main/Comment";
+import CommentCard from "../components/main/CommentCard";
+import { userState, wishlistState } from "../atoms/userAtom";
+import { Product } from "../types/mainType";
+
+import HeartIcon from "../assets/icons/heart.svg";
+import HeartFullIcon from "../assets/icons/heart_full.svg";
 
 export default function ProductsDtail() {
   const location = useLocation();
   const navigate = useNavigate();
+  const user = useRecoilValue(userState);
+  const wishlist = useRecoilValue(wishlistState);
+  const setWishlist = useSetRecoilState(wishlistState);
 
   const { product } = location.state as { product: Product };
   const { description, image, price, options } = product;
-  const user = useRecoilValue(userState);
-  const setWishlist = useSetRecoilState(wishlistState);
-  const wishlist = useRecoilValue(wishlistState);
 
   const [selected, setSelected] = useState<string>(options && options[0]);
   const isInWishlist = wishlist.some((item) => item.id === product.id);
@@ -72,7 +63,7 @@ export default function ProductsDtail() {
 
   return (
     <div className="container w-[600px]">
-      <img className="w-[598px] h-[450px]" src={image} alt={description} />
+      <img className="w-[598px] h-[550px]" src={image} alt={description} />
       <div className="flex m-[30px] gap-[20px]">
         <div className="w-[100px] h-[100px] bg-[#BEBEBE]"></div>
         <div className="w-[100px] h-[100px] bg-[#BEBEBE]"></div>

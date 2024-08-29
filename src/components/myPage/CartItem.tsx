@@ -1,21 +1,11 @@
 import React from "react";
-
 import useCart from "../../hook/useCart";
+import { CartProducts } from "../../types/mainType";
 
 import MinusIcon from "../../assets/icons/square_minus.svg";
 import PlusIcon from "../../assets/icons/square_plus.svg";
 import TrashIcon from "../../assets/icons/trash.svg";
 
-export interface CartProducts {
-  id: string;
-  title: string;
-  category: string;
-  description: string;
-  price: string;
-  image: string;
-  options: string;
-  quantity: number;
-}
 export default function CartItem({
   carts,
   userId,
@@ -24,7 +14,8 @@ export default function CartItem({
   userId?: string;
 }) {
   const { id, title, description, price, image, options, quantity } = carts;
-  const { addOrUpdateItem, removeItem } = useCart();
+  const { addOrUpdateItem, removeItem } = useCart(userId as string);
+
   const hadleMinus = () => {
     if (quantity < 2) return;
     addOrUpdateItem.mutate({ carts: { ...carts, quantity: quantity - 1 } });
@@ -37,28 +28,6 @@ export default function CartItem({
       removeItem.mutate({ userId, id });
     }
   };
-  // const hadleMinus = () => {
-  //   if (quantity < 2) return;
-  //   if (!userId) {
-  //     console.error("User ID is missing");
-  //     return;
-  //   }
-  //   addOrUpdateToCart(userId, { ...carts, quantity: quantity - 1 });
-  // };
-  // const handlePlus = () => {
-  //   if (!userId) {
-  //     console.error("User ID is missing");
-  //     return;
-  //   }
-  //   addOrUpdateToCart(userId, { ...carts, quantity: quantity + 1 });
-  // };
-  // const hadleDelete = () => {
-  //   if (!userId) {
-  //     console.error("User ID is missing");
-  //     return;
-  //   }
-  //   removeFromCart(userId, id);
-  // };
 
   return (
     <>

@@ -1,47 +1,27 @@
 import React, { useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 
-import useProducts, { loadUserData, uploadUserData } from "../api/firebase";
+import { loadUserData, uploadUserData } from "../api/firebase";
 import { userState, geekChickUser } from "../atoms/userAtom";
-
+import useProduct from "../hook/useProduct";
 import Header from "../components/common/Header";
 import SearchHeader from "../components/common/SearchHeader";
 import ProductCard from "../components/main/ProductCard";
-import { UserDataType } from "../types/usedType";
 
-interface Product {
-  id: string;
-  title: string;
-  category: string;
-  description: string;
-  price: string;
-  image: string;
-  options: string[];
-}
+import { UserDataType } from "../types/usedType";
 
 export default function Home() {
   const { keyword } = useParams<{ keyword: string }>();
   const user = useRecoilValue(userState);
   const setGeekUser = useSetRecoilState(geekChickUser);
-
   const searchKeyword = keyword || "";
-  const { search } = useProducts();
 
   const {
-    isLoading,
-    error,
-    data: products,
-  } = useQuery<Product[], Error>({
-    queryKey: searchKeyword ? ["products", searchKeyword] : ["products"],
-    queryFn: () => search(searchKeyword),
-  });
+    productsQuery: { isLoading, data: products },
+  } = useProduct(searchKeyword);
   {
     isLoading && <p>Loading..</p>;
-  }
-  {
-    error && <p>Something is wrong</p>;
   }
 
   // ⭕ 타입해결

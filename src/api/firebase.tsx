@@ -1,5 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { v4 as uuidv4 } from "uuid";
+import { SetterOrUpdater } from "recoil";
+
 import {
   getAuth,
   signInWithPopup,
@@ -8,6 +10,7 @@ import {
   signOut,
   onAuthStateChanged,
 } from "firebase/auth";
+
 import {
   getDatabase,
   ref,
@@ -21,6 +24,7 @@ import {
   remove,
   update,
 } from "firebase/database";
+
 import {
   UsedItemType,
   UserDataType,
@@ -30,91 +34,19 @@ import {
   MessageListType,
   NotificationDataType,
 } from "../types/usedType";
-import { SetterOrUpdater } from "recoil";
+
+import {
+  Product,
+  AddProduct,
+  PayProduct,
+  GetOrderDetails,
+  OrderDetails,
+  Comment,
+  CartProducts,
+} from "../types/mainType";
+
 interface AdminUser extends User {
   isAdmin: boolean;
-}
-
-export interface Product {
-  id: string;
-  title: string;
-  category: string;
-  description: string;
-  price: string;
-  image: string;
-  options: string[];
-}
-
-export interface addProduct {
-  id: string;
-  title: string;
-  category: string;
-  description: string;
-  price: string;
-  image: string;
-  options: string;
-}
-
-export interface PayProduct extends Product {
-  quantity: number;
-}
-
-export interface testOrderProduct {
-  title: string;
-  description: string;
-  price: string;
-  image: string;
-  options: string;
-  quantity: number;
-}
-
-export interface testProduct {
-  title: string;
-  description: string;
-  price: string;
-  image: string;
-  options: string[];
-  quantity: number;
-}
-
-export interface getOrderDetails {
-  ordersId?: string;
-  name: string;
-  phone: string;
-  address: string;
-  paymentMethod: string;
-  createdAt?: string;
-  items: testProduct[];
-}
-
-export interface OrderDetails {
-  ordersId?: string;
-  name: string;
-  phone: string;
-  address: string;
-  paymentMethod: string;
-  createdAt?: string;
-}
-
-interface Comment {
-  id: string;
-  text: string;
-  rank: number;
-  createdAt: string;
-  uid: string;
-  userPhoto: string;
-  displayName: string;
-}
-
-export interface CartProducts {
-  id: string;
-  title: string;
-  category: string;
-  description: string;
-  price: string;
-  image: string;
-  options: string;
-  quantity: number;
 }
 
 const firebaseConfig = {
@@ -194,7 +126,7 @@ const searchProducts = async (keyword: string): Promise<Product[]> => {
   return filteredItems;
 };
 
-export default function useProducts() {
+export function useProducts() {
   const search = async (keyword: string): Promise<Product[]> => {
     return keyword ? searchProducts(keyword) : getProducts();
   };
@@ -211,7 +143,7 @@ export async function getProducts(): Promise<Product[]> {
 }
 
 export async function addNewProduct(
-  product: addProduct,
+  product: AddProduct,
   image: string
 ): Promise<void> {
   const id = uuidv4();
@@ -222,10 +154,8 @@ export async function addNewProduct(
     id,
     price: product.price,
     image,
-    // options: product.options,
     options: product.options.split(","),
   });
-  // return;
 }
 
 export async function addWishlistItem(
@@ -242,13 +172,6 @@ export async function setWishlistItems(
 ): Promise<void> {
   await set(ref(database, `wishlist/${userId}`), wishlist);
 }
-
-// export async function removeWishlistItem(
-//   userId: string,
-//   product: Product
-// ): Promise<void> {
-//   return remove(ref(database, `wishlist/${userId}/${product.id}}`));
-// }
 
 export async function getWishlistItems(userId: string): Promise<Product[]> {
   const wishlistRef = ref(database, `wishlist/${userId}`);
@@ -292,6 +215,28 @@ export async function getCommentItems(productId: string): Promise<Comment[]> {
     return [];
   });
 }
+export async function removeComment(
+  productId: string,
+  commentId: string
+): Promise<void> {
+  const itemRef = ref(database, `products/${productId}/comments/${commentId}`);
+  await remove(itemRef);
+}
+
+export async function editComment(
+  itemId: string | undefined,
+  data: UsedCommentType
+) {
+  const itemRef = ref(
+    database,
+    `usedItems/${itemId}/comments/${data.commentId}`
+  );
+  try {
+    await update(itemRef, data);
+  } catch (err) {
+    console.error("댓글 수정 에러", err);
+  }
+}
 
 export async function addOrderList(
   userId: string,
@@ -325,7 +270,7 @@ export async function addOrderList(
 
 export async function getOrderItems(
   userId: string
-): Promise<getOrderDetails[]> {
+): Promise<GetOrderDetails[]> {
   const orderItemsRef = ref(getDatabase(), `userData/${userId}/orders`);
   return get(orderItemsRef).then((snapshot) => {
     if (snapshot.exists()) {

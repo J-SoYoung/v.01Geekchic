@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { login, logout, onUserStateChange } from "../api/firebase";
-import { User } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import { useSetRecoilState } from "recoil";
+import { User } from "firebase/auth";
+
+import { login, logout, onUserStateChange } from "../api/firebase";
 import { userState } from "../atoms/userAtom";
 
 interface AdminUser extends User {

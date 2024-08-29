@@ -1,24 +1,17 @@
 import React, { useEffect } from "react";
 import { useRecoilValue, useRecoilState } from "recoil";
-import { wishlistState, userState } from "../atoms/userAtom";
-import { getWishlistItems, setWishlistItems } from "../api/firebase";
-import closedIcon from "../assets/icons/close.svg";
 import { useNavigate } from "react-router-dom";
 
-interface Product {
-  id: string;
-  title: string;
-  category: string;
-  description: string;
-  price: string;
-  image: string;
-  options: string[];
-}
+import { wishlistState, userState } from "../atoms/userAtom";
+import { getWishlistItems, setWishlistItems } from "../api/firebase";
+import { Product } from "../types/mainType";
+
+import closedIcon from "../assets/icons/close.svg";
 
 export default function Wishlist() {
-  const [wishlist, setWishlist] = useRecoilState(wishlistState);
   const user = useRecoilValue(userState);
   const navigate = useNavigate();
+  const [wishlist, setWishlist] = useRecoilState(wishlistState);
 
   useEffect(() => {
     if (user) {
