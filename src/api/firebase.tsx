@@ -28,6 +28,7 @@ import {
   UsedSaleItem,
   MessagesType,
   MessageListType,
+  NotificationDataType,
 } from "../types/usedType";
 import { SetterOrUpdater } from "recoil";
 interface AdminUser extends User {
@@ -623,35 +624,32 @@ export async function sendUsedMessage({
   }
 }
 
-// 중고제품 구매 요청
-// ⭕ status type 설정 'pendig | .. ' 구체적인 단어로
-export interface NotificationDataType {
-  id: string;
-  buyerId: string;
-  itemId: string;
-  itemName: string;
-  itemQuantity: number;
-  quantity: number;
-  status: string; // 'pending'
-  createdAt: string;
-}
-
 // 중고 제품 구매 요청 (판매자에게 알림보내기)
-export async function addNotificationToSeller({
+export async function addNotification({
   buyerId,
   sellerId,
+  usedMessage,
   notificationData,
 }: {
   buyerId: string;
   sellerId: string;
+  usedMessage: MessagesType;
   notificationData: NotificationDataType;
 }) {
   try {
     const updates = {
-      [`userData/${sellerId}/notifications/${notificationData.id}`]:
+      [`userData/${sellerId}/notifications/${notificationData.notificationId}`]:
         notificationData,
-      [`userData/${buyerId}/notifications/${notificationData.id}`]:
+      [`userData/${buyerId}/notifications/${notificationData.notificationId}`]:
         notificationData,
+      [`/userData/${sellerId}/messages/${usedMessage.messageId}`]: {
+        ...usedMessage,
+        salesStatus: "pending",
+      },
+      [`/userData/${buyerId}/messages/${usedMessage.messageId}`]: {
+        ...usedMessage,
+        salesStatus: "pending",
+      },
     };
     await update(ref(database), updates);
   } catch (error) {
@@ -694,6 +692,7 @@ export async function loadNotification({
     `userData/${userId}/notifications/${notificationId}`
   );
   const snapshot = await get(notificationRef);
+  console.log();
   if (!snapshot.exists()) {
     return null;
   }
@@ -711,14 +710,15 @@ export async function updateOrderUsedStatus({
   try {
     // 구매 상태 업데이트
     const stateUpdates = {
-      [`userData/${sellerId}/notifications/${notification.id}`]: {
+      [`userData/${sellerId}/notifications/${notification.notificationId}`]: {
         ...notification,
         status: "approved",
       },
-      [`userData/${notification.buyerId}/notifications/${notification.id}`]: {
-        ...notification,
-        status: "approved",
-      },
+      [`userData/${notification.buyerId}/notifications/${notification.notificationId}`]:
+        {
+          ...notification,
+          status: "approved",
+        },
     };
     await update(ref(database), stateUpdates);
 

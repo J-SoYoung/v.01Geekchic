@@ -1,9 +1,11 @@
 import React from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useParams } from "react-router-dom";
 
 import { MessagesType } from "../types/usedType";
 import Layout from "../components/myPage/_Layout";
 import { IsSeller } from "../components/common/IsSeller";
+import { useQuery } from "@tanstack/react-query";
+import { loadAllNotification } from "../api/firebase";
 
 
 interface Props {
@@ -11,8 +13,19 @@ interface Props {
 }
 
 const UsedMessageList = () => {
+  // const {userId} = useParams<string>()
   const location = useLocation();
   const { messages }: Props = location.state || [];
+
+  // const { data: notification, isPending: notificationPending } = useQuery({
+  //   queryKey: ["notification"],
+  //   queryFn: () => {
+  //     if (userId)
+  //       return loadAllNotification(userId as string);
+  //   },
+  //   retry: 3,
+  //   retryDelay: 1000,
+  // });
 
   return (
     <Layout title="쪽지보내기">

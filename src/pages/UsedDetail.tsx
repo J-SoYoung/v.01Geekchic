@@ -14,7 +14,7 @@ import UsedDetailSkeleton from "../components/skeleton/UsedDetailSkeleton";
 
 const UsedDetail = () => {
   const navigate = useNavigate();
-  const { itemId } = useParams();
+  const { itemId } = useParams<{ itemId: string }>();
   const { userId, messages } = useRecoilValue(geekChickUser);
 
   // ⭕함수명 변경 -> 중고 상세페이지 데이터 로드 (주석 지울 수 있게)
@@ -38,6 +38,7 @@ const UsedDetail = () => {
         seller: data.seller,
         quantity: data.quantity,
         userId,
+        salesStatus: "initialization",
       };
       console.log("쪽지보내기 방 생성", messageData);
       await addUsedMessagePage(messageData); //⭕타입정리
