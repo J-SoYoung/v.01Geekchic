@@ -214,6 +214,28 @@ export async function getCommentItems(productId: string): Promise<Comment[]> {
     return [];
   });
 }
+export async function removeComment(
+  productId: string,
+  commentId: string
+): Promise<void> {
+  const itemRef = ref(database, `products/${productId}/comments/${commentId}`);
+  await remove(itemRef);
+}
+
+export async function editComment(
+  itemId: string | undefined,
+  data: UsedCommentType
+) {
+  const itemRef = ref(
+    database,
+    `usedItems/${itemId}/comments/${data.commentId}`
+  );
+  try {
+    await update(itemRef, data);
+  } catch (err) {
+    console.error("댓글 수정 에러", err);
+  }
+}
 
 export async function addOrderList(
   userId: string,
