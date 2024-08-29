@@ -1,17 +1,7 @@
 import React from "react";
+import { PayProduct } from "../../types/mainType";
 
-interface Product {
-  id: string;
-  title: string;
-  category: string;
-  description: string;
-  price: string;
-  image: string;
-  options: string[];
-  quantity: number;
-}
-
-export default function PaymentCard({ product }: { product: Product }) {
+export default function PaymentCard({ product }: { product: PayProduct }) {
   const price = parseInt(product.price) * product.quantity;
   return (
     <li className="flex mb-4 ml-[40px] w-[550px]">

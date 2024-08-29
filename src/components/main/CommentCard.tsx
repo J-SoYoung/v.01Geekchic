@@ -1,49 +1,29 @@
 import React from "react";
 import { useParams } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
-
-import { getCommentItems } from "../../api/firebase";
+import useComment from "../../hook/useComment";
+import CommentBtn from "./CommentBtn";
 
 import EmptyStar from "../../assets/icons/EmptyStar.svg";
 import FilledStar from "../../assets/icons/FilledStar.svg";
 
-interface Comment {
-  id: string;
-  text: string;
-  rank: number;
-  createdAt: string;
-  uid: string;
-  userPhoto: string;
-  displayName: string;
-}
-
 export default function CommentCard() {
   const { id } = useParams<{ id: string }>();
-
   const {
-    isLoading,
-    error,
-    data: comments,
-  } = useQuery<Comment[], Error>({
-    queryKey: ["comments"],
-    queryFn: () => getCommentItems(id as string),
-  });
-  {
-    isLoading && <p>Loading..</p>;
-  }
-  {
-    error && <p>Something is wrong</p>;
-  }
+    commentQuery: { isLoading, data: comments },
+  } = useComment(id as string);
+
   function formatDate(dateString: string): string {
     const date = new Date(dateString);
     return date.toISOString().split("T")[0];
   }
-
+  {
+    isLoading && <p>Loading..</p>;
+  }
   return (
     <div className="text-[14px] mt-[50px]">
       {comments && comments.length > 0 ? (
         comments?.map((comment) => (
-          <div key={comment.id} className="mt-[40px]">
+          <div key={comment.id} className="mt-[50px]">
             <div className="flex ml-[40px]">
               <img
                 src={comment.userPhoto}
@@ -70,6 +50,7 @@ export default function CommentCard() {
             <p className="border-b-2 border-0 h-[40px] w-[500px] m-auto text-left mt-[25px] text-lg">
               {comment.text}
             </p>
+            <CommentBtn key={comment.id} comments={comment} />
           </div>
         ))
       ) : (

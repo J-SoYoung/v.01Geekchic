@@ -1,32 +1,14 @@
 import React, { useState, ChangeEvent, FormEvent } from "react";
 import { useLocation, useParams, useNavigate } from "react-router-dom";
+
 import { addOrderList } from "../api/firebase";
 import PaymentCard from "../components/payment/PaymentCard";
-
-interface Product {
-  id: string;
-  title: string;
-  category: string;
-  description: string;
-  price: string;
-  image: string;
-  options: string[];
-  quantity: number;
-}
-
-interface OrderDetails {
-  ordersId?: string;
-  name: string;
-  phone: string;
-  address: string;
-  paymentMethod: string;
-  createdAt?: string;
-}
+import { PayProduct, OrderDetails } from "../types/mainType";
 
 export default function Payment() {
   const { id } = useParams<string>();
   const location = useLocation();
-  const state = location.state as { payProduct?: Product[] };
+  const state = location.state as { payProduct?: PayProduct[] };
   const payProduct = state?.payProduct;
   const navigate = useNavigate();
 

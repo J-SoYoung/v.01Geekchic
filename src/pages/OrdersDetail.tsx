@@ -1,33 +1,17 @@
 import React from "react";
 import { useLocation, Link } from "react-router-dom";
-import OrdersItem from "../components/myPage/OrdersItem";
 import { useRecoilValue } from "recoil";
-import { userState } from "../atoms/userAtom";
 
-interface getOrderDetails {
-  ordersId?: string;
-  name: string;
-  phone: string;
-  address: string;
-  paymentMethod: string;
-  createdAt?: string;
-  items: testProduct[];
-}
-interface testProduct {
-  title: string;
-  description: string;
-  price: string;
-  image: string;
-  options: string[];
-  quantity: number;
-}
+import { userState } from "../atoms/userAtom";
+import OrdersItem from "../components/myPage/OrdersItem";
+import { GetOrderDetails } from "../types/mainType";
 
 export default function OrdersDetail() {
   const location = useLocation();
   const user = useRecoilValue(userState);
   const userId = user?.uid;
 
-  const { orders } = location.state as { orders: getOrderDetails };
+  const { orders } = location.state as { orders: GetOrderDetails };
   const items = orders.items;
   const totalPrice: number =
     items?.reduce(

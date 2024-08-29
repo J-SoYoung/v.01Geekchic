@@ -1,5 +1,8 @@
 import React from "react";
+import { useRecoilValue } from "recoil";
+import { userState } from "../../atoms/userAtom";
 import { Link, useLocation } from "react-router-dom";
+
 import HomeIcon from "../../assets/icons/nav_home.svg";
 import HomeActIcons from "../../assets/icons/nav_homeActive.svg";
 import ItemsIcon from "../../assets/icons/nav_items.svg";
@@ -10,8 +13,6 @@ import UsedIcon from "../../assets/icons/nav_used.svg";
 import UsedActIcon from "../../assets/icons/nav_usedActive.svg";
 import MyIcon from "../../assets/icons/nav_my.svg";
 import MyActIcon from "../../assets/icons/nav_myActive.svg";
-import { useRecoilValue } from "recoil";
-import { userState } from "../../atoms/userAtom";
 
 const BottomNav = () => {
   const location = useLocation();
