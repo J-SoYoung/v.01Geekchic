@@ -32,7 +32,6 @@ import {
   UsedSaleItem,
   MessagesType,
   MessageListType,
-  NotificationDataType,
 } from "../types/usedType";
 
 import {
