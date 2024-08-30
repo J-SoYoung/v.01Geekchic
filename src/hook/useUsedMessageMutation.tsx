@@ -3,11 +3,11 @@ import { MessageListType } from "../types/usedType";
 import { sendUsedMessage } from "../api/firebase";
 
 export const useSendMessage = ({
-  userId,
+  buyerId,
   messageId,
   sellerId,
 }: {
-  userId: string;
+  buyerId: string;
   messageId: string;
   sellerId: string;
 }) => {
@@ -17,7 +17,7 @@ export const useSendMessage = ({
     mutationFn: async (newMessageObj: MessageListType) => {
       await sendUsedMessage({
         messages: newMessageObj,
-        userId,
+        buyerId,
         messageId,
         sellerId,
       });
