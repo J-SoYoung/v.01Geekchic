@@ -6,8 +6,8 @@ import { v4 as uuidv4 } from "uuid";
 
 import Layout from "../components/myPage/_Layout";
 import MessageSkeleton from "../components/skeleton/MessageSkeleton";
-import { addNotification, loadUsedMessage, updateOrderUsedStatus } from "../api/firebase";
-import { MessageListType, NotificationDataType, SellerType } from "../types/usedType";
+import { loadUsedMessage, updateOrderUsedStatus } from "../api/firebase";
+import { MessageListType, MessagesType, SellerType } from "../types/usedType";
 import { makeArr } from "../types/utils";
 import { geekChickUser } from "../atoms/userAtom";
 import { useSendMessage } from "../hook/useUsedMessageMutation";
@@ -17,7 +17,7 @@ export interface UsedItemsOrdersInfoType {
   seller: SellerType;
   itemId: string;
   itemName: string;
-  itemImage: string;
+  itemImage: string; 
   price: string;
   userId: string;
   quantity: number;
@@ -28,10 +28,10 @@ const UsedMessage = () => {
   const location = useLocation();
   const queryClient = useQueryClient();
 
-  const { userId } = useParams<string>();
+  const { buyerId } = useParams<{ buyerId: string }>();
   const { messageId } = location.state || {};
   const loginUser = useRecoilValue(geekChickUser);
-  
+
   const [newMessage, setNewMessage] = useState("");
   const [quantity, setQuantity] = useState(1);
 
@@ -43,46 +43,18 @@ const UsedMessage = () => {
   } = useQuery({
     queryKey: ["usedMessage"],
     queryFn: () => {
-      if (userId) return loadUsedMessage({ userId, messageId });
+      if (buyerId) return loadUsedMessage({ buyerId, messageId });
     },
   });
-  console.log(usedMessage);
-
-  const statusMessages = {
-    initialization: "결제하기",
-    pending: "판매 승인 대기중",
-    completion: "구매완료",
-    rejection: "판매거절",
-  };
-
-  const renderButtonMessage = (
-    status: string,
-    onClickUsedPurchase: () => void
-  ) => {
-    switch (status) {
-      case "initialization":
-        return (
-          <button
-            className="ml-auto font-bold text-[#8F5BBD]"
-            onClick={onClickUsedPurchase}
-          >
-            {statusMessages[status]}
-          </button>
-        );
-      case "pending":
-      case "completion":
-      case "rejection":
-        return <p>{statusMessages[status]}</p>;
-      default:
-        return <p>새로고침 해주세요</p>;
-    }
-  };
-
+  if (!buyerId) {
+    throw new Error("구매자의 아이디가 올바르지 않습니다");
+  }
   const sendMessageMutation = useSendMessage({
-    userId,
+    buyerId,
     messageId,
     sellerId: usedMessage?.seller.sellerId,
   });
+
   const onClickSendMessage = () => {
     if (!newMessage) return;
     const talkId = uuidv4();
@@ -97,48 +69,26 @@ const UsedMessage = () => {
     setNewMessage("");
   };
 
-  const onClickUsedPurchase = async () => {
-    // ⭕ mutation으로 업데이트
-    alert("제품이 마음에 드셨나요? 판매자의 판매 확정을 기다려주세요");
-    const notificationId = uuidv4();
-    const notificationData = {
-      notificationId: notificationId,
-      messageId: messageId,
-      buyerId: usedMessage.userId,
-      itemId: usedMessage.itemId,
-      itemName: usedMessage.itemName,
-      itemQuantity: usedMessage.quantity,
-      quantity: quantity,
-      salesStatus: "pending",
-      createdAt: new Date().toISOString(),
-    };
-
-    // 판매 구매자 모두에게 알림db생성
-    await addNotification({
-      buyerId: usedMessage.userId,
-      sellerId: usedMessage.seller.sellerId,
-      usedMessage,
-      notificationData,
-    });
-  };
-
   const orderStateMutation = useMutation({
     mutationFn: async ({
-      notification,
+      usedMessage,
       sellerId,
+      salesQuantity,
     }: {
-      notification: NotificationDataType;
+      usedMessage: MessagesType;
       sellerId: string;
+      salesQuantity: number;
     }) => {
       await updateOrderUsedStatus({
-        notification,
+        usedMessage,
         sellerId,
+        salesQuantity,
       });
     },
     onSuccess: () => {
       queryClient.invalidateQueries(
         {
-          queryKey: ["notifications"],
+          queryKey: ["usedMessage"],
           refetchType: "active",
           exact: true,
         },
@@ -147,11 +97,12 @@ const UsedMessage = () => {
     },
   });
 
-  // 구매 요청 승인 ( 상태 업데이트 )
-  const onClickPurchaseApprove = (notification: NotificationDataType) => {
+  // 판매수락 버튼 클릭
+  const onClickPurchaseApprove = () => {
     orderStateMutation.mutate({
-      notification,
-      sellerId: userId as string,
+      usedMessage,
+      sellerId: loginUser.userId,
+      salesQuantity: quantity,
     });
   };
 
@@ -159,15 +110,16 @@ const UsedMessage = () => {
     console.log(error);
     return <div>메세지 로드에 문제가 생겼습니다. 새로고침 해주세요</div>;
   }
+  if (usedMessage) {
+    <div>로딩중</div>;
+  }
+
   const isSalesCompleted: boolean =
     usedMessage && usedMessage.salesStatus === "completion";
-
-  console.log(isSalesCompleted);
 
   return (
     <Layout title={"쪽지 보내기"} data={loginUser.messages}>
       <div className="w-[596px] p-8 flex min-h-screen flex-col bg-gray-100 relative">
-        {/* 판매자정보 */}
         {messagePending ? (
           <MessageSkeleton />
         ) : (
@@ -176,13 +128,13 @@ const UsedMessage = () => {
             <div className="flex justify-between p-4 mb-8 border-b bg-white">
               <div className="flex">
                 <img
-                  src={usedMessage.itemImage}
+                  src={usedMessage?.itemImage}
                   alt="Product"
                   className="w-20 h-20 rounded-md object-cover"
                 />
                 <div className="ml-2 text-left">
                   <div className="text-lg font-bold">
-                    {usedMessage.seller.nickname}
+                    {usedMessage?.seller.nickname}
                   </div>
                   <div className="text-gray-500">{usedMessage.itemName}</div>
                   <div className="text-lg font-semibold text-[#8F5BBD]">
@@ -190,62 +142,51 @@ const UsedMessage = () => {
                   </div>
                 </div>
               </div>
-              {usedMessage?.seller.sellerId !== loginUser.userId ? (
-                // 구매자인 경우
-                <>
-                  <div className="h-12 flex border items-center">
-                    <button
-                      onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                      className="px-3 py-1 bg-gray-200 rounded-l"
-                    >
-                      -
-                    </button>
-                    <input
-                      type="number"
-                      value={quantity}
-                      onChange={(e) => setQuantity(Number(e.target.value))}
-                      className="text-center "
-                      min={1}
-                      max={usedMessage.quantity}
-                    />
-                    <button
-                      onClick={() =>
-                        setQuantity(
-                          Math.min(usedMessage.quantity, quantity + 1)
-                        )
-                      }
-                      className="px-3 py-1 bg-gray-200 rounded-r"
-                    >
-                      +
-                    </button>
-                  </div>
-                  {messagePending ? (
-                    <p>로딩중...</p>
-                  ) : (
-                    usedMessage &&
-                    renderButtonMessage(
-                      usedMessage.salesStatus,
-                      onClickUsedPurchase
-                    )
-                  )}
-                </>
-              ) : (
-                // 판매자인 경우
-                usedMessage.salesStatus === "pending" && (
-                  <div className="flex items-center">
-                    <button 
-                    // onClick={onClickPurchaseApprove}
-                    className="p-2 mr-2 bg-[#8F5BBD] text-white font-bold rounded-lg ">
-                      판매 수락
-                    </button>
-                    <button 
-                    // onClick={}
-                    className="p-2 bg-gray-400 text-white font-bold rounded-lg ">
-                      판매 거절
-                    </button>
-                  </div>
-                )
-              )}
+              {usedMessage?.seller.sellerId == loginUser.userId &&
+                usedMessage.salesStatus === "initialization" && (
+                  <>
+                    <div className="h-12 flex border items-center">
+                      <button
+                        onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                        className="px-3 py-1 bg-gray-200 rounded-l"
+                      >
+                        -
+                      </button>
+                      <input
+                        type="number"
+                        value={quantity}
+                        onChange={(e) => setQuantity(Number(e.target.value))}
+                        className="text-center "
+                        min={1}
+                        max={usedMessage.quantity}
+                      />
+                      <button
+                        onClick={() =>
+                          setQuantity(
+                            Math.min(usedMessage.quantity, quantity + 1)
+                          )
+                        }
+                        className="px-3 py-1 bg-gray-200 rounded-r"
+                      >
+                        +
+                      </button>
+                    </div>
+                    <div className="flex items-center">
+                      <button
+                        onClick={onClickPurchaseApprove}
+                        className="p-2 mr-2 bg-[#8F5BBD] text-white font-bold rounded-lg "
+                      >
+                        판매 수락
+                      </button>
+                      <button
+                        // onClick={}
+                        className="p-2 bg-gray-400 text-white font-bold rounded-lg "
+                      >
+                        판매 거절
+                      </button>
+                    </div>
+                  </>
+                )}
             </div>
 
             {/* 대화창 */}

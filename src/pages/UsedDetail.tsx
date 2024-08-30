@@ -11,11 +11,13 @@ import Chevron_left from "../assets/icons/chevron_left.svg";
 import UsedCommentList from "../components/usedDetail/UsedCommentList";
 import UsedInputComment from "../components/usedDetail/UsedInputComment";
 import UsedDetailSkeleton from "../components/skeleton/UsedDetailSkeleton";
+import { MessagesType } from "../types/usedType";
 
 const UsedDetail = () => {
   const navigate = useNavigate();
   const { itemId } = useParams<{ itemId: string }>();
-  const { userId, messages } = useRecoilValue(geekChickUser);
+  const { userId, nickname, userAvatar, messages } =
+    useRecoilValue(geekChickUser);
 
   // ⭕함수명 변경 -> 중고 상세페이지 데이터 로드 (주석 지울 수 있게)
   const { data, isPending, isError } = useQuery({
@@ -27,17 +29,20 @@ const UsedDetail = () => {
   const onClickAddMessagePage = async () => {
     const messageId = uuidv4();
     if (!currentMessage) {
-      const messageData = {
+      const messageData: MessagesType = {
         createdAt: new Date().toISOString(),
         itemId,
         itemImage: data.imageArr[0],
         itemName: data.itemName,
-        messageList: "",
         messageId: messageId,
         price: data.price,
-        seller: data.seller,
         quantity: data.quantity,
-        userId,
+        seller: data.seller,
+        buyer: {
+          userId,
+          nickname,
+          userAvatar,
+        },
         salesStatus: "initialization",
       };
       console.log("쪽지보내기 방 생성", messageData);

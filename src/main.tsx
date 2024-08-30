@@ -45,7 +45,7 @@ const router = createBrowserRouter([
       { path: "/my/:userId/profile", element: <MyProfile /> },
       { path: "/my/:userId/messageList", element: <UsedMessageList /> },
       { path: "/my/:userId/carts", element: <MyCart /> },
-      { path: "/message/:itemId/:userId", element: <UsedMessage /> },
+      { path: "/message/:itemId/:buyerId", element: <UsedMessage /> },
       { path: "/payment/:id", element: <Payment /> },
       { path: "/orders/detail/:ordersid", element: <OrdersDetail /> },
     ],
