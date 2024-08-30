@@ -19,7 +19,6 @@ const UsedDetail = () => {
   const { userId, nickname, userAvatar, messages } =
     useRecoilValue(geekChickUser);
 
-  // ⭕함수명 변경 -> 중고 상세페이지 데이터 로드 (주석 지울 수 있게)
   const { data, isPending, isError } = useQuery({
     queryKey: ["usedDetailItem"],
     queryFn: () => usedDetailItem(itemId as string),
@@ -45,8 +44,7 @@ const UsedDetail = () => {
         },
         salesStatus: "initialization",
       };
-      console.log("쪽지보내기 방 생성", messageData);
-      await addUsedMessagePage(messageData); //⭕타입정리
+      await addUsedMessagePage(messageData); 
     }
     navigate(`/message/${itemId}/${userId}`, {
       state: {

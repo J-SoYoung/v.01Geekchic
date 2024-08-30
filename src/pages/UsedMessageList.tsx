@@ -11,7 +11,7 @@ interface Props {
 const UsedMessageList = () => {
   const location = useLocation();
   const { messages }: Props = location.state || [];
-  console.log(messages);
+
   return (
     <Layout title="쪽지보내기">
       <div className="text-left">

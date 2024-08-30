@@ -11,9 +11,7 @@ interface CartsProps {
 const Cart = ({ carts }: CartsProps) => {
   const [cartItems, setCartItems] = useState<Product[]>([]);
   const cartsArr = makeArr(carts);
-  console.log(cartsArr);
 
-  // ⭕함수 동작X -> 구현해야함 ( 수량변경 )
   const handleQuantityChange = (cartId: string, quantity: number) => {
     setCartItems((prevItems) =>
       prevItems.map((item) =>

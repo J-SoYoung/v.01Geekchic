@@ -24,7 +24,6 @@ export default function Home() {
     isLoading && <p>Loading..</p>;
   }
 
-  // ⭕ 타입해결
   useEffect(() => {
     const fetchData = async () => {
       // 로그인을 했는지 확인

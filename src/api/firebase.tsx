@@ -295,8 +295,6 @@ export async function removeFromCart(userId: string, productId: string) {
 }
 
 // 중고 제품 업로드
-// ⭕ 주석/함수이름 통일 => 추가Add, 삭제Remove, 수정Edit, 불러오기Load
-// ⭕ 아래 변수 구조분해할당 한 부분 뭐가 다른거지?
 export async function usedItemUpload(
   itemData: UsedItemType,
   setUser: SetterOrUpdater<UserDataType>,
@@ -380,7 +378,7 @@ export async function usedDetailItem(itemId: string) {
   }
 }
 
-// ⭕ 댓글 최신순으로 db에 저장 or db에서 가져오기
+
 // 댓글 추가 ( = 아이템 데이터 수정 )
 interface DataType {
   comment: string;
@@ -624,6 +622,6 @@ export async function updateOrderUsedStatus({
     };
     await update(ref(database), quantityUpdates);
   } catch (error) {
-    console.error("updateOrderUsedStatus 함수 에러:", error.message);
+    console.error("updateOrderUsedStatus 함수 에러:", error);
   }
 }

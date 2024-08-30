@@ -8,7 +8,6 @@ export const calculateDaysAgo = (createdAt: string): string => {
   return `${daysDifference}일전`;
 };
 
-// ⭕타입 지정 - 제네릭!!
 // 객체를 배열로 변환하는 함수
 export const makeArr = (data) => {
   return Object.entries(data || []).map(([, value]) => ({

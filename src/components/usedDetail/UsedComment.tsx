@@ -53,7 +53,6 @@ const UsedComment = ({ commentObj }: CommentObjProps) => {
         <div className="flex mb-2 items-end justify-between">
           <div className="flex">
             <div className="font-semibold">{commentObj.nickname}</div>
-            {/* ⭕버튼 컴포넌트 만들기. 똑같은버튼 중복임 */}
             {loginUser.userId === commentObj.userId &&
               (isCommentEdit ? (
                 <>

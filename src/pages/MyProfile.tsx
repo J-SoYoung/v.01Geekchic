@@ -9,8 +9,6 @@ import { editUserData } from "../api/firebase";
 import { uploadCloudImage } from "../api/uploader";
 import { defaultImage } from "../types/utils";
 
-
-// ⭕ 데이터 형태 세세하게 지정하기 ex)phone 010-1111-1110 하이픈넣기, 주소명 등
 const MyProfile = () => {
   const [user, setUser] = useRecoilState(geekChickUser);
   const [isEditing, setIsEditing] = useState(false);
@@ -52,7 +50,6 @@ const MyProfile = () => {
     setPreviewImage(user.userAvatar ?? "");
   };
 
-  // ⭕이미지 컴포넌트 따로 분리?
   return (
     <Layout title="내 프로필 관리">
       <div className="p-8">
