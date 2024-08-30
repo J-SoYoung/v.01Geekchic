@@ -77,7 +77,6 @@ export interface OrderItemsType {
   phone: string;
 }
 
-// ⭕ type 상세설정
 export interface MessageListType {
   id?: string;
   message: string;
@@ -85,7 +84,6 @@ export interface MessageListType {
   createdAt: string;
 }
 
-// ⭕ type 상세설정
 export interface MessagesType {
   createdAt: string;
   itemId: string | undefined;

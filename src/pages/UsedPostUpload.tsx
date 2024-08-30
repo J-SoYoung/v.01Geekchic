@@ -8,7 +8,6 @@ import { uploadCloudImage } from "../api/uploader";
 import { geekChickUser } from "../atoms/userAtom";
 import { UsedItemType } from "../types/usedType";
 
-// ⭕ 유효성 검사 check
 const UsedPostUpload = () => {
   const navigate = useNavigate();
   const [user, setUser] = useRecoilState(geekChickUser);
