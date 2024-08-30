@@ -16,7 +16,6 @@ const UsedHome = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [user, setUser] = useRecoilState(geekChickUser);
 
-  // ⭕유저데이터도 reqct-query로 업데이트
   useEffect(() => {
     const fetchData = async () => {
       const data = await loadUserData(user.userId);
