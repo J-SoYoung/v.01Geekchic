@@ -1,7 +1,7 @@
 import React, { useState, ChangeEvent, FormEvent } from "react";
 import { useLocation, useParams, useNavigate } from "react-router-dom";
 
-import { addOrderList } from "../api/firebase";
+import { addOrderList, removeFromCart } from "../api/firebase";
 import PaymentCard from "../components/payment/PaymentCard";
 import { PayProduct, OrderDetails } from "../types/mainType";
 
@@ -23,6 +23,7 @@ export default function Payment() {
     return <div>데이터가 없습니다.</div>;
   }
 
+  const productIds = payProduct.map((product) => product.id);
   const totalPrice =
     payProduct &&
     payProduct.reduce(
@@ -52,6 +53,9 @@ export default function Payment() {
     try {
       await addOrderList(userId, payProduct, orderDetails);
       alert("주문이 성공적으로 완료되었습니다.");
+      for (const productId of productIds) {
+        await removeFromCart(userId, productId);
+      }
       navigate(`/my/${userId}`);
     } catch (error) {
       alert("주문 실패");

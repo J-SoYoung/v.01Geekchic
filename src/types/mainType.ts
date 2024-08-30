@@ -9,6 +9,7 @@ export interface Product {
 }
 
 export interface PayProduct extends Product {
+  id: string;
   quantity: number;
 }
 
