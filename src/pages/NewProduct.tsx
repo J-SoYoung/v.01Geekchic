@@ -1,5 +1,5 @@
 import React, { useState, ChangeEvent, FormEvent } from "react";
-import { uploadImage } from "../api/uploader";
+import { uploadCloudImage } from "../api/uploader";
 import useProduct from "../hook/useProduct";
 import { AddProduct } from "../types/mainType";
 
@@ -25,7 +25,7 @@ export default function NewProduct() {
     setIsUploading(true);
 
     if (file) {
-      const url = await uploadImage(file);
+      const url = await uploadCloudImage(file);
       addProduct.mutate(
         { product: product as AddProduct, url },
         {
