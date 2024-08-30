@@ -1,32 +1,17 @@
-import React from "react";
-import { Link, useLocation, useParams } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 import { MessagesType } from "../types/usedType";
 import Layout from "../components/myPage/_Layout";
 import { IsSeller } from "../components/common/IsSeller";
-import { useQuery } from "@tanstack/react-query";
-import { loadAllNotification } from "../api/firebase";
-
 
 interface Props {
   messages: MessagesType[];
 }
 
 const UsedMessageList = () => {
-  // const {userId} = useParams<string>()
   const location = useLocation();
   const { messages }: Props = location.state || [];
-
-  // const { data: notification, isPending: notificationPending } = useQuery({
-  //   queryKey: ["notification"],
-  //   queryFn: () => {
-  //     if (userId)
-  //       return loadAllNotification(userId as string);
-  //   },
-  //   retry: 3,
-  //   retryDelay: 1000,
-  // });
-
+  console.log(messages);
   return (
     <Layout title="쪽지보내기">
       <div className="text-left">
@@ -42,12 +27,13 @@ const UsedMessageList = () => {
             </div>
           ) : (
             messages.map((m) => {
+              const isCompleted = m.salesStatus === "completion";
               return (
                 <Link
                   key={m.messageId}
-                  to={`/message/${m.itemId}/${m.userId}`}
-                  state={{ userId: m.userId, messageId: m.messageId }}
-                  className="flex items-center p-2"
+                  to={`/message/${m.itemId}/${m.buyer.userId}`}
+                  state={{ userId: m.buyer.userId, messageId: m.messageId }}
+                  className={`flex items-center p-2 `}
                 >
                   <div className="w-24 h-24 mr-2">
                     <img
@@ -61,7 +47,10 @@ const UsedMessageList = () => {
                       <div className="text-xl font-semibold">{m.itemName}</div>
                       <div className="text-m text-gray-500 flex items-center">
                         <span className="mr-1">{m.seller.nickname}</span>
-                        <IsSeller sellerId={m?.seller.sellerId}/>
+                        <IsSeller sellerId={m?.seller.sellerId} />
+                        {isCompleted && (
+                          <p className="text-red-400 font-bold">판매완료</p>
+                        )}
                       </div>
                     </div>
                     <p className="text-s text-gray-400">

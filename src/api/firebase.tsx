@@ -32,7 +32,6 @@ import {
   UsedSaleItem,
   MessagesType,
   MessageListType,
-  NotificationDataType,
 } from "../types/usedType";
 
 import {
@@ -507,11 +506,11 @@ export async function editUserData(
 
 // 쪽지 페이지 생성
 export async function addUsedMessagePage(messageData: MessagesType) {
-  const { seller, userId, messageId } = messageData;
+  const { seller, buyer, messageId } = messageData;
   try {
     const updates = {
       [`/userData/${seller.sellerId}/messages/${messageId}`]: messageData,
-      [`/userData/${userId}/messages/${messageId}`]: messageData,
+      [`/userData/${buyer.userId}/messages/${messageId}`]: messageData,
     };
     await update(ref(database), updates);
   } catch (err) {
@@ -521,17 +520,17 @@ export async function addUsedMessagePage(messageData: MessagesType) {
 
 // 쪽지 페이지 불러오기
 interface loadUsedMessagePropsType {
-  userId: string;
+  buyerId: string;
   messageId: string;
 }
 export async function loadUsedMessage({
-  userId,
+  buyerId,
   messageId,
 }: loadUsedMessagePropsType) {
   try {
     const messageRef = ref(
       database,
-      `userData/${userId}/messages/${messageId}`
+      `userData/${buyerId}/messages/${messageId}`
     );
     const snapshot = await get(messageRef);
     if (snapshot.exists()) {
@@ -546,13 +545,13 @@ export async function loadUsedMessage({
 // 쪽지 보내기 ( messageList에 쪽지 저장 )
 interface sendUsedMessagePropsType {
   messages: MessageListType;
-  userId: string;
+  buyerId: string;
   messageId: string;
   sellerId: string;
 }
 export async function sendUsedMessage({
   messages,
-  userId,
+  buyerId,
   messageId,
   sellerId,
 }: sendUsedMessagePropsType) {
@@ -560,7 +559,7 @@ export async function sendUsedMessage({
     const updates = {
       [`/userData/${sellerId}/messages/${messageId}/messageList/${messages.id}`]:
         messages,
-      [`/userData/${userId}/messages/${messageId}/messageList/${messages.id}`]:
+      [`/userData/${buyerId}/messages/${messageId}/messageList/${messages.id}`]:
         messages,
     };
     await update(ref(database), updates);
@@ -569,124 +568,23 @@ export async function sendUsedMessage({
   }
 }
 
-// 중고 제품 구매 요청 (판매자에게 알림보내기)
-export async function addNotification({
-  buyerId,
-  sellerId,
-  usedMessage,
-  notificationData,
-}: {
-  buyerId: string;
-  sellerId: string;
-  usedMessage: MessagesType;
-  notificationData: NotificationDataType;
-}) {
-  try {
-    const updates = {
-      [`userData/${sellerId}/notifications/${notificationData.notificationId}`]:
-        notificationData,
-      [`userData/${buyerId}/notifications/${notificationData.notificationId}`]:
-        notificationData,
-      [`/userData/${sellerId}/messages/${usedMessage.messageId}`]: {
-        ...usedMessage,
-        salesStatus: "pending",
-      },
-      [`/userData/${buyerId}/messages/${usedMessage.messageId}`]: {
-        ...usedMessage,
-        salesStatus: "pending",
-      },
-    };
-    await update(ref(database), updates);
-  } catch (error) {
-    console.error("중고 구매 요청 에러", error);
-  }
-}
-
-// 중고제품 구매 알림 모두 보기
-export async function loadAllNotification({
-  userId,
-  itemId = null,
-}: {
-  userId: string;
-  itemId: string | null;
-}) {
-  const notificationRef = ref(database, `userData/${userId}/notifications`);
-  const snapshot = await get(notificationRef);
-  if (!snapshot.exists()) {
-    return [];
-  }
-  const notifications: NotificationDataType[] = Object.values(snapshot.val());
-  if (itemId !== null) {
-    return notifications.filter(
-      (notification) => notification.itemId === itemId
-    );
-  }
-  return notifications;
-}
-
-// 해당 중고제품 구매 알림 보기
-export async function loadNotification({
-  userId,
-  notificationId,
-}: {
-  userId: string;
-  notificationId: string;
-}) {
-  const notificationRef = ref(
-    database,
-    `userData/${userId}/notifications/${notificationId}`
-  );
-  const snapshot = await get(notificationRef);
-  console.log();
-  if (!snapshot.exists()) {
-    return null;
-  }
-  return snapshot.val();
-}
-
-// 구매 요청 승인 ( = state업데이트 )
+// 구매 요청 승인
 export async function updateOrderUsedStatus({
-  notification,
+  usedMessage,
   sellerId,
+  salesQuantity,
 }: {
-  notification: NotificationDataType;
+  usedMessage: MessagesType;
   sellerId: string;
+  salesQuantity: number;
 }) {
   try {
-    // 구매 상태 업데이트
-    const stateUpdates = {
-      [`userData/${sellerId}/notifications/${notification.notificationId}`]: {
-        ...notification,
-        status: "approved",
-      },
-      [`userData/${notification.buyerId}/notifications/${notification.notificationId}`]:
-        {
-          ...notification,
-          status: "approved",
-        },
-    };
-    await update(ref(database), stateUpdates);
-
-    // 구매정보 firebase에 저장
-    const usedOrderId = uuidv4();
-    const usedOrderRef = ref(
-      database,
-      `userData/${notification.buyerId}/orders_used/${usedOrderId}`
-    );
-    const usedItemsOrdersInfo = {
-      itemId: notification.itemId,
-      quantity: notification.quantity,
-      createdAt: notification.createdAt,
-    };
-    await update(usedOrderRef, usedItemsOrdersInfo);
-
-    // 중고제품 수량 업데이트 & 판매자의 sales 수량 업데이트
-    const usedItemRef = ref(database, `usedItems/${notification.itemId}`);
+    const usedItemRef = ref(database, `usedItems/${usedMessage.itemId}`);
     const sellerRef = ref(
       database,
-      `userData/${sellerId}/sales/${notification.itemId}`
+      `userData/${sellerId}/sales/${usedMessage.itemId}`
     );
-    // promise.all을 사용해 병렬로 데이터 가져오기
+
     const [itemSnapshot, sellerSnapshot] = await Promise.all([
       get(usedItemRef),
       get(sellerRef),
@@ -696,82 +594,36 @@ export async function updateOrderUsedStatus({
     const sellerItemData = sellerSnapshot.val();
 
     if (!usedItemData) {
-      throw new Error(`No data found at usedItems/${notification.itemId}`);
+      throw new Error(`No data found at usedItems/${usedMessage.itemId}`);
     }
     if (!sellerItemData) {
       throw new Error(
-        `No data found at userData/${sellerId}/sales/${notification.itemId}`
+        `No data found at userData/${sellerId}/sales/${usedMessage.itemId}`
       );
     }
 
-    const quantity = notification.itemQuantity - notification.quantity;
+    const quantity = usedMessage.quantity - salesQuantity;
+
     const quantityUpdates = {
-      [`usedItems/${notification.itemId}`]: { ...usedItemData, quantity },
-      [`userData/${sellerId}/sales/${notification.itemId}`]: {
+      [`usedItems/${usedMessage.itemId}`]: { ...usedItemData, quantity },
+      [`userData/${sellerId}/sales/${usedMessage.itemId}`]: {
         ...sellerItemData,
         quantity,
         salesQuantity: sellerItemData.salesQuantity + quantity,
       },
+      [`userData/${sellerId}/messages/${usedMessage.messageId}`]: {
+        ...usedMessage,
+        quantity,
+        salesStatus: "completion",
+      },
+      [`userData/${usedMessage.buyer.userId}/messages/${usedMessage.messageId}`]: {
+        ...usedMessage,
+        quantity,
+        salesStatus: "completion",
+      },
     };
     await update(ref(database), quantityUpdates);
   } catch (error) {
-    console.error("구매상태 알림 변경 에러", error);
+    console.error("updateOrderUsedStatus 함수 에러:", error.message);
   }
 }
-
-// 알림 삭제
-export async function removeNotification({
-  notificationId,
-  userId,
-}: {
-  notificationId: string;
-  userId: string;
-}): Promise<void> {
-  const notificationRef = ref(
-    database,
-    `userData/${userId}/notifications/${notificationId}`
-  );
-  await remove(notificationRef);
-}
-
-// 중고제품 구매리스트 생성
-// export async function addUsedItemsOrderList({
-//   data,
-// }: {
-//   data: UsedItemsOrdersInfoType;
-// }) {
-//   try {
-//     const usedOrderRef = ref(
-//       database,
-//       `userData/${data.userId}/orders_used/${data.id}`
-//     );
-//     await update(usedOrderRef, data);
-//   } catch (err) {
-//     console.error(err);
-//   }
-// }
-
-// 제품 수량 업데이트
-// export async function updateUsedItemQuantity({
-//   itemId,
-//   quantity,
-// }: {
-//   itemId: string;
-//   quantity: number;
-// }) {
-//   try {
-//     const itemRef = ref(database, `usedItems/${itemId}`);
-
-//     if (quantity <= 0) {
-//       await update(itemRef, {
-//         quantity: 0,
-//         isSales: false,
-//       });
-//     } else {
-//       // 수량 업데이트
-//       await update(itemRef, { quantity });
-//     }
-//   } catch (err) {
-//     console.error(err);
-//   }
-// }

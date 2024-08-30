@@ -6,7 +6,6 @@ import { loadUserData, logout } from "../api/firebase";
 
 import Layout from "../components/myPage/_Layout";
 import MyPageSkeleton from "../components/skeleton/MyPageSkeleton";
-import Notification from "../components/myPage/Notification";
 
 const MyPage = () => {
   const { userId } = useParams<{ userId: string }>();
@@ -129,9 +128,6 @@ const MyPage = () => {
               </span>
             </Link>
           </div>
-
-          <Notification userId={userId} />
-
         </div>
       </div>
     </Layout>
