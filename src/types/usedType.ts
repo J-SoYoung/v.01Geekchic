@@ -1,8 +1,17 @@
 import { User } from "firebase/auth";
 import { Product } from "../types/mainType";
 
-export interface UsedItemType extends UsedSaleItem {
-  // 중고 데이터 타입 ( 중고 판매 타입 확장 )
+export interface UsedItemType {
+  // 중고 데이터 타입
+  id: string;
+  itemName: string;
+  size: string;
+  createdAt: string;
+  quantity: number;
+  price: string;
+  imageArr: string[];
+  isSales: boolean;
+  options: string[];
   description: string;
   seller: SellerType;
   comments?: UsedCommentType;
@@ -25,6 +34,12 @@ export interface SellerType {
   userAvatar: string | null;
   address: string | null;
   phone: string | null;
+}
+export interface BuyerType {
+  // 구매자 정보
+  userId: string;
+  nickname: string | null;
+  userAvatar: string | null;
 }
 
 export interface FirebaseUserType extends User {
@@ -73,16 +88,16 @@ export interface MessageListType {
 // ⭕ type 상세설정
 export interface MessagesType {
   createdAt: string;
-  itemId: string;
+  itemId: string | undefined;
   itemImage: string;
   itemName: string;
   messageId: string;
-  messageList: MessageListType;
+  messageList?: MessageListType;
   price: string;
-  salesStatus: string; //initialization, pending, completion, rejection
-  seller: SellerType;
-  userId: string;
   quantity: number;
+  seller: SellerType;
+  buyer: BuyerType;
+  salesStatus: string; //initialization, pending, completion, rejection
 }
 
 //유저 타입
@@ -99,17 +114,4 @@ export interface UserDataType {
   carts?: Product[];
   wishlists?: Product[];
   messages?: MessagesType;
-}
-
-// ⭕ type 상세설정
-export interface NotificationDataType {
-  notificationId: string;
-  messageId: string;
-  buyerId: string;
-  itemId: string;
-  itemName: string;
-  itemQuantity: number;
-  quantity: number;
-  salesStatus: string; // pending, completion, rejection
-  createdAt: string;
 }
