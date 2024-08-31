@@ -1,12 +1,15 @@
 # GeekChic
+- Vite + React + TypeScript
+- 제작 기간 : 2024.06.28 - 2024.08.31 (약 2달)
+- 참여 인원 : 프론트엔드2명 (정소영, 전민재)
 
-Vite + React + TypeScript
+https://github.com/user-attachments/assets/f0885d3b-675d-4b9b-81cc-8e56b9304cd8
+
 
 ## 💞프로젝트 목표
 사용자들이 다양한 제품을 쉽게 검색하고 구매 및 중고 물품을 손쉽게 사고팔 수 있는 플랫폼을 구축하여 , 자원 재활용과 비용 절감을 도모하는 온라인 쇼핑몰 커뮤니티 플랫폼을 구축합니다.
 
 ## 💞주요기능
-
 - **사용자 인증** : 회원 가입, 로그인 및 로그아웃 기능
 - **제품 목록** : 제품 카테고리, 상세 설명, 가격, 이미지 등 제품 정보 표시
 - **장바구니** : 주문 생성, 결제, 주문 내역 조회 기능
@@ -17,7 +20,6 @@ Vite + React + TypeScript
 - **거래, 판매 관리**: 거래, 판매 상태 관리 및 내역 조회 기능
 
 ## 💞기술 스택
-
 - React, Vite, Typescript, Tailwind
 - React-Router-Dom
 - Firebase, React-query, Recoil 
